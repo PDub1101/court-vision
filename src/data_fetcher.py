@@ -18,35 +18,112 @@ PREFERRED_BOOKMAKERS = ["draftkings", "fanduel", "betmgm", "williamhill_us"]
 
 def get_live_nba_odds():
     """
-    Pulls today's NBA game odds (spreads, moneylines, totals) from The Odds API.
-    Falls back to mock data if no API key is provided or if network fails.
+    Pulls today's NBA game odds (spreads, moneylines, totals):
+    1. Uses The Odds API if THE_ODDS_API_KEY is configured.
+    2. Otherwise automatically pulls live NBA games and DraftKings/ESPN Bet lines
+       from ESPN's public NBA Scoreboard API (zero API key required).
+    3. Falls back to the baseline sample slate if no games are scheduled today.
     """
-    if not ODDS_API_KEY:
-        print("[CourtVision] No THE_ODDS_API_KEY detected. Using realistic live fallback slate.")
-        return get_mock_odds_slate()
+    if ODDS_API_KEY:
+        url = "https://api.the-odds-api.com/v4/sports/basketball_nba/odds/"
+        params = {
+            "apiKey": ODDS_API_KEY,
+            "regions": "us",
+            "markets": "spreads,h2h,totals",
+            "oddsFormat": "american",
+            "dateFormat": "iso"
+        }
+        try:
+            response = requests.get(url, params=params, timeout=10)
+            if response.status_code == 200:
+                events = response.json()
+                remaining_requests = response.headers.get("x-requests-remaining", "N/A")
+                print(f"[CourtVision] Retrieved {len(events)} games via The Odds API. Remaining: {remaining_requests}")
+                parsed = parse_odds_response(events)
+                if parsed:
+                    return parsed
+        except Exception as e:
+            print(f"[CourtVision] The Odds API request failed: {e}.")
 
-    url = "https://api.the-odds-api.com/v4/sports/basketball_nba/odds/"
-    params = {
-        "apiKey": ODDS_API_KEY,
-        "regions": "us",
-        "markets": "spreads,h2h,totals",
-        "oddsFormat": "american",
-        "dateFormat": "iso"
-    }
+    # Zero-key live feed via ESPN Public NBA Scoreboard API
+    espn_games = get_espn_public_nba_slate()
+    if espn_games:
+        print(f"[CourtVision] Retrieved {len(espn_games)} live NBA games & spreads via ESPN Public API.")
+        return espn_games
 
+    print("[CourtVision] Using baseline NBA slate.")
+    return get_mock_odds_slate()
+
+
+def get_espn_public_nba_slate():
+    """
+    Fetches today's real NBA schedule and sportsbook spreads from ESPN's public JSON API.
+    Works 24/7 on GitHub Actions without requiring an API key.
+    """
+    url = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard"
     try:
-        response = requests.get(url, params=params, timeout=10)
-        if response.status_code == 200:
-            events = response.json()
-            remaining_requests = response.headers.get("x-requests-remaining", "N/A")
-            print(f"[CourtVision] Successfully retrieved {len(events)} games. Requests remaining: {remaining_requests}")
-            return parse_odds_response(events)
-        else:
-            print(f"[CourtVision] The Odds API error ({response.status_code}): {response.text}")
-            return get_mock_odds_slate()
+        resp = requests.get(url, timeout=10)
+        if resp.status_code != 200:
+            return []
+        data = resp.json()
+        events = data.get("events", [])
+        parsed = []
+        for ev in events:
+            comp = (ev.get("competitions") or [{}])[0]
+            competitors = comp.get("competitors", [])
+            if len(competitors) < 2:
+                continue
+
+            home_comp = next((c for c in competitors if c.get("homeAway") == "home"), competitors[0])
+            away_comp = next((c for c in competitors if c.get("homeAway") == "away"), competitors[1])
+
+            home_team = home_comp.get("team", {}).get("displayName", "Home Team")
+            away_team = away_comp.get("team", {}).get("displayName", "Away Team")
+            commence_time = ev.get("date", "")
+            game_id = f"espn_nba_{ev.get('id', '')}"
+
+            odds_list = comp.get("odds", [])
+            home_spread = -2.5
+            sportsbook = "DraftKings / Consensus"
+            over_under = 224.5
+
+            if odds_list:
+                odd_obj = odds_list[0]
+                sportsbook = odd_obj.get("provider", {}).get("name", "DraftKings")
+                over_under = odd_obj.get("overUnder", 224.5)
+                details = odd_obj.get("details", "")  # e.g. "BOS -4.5"
+                home_abbr = home_comp.get("team", {}).get("abbreviation", "")
+                away_abbr = away_comp.get("team", {}).get("abbreviation", "")
+                if details and " " in details:
+                    parts = details.split()
+                    fav_abbr = parts[0].strip()
+                    try:
+                        line_val = float(parts[-1])
+                        if fav_abbr == home_abbr:
+                            home_spread = line_val
+                        elif fav_abbr == away_abbr:
+                            home_spread = -line_val
+                    except ValueError:
+                        pass
+
+            parsed.append({
+                "game_id": game_id,
+                "commence_time": commence_time,
+                "home_team": home_team,
+                "away_team": away_team,
+                "sportsbook": sportsbook,
+                "home_spread": round(float(home_spread), 1),
+                "home_spread_odds": -110,
+                "away_spread": round(float(-home_spread), 1),
+                "away_spread_odds": -110,
+                "home_ml": None,
+                "away_ml": None,
+                "total": over_under
+            })
+        return parsed
     except Exception as e:
-        print(f"[CourtVision] Request to The Odds API failed: {e}. Falling back to sample slate.")
-        return get_mock_odds_slate()
+        print(f"[CourtVision] ESPN public feed note: {e}")
+        return []
 
 
 def parse_odds_response(events):
