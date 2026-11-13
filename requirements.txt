@@ -1,0 +1,11 @@
+# Core Data & Modeling
+requests>=2.31.0
+pandas>=2.0.0
+numpy>=1.24.0
+nba_api>=1.4.1
+
+# AI & LLM Integration (Official Google GenAI SDK)
+google-genai>=0.1.1
+
+# Utilities
+python-dotenv>=1.0.0
