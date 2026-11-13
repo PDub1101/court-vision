@@ -519,7 +519,7 @@ function buildScoreBugHtml(bet) {
       <div class="bcast-rack">
         
         <!-- Away Team Wing -->
-        <div class="bcast-team-wing away" style="background: linear-gradient(135deg, ${awayTeam.primary}44 0%, rgba(13, 19, 34, 0.95) 75%);">
+        <div class="bcast-team-wing away" style="background: linear-gradient(135deg, ${awayTeam.primary}26 0%, var(--bcast-wing-base) 80%);">
           <div>
             <div class="bcast-team-header">
               <img src="${awayTeam.logo}" alt="${awayTeam.abbr}" class="bcast-team-logo" loading="lazy" onerror="this.style.opacity='0.4'">
@@ -551,7 +551,7 @@ function buildScoreBugHtml(bet) {
         </div>
 
         <!-- Home Team Wing -->
-        <div class="bcast-team-wing home" style="background: linear-gradient(225deg, ${homeTeam.primary}44 0%, rgba(13, 19, 34, 0.95) 75%);">
+        <div class="bcast-team-wing home" style="background: linear-gradient(225deg, ${homeTeam.primary}26 0%, var(--bcast-wing-base) 80%);">
           <div>
             <div class="bcast-team-header">
               <img src="${homeTeam.logo}" alt="${homeTeam.abbr}" class="bcast-team-logo" loading="lazy" onerror="this.style.opacity='0.4'">
