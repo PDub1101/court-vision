@@ -239,7 +239,8 @@ def settle_bet(bet_id, actual_margin, final_score_str):
         })
 
     save_bankroll_state(state)
-    print(f"[Bankroll] Settled {bet_id} as {result} ({pnl:+$g}). New balance: ${state['bankroll']['current_balance']}")
+    sign = "+" if pnl >= 0 else "-"
+    print(f"[Bankroll] Settled {bet_id} as {result} ({sign}${abs(pnl):.2f}). New balance: ${state['bankroll']['current_balance']:.2f}")
 
     # Trigger ISyE 4031 Morning Post-Mortem & Self-Learning Rule Update
     try:
