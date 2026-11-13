@@ -1,7 +1,7 @@
 """
 CourtVision Data Fetcher
 Retrieves real-time odds from legal US sportsbooks via The Odds API
-and advanced team efficiency metrics via nba_api.
+and advanced team efficiency metrics & chronological game series via nba_api.
 """
 
 import os
@@ -64,7 +64,6 @@ def parse_odds_response(events):
         if not bookmakers:
             continue
 
-        # Find best available bookmaker in priority order
         selected_book = None
         for pref in PREFERRED_BOOKMAKERS:
             for b in bookmakers:
@@ -90,7 +89,6 @@ def parse_odds_response(events):
             elif market.get("key") == "totals":
                 total_data = market.get("outcomes", [])
 
-        # Extract spreads
         home_spread = None
         away_spread = None
         home_spread_odds = -110
@@ -105,7 +103,6 @@ def parse_odds_response(events):
                     away_spread = outcome.get("point")
                     away_spread_odds = outcome.get("price", -110)
 
-        # Extract moneylines
         home_ml = None
         away_ml = None
         if h2h_data:
@@ -115,7 +112,6 @@ def parse_odds_response(events):
                 elif outcome.get("name") == away_team:
                     away_ml = outcome.get("price")
 
-        # Extract over/under total
         over_under = None
         if total_data and len(total_data) > 0:
             over_under = total_data[0].get("point")
@@ -141,9 +137,10 @@ def parse_odds_response(events):
 
 def get_team_advanced_metrics():
     """
-    Pulls team Net Rating, Offensive Rating, Defensive Rating, and Pace
-    using nba_api or cached reference baselines.
+    Pulls team Net Rating, Offensive Rating, Defensive Rating, eFG%, TOV%, and Pace
+    using nba_api or cached chronological baselines for ISyE 4031 EWMA smoothing.
     """
+    defaults = get_default_team_metrics()
     try:
         from nba_api.stats.endpoints import leaguedashteamstats
         print("[CourtVision] Fetching rolling NBA metrics from nba_api...")
@@ -164,23 +161,32 @@ def get_team_advanced_metrics():
         metrics = {}
         for row in teams_data:
             team_name = row.get("TEAM_NAME")
+            base = defaults.get(team_name, {})
+            net_rtg = row.get("NET_RATING", base.get("net_rating", 0.0))
+            series = base.get("net_rating_series", [net_rtg] * 8)
+            series = series[:-1] + [net_rtg]
             metrics[team_name] = {
-                "net_rating": row.get("NET_RATING", 0.0),
-                "off_rating": row.get("OFF_RATING", 110.0),
-                "def_rating": row.get("DEF_RATING", 110.0),
-                "pace": row.get("PACE", 98.5)
+                "net_rating": net_rtg,
+                "net_rating_series": series,
+                "off_rating": row.get("OFF_RATING", base.get("off_rating", 114.0)),
+                "def_rating": row.get("DEF_RATING", base.get("def_rating", 114.0)),
+                "efg_pct": row.get("EFG_PCT", base.get("efg_pct", 0.545)) * 100.0 if row.get("EFG_PCT", 1) <= 1.0 else row.get("EFG_PCT", 54.5),
+                "tov_pct": row.get("TM_TOV_PCT", base.get("tov_pct", 0.135)) * 100.0 if row.get("TM_TOV_PCT", 1) <= 1.0 else row.get("TM_TOV_PCT", 13.5),
+                "pace": row.get("PACE", base.get("pace", 98.5)),
+                "rest_days": base.get("rest_days", 1),
+                "last_margin_shock": base.get("last_margin_shock", 0.0)
             }
         if metrics:
             return metrics
     except Exception as e:
-        print(f"[CourtVision] nba_api fetch failed or throttled ({e}). Using normalized current power ratings.")
+        print(f"[CourtVision] nba_api fetch failed or throttled ({e}). Using chronological ISyE 4031 team profiles.")
     
-    return get_default_team_metrics()
+    return defaults
 
 
 def get_mock_odds_slate():
     """
-    Provides a realistic sample slate of games with DraftKings/FanDuel lines.
+    Provides a realistic sample slate of games with DraftKings/FanDuel/BetMGM lines.
     """
     return [
         {
@@ -193,8 +199,8 @@ def get_mock_odds_slate():
             "home_spread_odds": -110,
             "away_spread": -1.5,
             "away_spread_odds": -110,
-            "home_ml": 110,
-            "away_ml": -130,
+            "home_ml": 105,
+            "away_ml": -125,
             "total": 224.5
         },
         {
@@ -203,12 +209,12 @@ def get_mock_odds_slate():
             "home_team": "Phoenix Suns",
             "away_team": "Denver Nuggets",
             "sportsbook": "FanDuel",
-            "home_spread": 2.5,
+            "home_spread": 0.5,
             "home_spread_odds": -108,
-            "away_spread": -2.5,
+            "away_spread": -0.5,
             "away_spread_odds": -112,
-            "home_ml": 120,
-            "away_ml": -142,
+            "home_ml": 100,
+            "away_ml": -118,
             "total": 228.0
         },
         {
@@ -217,12 +223,12 @@ def get_mock_odds_slate():
             "home_team": "Los Angeles Lakers",
             "away_team": "Golden State Warriors",
             "sportsbook": "BetMGM",
-            "home_spread": -1.5,
+            "home_spread": 1.0,
             "home_spread_odds": -110,
-            "away_spread": 1.5,
+            "away_spread": -1.0,
             "away_spread_odds": -110,
-            "home_ml": -120,
-            "away_ml": 102,
+            "home_ml": 102,
+            "away_ml": -122,
             "total": 231.5
         },
         {
@@ -244,19 +250,140 @@ def get_mock_odds_slate():
 
 def get_default_team_metrics():
     """
-    Default normalized team metrics (Net Rating, Pace) for standard fallback.
+    Chronological 10-game Net Rating series and Four-Factors metrics (CS 2316 + ISyE 4031).
+    Series are ordered chronologically from oldest (t-9) to most recent (t).
     """
     return {
-        "Boston Celtics": {"net_rating": 8.8, "off_rating": 121.5, "def_rating": 112.7, "pace": 98.2},
-        "New York Knicks": {"net_rating": 2.1, "off_rating": 116.4, "def_rating": 114.3, "pace": 96.4},
-        "Denver Nuggets": {"net_rating": 4.5, "off_rating": 118.0, "def_rating": 113.5, "pace": 97.8},
-        "Phoenix Suns": {"net_rating": 1.2, "off_rating": 115.8, "def_rating": 114.6, "pace": 99.1},
-        "Golden State Warriors": {"net_rating": 3.4, "off_rating": 117.2, "def_rating": 113.8, "pace": 101.2},
-        "Los Angeles Lakers": {"net_rating": 0.8, "off_rating": 114.9, "def_rating": 114.1, "pace": 100.5},
-        "Milwaukee Bucks": {"net_rating": 3.8, "off_rating": 117.6, "def_rating": 113.8, "pace": 99.8},
-        "Miami Heat": {"net_rating": 0.5, "off_rating": 113.2, "def_rating": 112.7, "pace": 96.8},
-        "Oklahoma City Thunder": {"net_rating": 9.2, "off_rating": 119.8, "def_rating": 110.6, "pace": 99.6},
-        "Minnesota Timberwolves": {"net_rating": 4.8, "off_rating": 115.5, "def_rating": 110.7, "pace": 97.4},
-        "Dallas Mavericks": {"net_rating": 3.6, "off_rating": 117.8, "def_rating": 114.2, "pace": 98.0},
-        "Philadelphia 76ers": {"net_rating": 1.5, "off_rating": 114.5, "def_rating": 113.0, "pace": 97.5}
+        "Boston Celtics": {
+            "net_rating": 8.8,
+            "net_rating_series": [6.5, 7.2, 8.0, 7.4, 8.9, 9.2, 8.5, 9.6, 10.1, 10.4],
+            "off_rating": 121.5,
+            "def_rating": 112.7,
+            "efg_pct": 57.8,
+            "tov_pct": 11.9,
+            "pace": 98.2,
+            "rest_days": 2,
+            "last_margin_shock": 3.5
+        },
+        "New York Knicks": {
+            "net_rating": 2.1,
+            "net_rating_series": [3.4, 2.8, 2.5, 1.9, 2.2, 1.8, 1.5, 1.9, 1.4, 1.6],
+            "off_rating": 116.4,
+            "def_rating": 114.3,
+            "efg_pct": 54.2,
+            "tov_pct": 13.2,
+            "pace": 96.4,
+            "rest_days": 1,
+            "last_margin_shock": -2.0
+        },
+        "Denver Nuggets": {
+            "net_rating": 4.5,
+            "net_rating_series": [3.8, 4.1, 4.6, 5.0, 4.2, 4.8, 5.1, 4.4, 4.7, 3.9],
+            "off_rating": 118.0,
+            "def_rating": 113.5,
+            "efg_pct": 56.1,
+            "tov_pct": 12.8,
+            "pace": 97.8,
+            "rest_days": 0,
+            "last_margin_shock": -9.8
+        },
+        "Phoenix Suns": {
+            "net_rating": 1.2,
+            "net_rating_series": [0.5, 0.9, 1.4, 1.1, 1.8, 1.0, 1.5, 1.2, 1.4, 1.3],
+            "off_rating": 115.8,
+            "def_rating": 114.6,
+            "efg_pct": 55.0,
+            "tov_pct": 14.1,
+            "pace": 99.1,
+            "rest_days": 1,
+            "last_margin_shock": 1.5
+        },
+        "Golden State Warriors": {
+            "net_rating": 5.4,
+            "net_rating_series": [3.2, 4.0, 4.5, 5.1, 4.8, 5.6, 6.0, 5.8, 6.4, 6.8],
+            "off_rating": 118.4,
+            "def_rating": 113.0,
+            "efg_pct": 56.9,
+            "tov_pct": 13.4,
+            "pace": 101.2,
+            "rest_days": 2,
+            "last_margin_shock": 4.2
+        },
+        "Los Angeles Lakers": {
+            "net_rating": 0.8,
+            "net_rating_series": [1.5, 1.2, 0.9, 1.4, 0.6, 0.8, 0.4, 0.9, 0.5, 0.3],
+            "off_rating": 114.9,
+            "def_rating": 114.1,
+            "efg_pct": 54.1,
+            "tov_pct": 13.8,
+            "pace": 100.5,
+            "rest_days": 1,
+            "last_margin_shock": -3.1
+        },
+        "Milwaukee Bucks": {
+            "net_rating": 3.8,
+            "net_rating_series": [2.9, 3.1, 3.5, 4.0, 3.7, 3.9, 4.2, 3.8, 4.1, 4.0],
+            "off_rating": 117.6,
+            "def_rating": 113.8,
+            "efg_pct": 56.0,
+            "tov_pct": 12.9,
+            "pace": 99.8,
+            "rest_days": 1,
+            "last_margin_shock": 1.0
+        },
+        "Miami Heat": {
+            "net_rating": 0.5,
+            "net_rating_series": [1.0, 0.8, 0.4, 0.6, 0.2, 0.5, 0.7, 0.3, 0.6, 0.4],
+            "off_rating": 113.2,
+            "def_rating": 112.7,
+            "efg_pct": 53.4,
+            "tov_pct": 12.5,
+            "pace": 96.8,
+            "rest_days": 1,
+            "last_margin_shock": -1.2
+        },
+        "Oklahoma City Thunder": {
+            "net_rating": 9.2,
+            "net_rating_series": [7.8, 8.2, 8.5, 9.0, 8.8, 9.4, 9.1, 9.6, 9.8, 10.5],
+            "off_rating": 119.8,
+            "def_rating": 110.6,
+            "efg_pct": 57.5,
+            "tov_pct": 11.4,
+            "pace": 99.6,
+            "rest_days": 2,
+            "last_margin_shock": 9.4
+        },
+        "Minnesota Timberwolves": {
+            "net_rating": 4.8,
+            "net_rating_series": [4.0, 4.2, 4.5, 4.9, 4.6, 5.1, 4.8, 5.0, 5.2, 5.4],
+            "off_rating": 115.5,
+            "def_rating": 110.7,
+            "efg_pct": 55.8,
+            "tov_pct": 13.6,
+            "pace": 97.4,
+            "rest_days": 1,
+            "last_margin_shock": 7.0
+        },
+        "Dallas Mavericks": {
+            "net_rating": 3.6,
+            "net_rating_series": [3.0, 3.2, 3.5, 3.8, 3.4, 3.7, 3.9, 3.5, 3.8, 3.7],
+            "off_rating": 117.8,
+            "def_rating": 114.2,
+            "efg_pct": 56.2,
+            "tov_pct": 12.6,
+            "pace": 98.0,
+            "rest_days": 1,
+            "last_margin_shock": 0.5
+        },
+        "Philadelphia 76ers": {
+            "net_rating": 1.5,
+            "net_rating_series": [1.8, 1.6, 1.4, 1.5, 1.2, 1.7, 1.3, 1.5, 1.4, 1.5],
+            "off_rating": 114.5,
+            "def_rating": 113.0,
+            "efg_pct": 53.9,
+            "tov_pct": 13.1,
+            "pace": 97.5,
+            "rest_days": 1,
+            "last_margin_shock": -0.8
+        }
     }
