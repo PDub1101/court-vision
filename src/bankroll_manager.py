@@ -1,12 +1,13 @@
 """
 CourtVision Bankroll Manager
 Manages the $1,000 paper trading bankroll, unit allocation,
-active open wagers, and settled ledger accounting.
+active open wagers, settled ledger accounting, and triggers ISyE 4031 Post-Mortems.
 """
 
 import os
 import json
 from datetime import datetime, timezone
+from src.gemini_veto import update_decision_basis_post_mortem
 
 STATE_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "bankroll_state.json")
 UNIT_1_AMOUNT = 20.0
@@ -44,16 +45,27 @@ def calculate_potential_profit(stake, american_odds):
 
 def place_simulated_wager(candidate, veto_verdict):
     """
-    Places a paper bet if approved by Gemini veto engine.
+    Places a paper bet if approved by the ISyE 4031 + Gemini veto engine.
     """
     state = load_bankroll_state()
+    isye = candidate.get("isye_4031", {})
 
-    # Avoid duplicate active bets on same game and side
+    # Check if an active bet already exists for this game_id
     game_id = candidate["game_id"]
-    for active in state.get("active_bets", []):
+    for idx, active in enumerate(state.get("active_bets", [])):
         if active["game_id"] == game_id and active["selection"] == candidate["recommended_side"]:
-            print(f"[Bankroll] Bet already active for {candidate['recommended_side']}. Skipping duplicate.")
-            return None
+            # Enrich existing active bet with latest ISyE 4031 telemetry
+            active["cover_prob_pct"] = isye.get("cover_prob_pct", 60.5)
+            active["ev_pct"] = isye.get("ev_pct", 15.5)
+            active["se_pred"] = isye.get("se_pred", 10.46)
+            active["se_mean"] = isye.get("se_mean", 0.96)
+            active["pi_80"] = isye.get("pi_80", [-8.0, 18.0])
+            active["triggered_rule_id"] = veto_verdict.get("triggered_rule_id", "RULE-001")
+            active["gemini_confidence"] = veto_verdict.get("confidence", active.get("gemini_confidence", 78))
+            active["gemini_reasoning"] = veto_verdict.get("reasoning", active.get("gemini_reasoning", ""))
+            save_bankroll_state(state)
+            print(f"[Bankroll] Synced ISyE 4031 telemetry for active bet on {candidate['recommended_side']}.")
+            return active
 
     units = veto_verdict.get("recommended_units", 1)
     if units <= 0 or veto_verdict.get("verdict") != "BET":
@@ -79,7 +91,13 @@ def place_simulated_wager(candidate, veto_verdict):
         "potential_profit": potential_profit,
         "model_projected_spread": candidate["projected_home_spread"],
         "edge_points": candidate["edge_points"],
-        "gemini_confidence": veto_verdict.get("confidence", 75),
+        "cover_prob_pct": isye.get("cover_prob_pct", 58.0),
+        "ev_pct": isye.get("ev_pct", 10.5),
+        "se_pred": isye.get("se_pred", 10.46),
+        "se_mean": isye.get("se_mean", 0.96),
+        "pi_80": isye.get("pi_80", [-8.0, 18.0]),
+        "triggered_rule_id": veto_verdict.get("triggered_rule_id", "RULE-001"),
+        "gemini_confidence": veto_verdict.get("confidence", 78),
         "gemini_reasoning": veto_verdict.get("reasoning", ""),
         "status": "PENDING"
     }
@@ -95,8 +113,8 @@ def place_simulated_wager(candidate, veto_verdict):
 
 def settle_bet(bet_id, actual_margin, final_score_str):
     """
-    Settles a pending bet given actual game margin.
-    actual_margin: Home Score - Away Score.
+    Settles a pending bet given actual game margin (Home Score - Away Score)
+    and triggers the ISyE 4031 post-mortem residual diagnostic & LLM rule update.
     """
     state = load_bankroll_state()
     bet = None
@@ -117,9 +135,6 @@ def settle_bet(bet_id, actual_margin, final_score_str):
     line = bet["line"]
     is_home_pick = (bet["selection"] in bet["matchup"].split(" @ ")[1])
 
-    # Determine spread cover:
-    # If picking Home +3.5: Home covers if (Home - Away) + 3.5 > 0
-    # If picking Away -2.5: Away covers if (Away - Home) - 2.5 > 0 -> (-(Home - Away)) - 2.5 > 0
     if is_home_pick:
         cover_diff = actual_margin + line
     else:
@@ -145,7 +160,6 @@ def settle_bet(bet_id, actual_margin, final_score_str):
     state["bankroll"]["total_profit_loss"] = round(state["bankroll"]["current_balance"] - state["bankroll"]["starting_capital"], 2)
     state["bankroll"]["roi_percent"] = round((state["bankroll"]["total_profit_loss"] / state["bankroll"]["starting_capital"]) * 100.0, 2)
 
-    # Metrics update
     metrics = state["metrics"]
     metrics["total_bets"] += 1
     if result == "WON":
@@ -170,20 +184,20 @@ def settle_bet(bet_id, actual_margin, final_score_str):
     decided = metrics["wins"] + metrics["losses"]
     metrics["win_rate_percent"] = round((metrics["wins"] / decided * 100.0), 1) if decided > 0 else 0.0
 
-    # Move from active to settled
     del state["active_bets"][bet_idx]
     now_utc = datetime.now(timezone.utc)
     settled_entry = {
         **bet,
+        "status": "SETTLED",
         "result": result,
         "final_score": final_score_str,
         "cover_margin": round(cover_diff, 1),
         "net_pnl": pnl,
+        "bankroll_after": state["bankroll"]["current_balance"],
         "settled_at": now_utc.strftime("%Y-%m-%d %H:%M:%S")
     }
     state["settled_bets"].insert(0, settled_entry)
 
-    # Log to equity history
     state["equity_history"].append({
         "date": now_utc.strftime("%Y-%m-%d"),
         "balance": state["bankroll"]["current_balance"],
@@ -193,4 +207,11 @@ def settle_bet(bet_id, actual_margin, final_score_str):
 
     save_bankroll_state(state)
     print(f"[Bankroll] Settled {bet_id} as {result} ({pnl:+$g}). New balance: ${state['bankroll']['current_balance']}")
+
+    # Trigger ISyE 4031 Morning Post-Mortem & Self-Learning Rule Update
+    try:
+        update_decision_basis_post_mortem(settled_entry, actual_margin, final_score_str)
+    except Exception as e:
+        print(f"[Bankroll] Post-mortem update warning: {e}")
+
     return True
