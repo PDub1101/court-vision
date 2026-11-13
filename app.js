@@ -246,9 +246,10 @@ function renderSlateCards(slate, evaluatedPicks) {
     const homePicked = game.has_edge && game.edge_direction === 'HOME';
     const awayPicked = game.has_edge && game.edge_direction === 'AWAY';
 
+    card.id = `slate-card-${game.game_id}`;
     card.innerHTML = `
       <div class="game-header">
-        <span style="font-weight: 700;">🏀 ${gameTime} • <span style="color: var(--bball-orange);">Prospective Nowcast</span></span>
+        <span style="font-weight: 700;">🏀 ${gameTime} • <span id="game-live-status-${game.game_id}" style="color: var(--bball-orange);">Prospective Nowcast</span></span>
         <span class="bookmaker-badge">${game.sportsbook}</span>
       </div>
 
@@ -256,7 +257,7 @@ function renderSlateCards(slate, evaluatedPicks) {
         <div class="team-badge-wrap">
           <span class="team-chip">${awayAbbr}</span>
           <div>
-            <span class="team-name">${game.away_team}</span>
+            <span class="team-name">${game.away_team} <span id="away-live-score-${game.game_id}" style="font-family: 'JetBrains Mono', monospace; font-weight: 800; color: var(--text-primary); margin-left: 6px;"></span></span>
             <span class="ewma-sub">EWMA NRtg: ${awayEwma} (Trend: ${awayTrend})</span>
           </div>
         </div>
@@ -269,7 +270,7 @@ function renderSlateCards(slate, evaluatedPicks) {
         <div class="team-badge-wrap">
           <span class="team-chip">${homeAbbr}</span>
           <div>
-            <span class="team-name">${game.home_team}</span>
+            <span class="team-name">${game.home_team} <span id="home-live-score-${game.game_id}" style="font-family: 'JetBrains Mono', monospace; font-weight: 800; color: var(--text-primary); margin-left: 6px;"></span></span>
             <span class="ewma-sub">EWMA NRtg: ${homeEwma} (Trend: ${homeTrend})</span>
           </div>
         </div>
@@ -504,6 +505,32 @@ async function fetchLiveScoresAndUpdateDesk() {
               🟡 PUSH (${marginStr})
             </span>
           `;
+        }
+      });
+
+      // Also match against slate cards on Tab 1
+      const slate = (window.COURTVISION_DATA && window.COURTVISION_DATA.todays_slate) || [];
+      slate.forEach(g => {
+        const isMatch = (g.away_team.includes(awayName) || awayName.includes(g.away_team)) &&
+                        (g.home_team.includes(homeName) || homeName.includes(g.home_team));
+        if (!isMatch) return;
+
+        const awayScoreEl = document.getElementById(`away-live-score-${g.game_id}`);
+        const homeScoreEl = document.getElementById(`home-live-score-${g.game_id}`);
+        const statusEl = document.getElementById(`game-live-status-${g.game_id}`);
+
+        if (awayScoreEl && homeScoreEl) {
+          if (state !== 'pre') {
+            awayScoreEl.textContent = `[${awayScore}]`;
+            homeScoreEl.textContent = `[${homeScore}]`;
+          }
+        }
+        if (statusEl) {
+          if (state === 'in') {
+            statusEl.innerHTML = `<span style="color: var(--neg); font-weight: 800;">🔴 LIVE: ${detail}</span>`;
+          } else if (state === 'post' || isFinal) {
+            statusEl.innerHTML = `<span style="color: var(--text-muted); font-weight: 800;">FINAL</span>`;
+          }
         }
       });
     });
