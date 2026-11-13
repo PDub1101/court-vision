@@ -2,8 +2,8 @@
   "bankroll": {
     "starting_capital": 1000.0,
     "current_balance": 998.18,
-    "available_cash": 978.18,
-    "in_play_equity": 20.0,
+    "available_cash": 918.18,
+    "in_play_equity": 80.0,
     "total_profit_loss": -1.82,
     "roi_percent": -0.18,
     "currency": "USD"
@@ -23,21 +23,57 @@
   },
   "active_bets": [
     {
-      "bet_id": "bet_20261112_bos",
+      "bet_id": "bet_20261113_005007_bos",
       "game_id": "nba_20261112_bos_nyk",
-      "date_placed": "2026-11-12 16:00:00",
+      "date_placed": "2026-11-13 00:50:07",
       "matchup": "Boston Celtics @ New York Knicks",
       "selection": "Boston Celtics",
       "line": -1.5,
       "odds": -110,
       "sportsbook": "DraftKings",
-      "stake": 20.0,
-      "units": 1,
-      "potential_profit": 18.18,
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": 6.5,
+      "edge_points": 5.0,
+      "cover_prob_pct": 67.8,
+      "ev_pct": 29.41,
+      "se_pred": 10.75,
+      "se_mean": 2.65,
+      "pi_80": [
+        -20.3,
+        7.3
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 67.8% (+29.41% EV, SE_pred=10.75) exceeds high-conviction threshold for Boston Celtics. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261113_005007_gol",
+      "game_id": "nba_20261112_gsw_lal",
+      "date_placed": "2026-11-13 00:50:07",
+      "matchup": "Golden State Warriors @ Los Angeles Lakers",
+      "selection": "Golden State Warriors",
+      "line": -1.0,
+      "odds": -110,
+      "sportsbook": "BetMGM",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
       "model_projected_spread": 4.3,
-      "edge_points": 2.8,
-      "gemini_confidence": 78,
-      "gemini_reasoning": "Clear 2.8 point discrepancy against DraftKings. Perimeter efficiency metrics strongly favor Celtics covering even with Porzingis managed minutes.",
+      "edge_points": 3.3,
+      "cover_prob_pct": 62.1,
+      "ev_pct": 18.54,
+      "se_pred": 10.61,
+      "se_mean": 2.02,
+      "pi_80": [
+        -17.9,
+        9.4
+      ],
+      "triggered_rule_id": "RULE-003",
+      "gemini_confidence": 82,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 62.1% (+18.54% EV, SE_pred=10.61) exceeds high-conviction threshold for Golden State Warriors. Applied RULE-003 (AR(1) blowout mean-reversion dampener of +0.58 pts).",
       "status": "PENDING"
     }
   ],
@@ -56,6 +92,11 @@
       "potential_profit": 18.52,
       "model_projected_spread": 6.8,
       "edge_points": 2.8,
+      "cover_prob_pct": 59.8,
+      "ev_pct": 15.1,
+      "se_pred": 10.48,
+      "se_mean": 1.12,
+      "triggered_rule_id": "RULE-002",
       "gemini_confidence": 74,
       "gemini_reasoning": "Offensive rating edge against fatigued Timberwolves backcourt.",
       "status": "SETTLED",
@@ -80,8 +121,13 @@
       "potential_profit": 18.18,
       "model_projected_spread": 10.6,
       "edge_points": 3.1,
+      "cover_prob_pct": 61.5,
+      "ev_pct": 17.4,
+      "se_pred": 10.46,
+      "se_mean": 0.94,
+      "triggered_rule_id": "RULE-001",
       "gemini_confidence": 85,
-      "gemini_reasoning": "Top net rating in league facing bottom-5 defensive turnover rate. High confidence cover.",
+      "gemini_reasoning": "Top EWMA net rating in league facing bottom-5 defensive turnover rate. High confidence cover.",
       "status": "SETTLED",
       "result": "WON",
       "final_score": "OKC 124 - POR 104",
@@ -111,5 +157,5 @@
       "note": "Day 2 Settlement: LOST DEN -4.0 (-$20.00)"
     }
   ],
-  "last_updated": "2026-11-12T19:18:00Z"
+  "last_updated": "2026-11-13T00:50:07.178857+00:00"
 }
