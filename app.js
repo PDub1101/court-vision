@@ -34,7 +34,6 @@ function toggleTheme() {
   localStorage.setItem('theme', newTheme);
   updateThemeButton(newTheme);
 
-  // Re-render chart with appropriate colors
   if (equityChartInstance) {
     updateChartTheme(equityChartInstance, newTheme);
   }
@@ -45,10 +44,10 @@ function updateThemeButton(theme) {
   const textEl = document.getElementById('theme-text');
   if (theme === 'slate') {
     iconEl.textContent = '☀️';
-    textEl.textContent = 'Light';
+    textEl.textContent = 'Light Mode';
   } else {
     iconEl.textContent = '🌙';
-    textEl.textContent = 'Dark';
+    textEl.textContent = 'Dark Mode';
   }
 }
 
@@ -101,9 +100,9 @@ function renderDashboard() {
   const trialDay = Math.min(uniqueDays, 30);
   const progressPct = Math.min(100, Math.max(3.3, (trialDay / 30) * 100));
 
-  document.getElementById('trial-day-display').innerHTML = `Day ${trialDay} <span style="font-size: 16px; color: var(--text-muted); font-weight: 500;">/ 30</span>`;
+  document.getElementById('trial-day-display').innerHTML = `Day ${trialDay} <span style="font-size: 16px; color: var(--text-muted); font-weight: 600;">/ 30</span>`;
   document.getElementById('trial-progress-fill').style.width = `${progressPct}%`;
-  document.getElementById('trial-sub-text').textContent = trialDay >= 30 ? '30-Day Evaluation Period Completed' : `Tracking live accuracy (${30 - trialDay} days remaining)`;
+  document.getElementById('trial-sub-text').textContent = trialDay >= 30 ? '30-Day Evaluation Period Completed' : `Tracking live model accuracy (${30 - trialDay} days remaining)`;
 
   // 2. Render Bankroll KPI
   document.getElementById('bankroll-val').textContent = `$${bankroll.current_balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -117,7 +116,7 @@ function renderDashboard() {
   pnlValEl.style.color = pnl >= 0 ? 'var(--pos)' : 'var(--neg)';
 
   const roiColor = pnl >= 0 ? 'var(--pos)' : 'var(--neg)';
-  document.getElementById('roi-sub').innerHTML = `<span style="color: ${roiColor}; font-weight: 700;">${pnl >= 0 ? '+' : ''}${bankroll.roi_percent.toFixed(1)}% ROI</span> vs $1,000 start`;
+  document.getElementById('roi-sub').innerHTML = `<span style="color: ${roiColor}; font-weight: 700;">${pnl >= 0 ? '+' : ''}${bankroll.roi_percent.toFixed(1)}% ROI</span> vs $1,000 starting capital`;
 
   // 4. Render ATS Record
   document.getElementById('record-val').textContent = `${metrics.wins} - ${metrics.losses} - ${metrics.pushes}`;
@@ -126,11 +125,11 @@ function renderDashboard() {
   // 5. Update Tab Badges
   const edgeCount = slate.filter(g => g.has_edge).length;
   document.getElementById('picks-count-badge').textContent = `${edgeCount} Edge${edgeCount === 1 ? '' : 's'}`;
-  document.getElementById('active-bets-badge').textContent = `${activeBets.length} Active`;
+  document.getElementById('active-bets-badge').textContent = `${activeBets.length} Active ($${bankroll.in_play_equity.toFixed(0)})`;
   document.getElementById('settled-bets-badge').textContent = `${settledBets.length} Settled`;
 
   if (data.generated_at) {
-    document.getElementById('slate-updated-time').textContent = `Updated: ${data.generated_at}`;
+    document.getElementById('slate-updated-time').textContent = `Sync: ${data.generated_at}`;
   }
 
   // 6. Render Tab 1: Game Slate
@@ -147,6 +146,24 @@ function renderDashboard() {
 // ============================================================================
 // SLATE CARDS RENDERING
 // ============================================================================
+function getTeamAbbr(teamName) {
+  const map = {
+    "Boston Celtics": "BOS",
+    "New York Knicks": "NYK",
+    "Denver Nuggets": "DEN",
+    "Phoenix Suns": "PHX",
+    "Golden State Warriors": "GSW",
+    "Los Angeles Lakers": "LAL",
+    "Milwaukee Bucks": "MIL",
+    "Miami Heat": "MIA",
+    "Oklahoma City Thunder": "OKC",
+    "Minnesota Timberwolves": "MIN",
+    "Dallas Mavericks": "DAL",
+    "Philadelphia 76ers": "PHI"
+  };
+  return map[teamName] || teamName.substring(0, 3).toUpperCase();
+}
+
 function renderSlateCards(slate, evaluatedPicks) {
   const container = document.getElementById('slate-container');
   container.innerHTML = '';
@@ -156,7 +173,6 @@ function renderSlateCards(slate, evaluatedPicks) {
     return;
   }
 
-  // Create lookup for evaluated picks
   const evalMap = {};
   evaluatedPicks.forEach(p => {
     evalMap[p.game_id] = p;
@@ -168,6 +184,8 @@ function renderSlateCards(slate, evaluatedPicks) {
 
     const gameTime = formatGameTime(game.commence_time);
     const evaluation = evalMap[game.game_id];
+    const awayAbbr = getTeamAbbr(game.away_team);
+    const homeAbbr = getTeamAbbr(game.home_team);
 
     let vetoHtml = '';
     if (evaluation) {
@@ -176,7 +194,7 @@ function renderSlateCards(slate, evaluatedPicks) {
       const badgeTitle = isApproved ? `APPROVED (${evaluation.gemini_units}U • ${evaluation.gemini_confidence}/100)` : `VETOED (${evaluation.gemini_confidence}/100)`;
       vetoHtml = `
         <div class="veto-box ${badgeClass}">
-          <div style="font-weight: 700; margin-bottom: 3px;">
+          <div style="font-weight: 800; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
             ${isApproved ? '✅' : '⚠️'} Gemini Context: ${badgeTitle}
           </div>
           <div>${evaluation.gemini_reasoning}</div>
@@ -189,19 +207,25 @@ function renderSlateCards(slate, evaluatedPicks) {
 
     card.innerHTML = `
       <div class="game-header">
-        <span>${gameTime}</span>
+        <span style="font-weight: 700;">🏀 ${gameTime}</span>
         <span class="bookmaker-badge">${game.sportsbook}</span>
       </div>
 
       <div class="matchup-row">
-        <span class="team-name">${game.away_team}</span>
+        <div class="team-badge-wrap">
+          <span class="team-chip">${awayAbbr}</span>
+          <span class="team-name">${game.away_team}</span>
+        </div>
         <span class="spread-pill ${awayPicked ? 'picked' : ''}">
           ${game.vegas_away_spread > 0 ? '+' : ''}${game.vegas_away_spread}
         </span>
       </div>
 
       <div class="matchup-row">
-        <span class="team-name">${game.home_team}</span>
+        <div class="team-badge-wrap">
+          <span class="team-chip">${homeAbbr}</span>
+          <span class="team-name">${game.home_team}</span>
+        </div>
         <span class="spread-pill ${homePicked ? 'picked' : ''}">
           ${game.vegas_home_spread > 0 ? '+' : ''}${game.vegas_home_spread}
         </span>
@@ -209,15 +233,15 @@ function renderSlateCards(slate, evaluatedPicks) {
 
       <div class="model-comparison-box">
         <div class="comparison-row">
-          <span style="color: var(--text-muted);">Model Projected Spread:</span>
-          <span style="font-family: 'JetBrains Mono', monospace; font-weight: 600;">
+          <span style="color: var(--text-muted); font-weight: 600;">Model Projected Line:</span>
+          <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">
             ${game.home_team} ${game.projected_home_spread > 0 ? '+' : ''}${game.projected_home_spread}
           </span>
         </div>
         <div class="comparison-row">
-          <span style="color: var(--text-muted);">Statistical Edge:</span>
-          <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: ${game.has_edge ? 'var(--pos)' : 'var(--text-muted)'};">
-            ${game.has_edge ? `+${game.edge_points} pts on ${game.recommended_side}` : 'None (< 2.5 pts)'}
+          <span style="color: var(--text-muted); font-weight: 600;">Discrepancy (Edge):</span>
+          <span style="font-family: 'JetBrains Mono', monospace; font-weight: 800; color: ${game.has_edge ? 'var(--bball-orange)' : 'var(--text-muted)'};">
+            ${game.has_edge ? `+${game.edge_points} pts on ${game.recommended_side}` : 'No Edge (< 2.5 pts)'}
           </span>
         </div>
       </div>
@@ -250,17 +274,17 @@ function renderActiveBetsTable(activeBets) {
   activeBets.forEach(b => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td style="font-weight: 600;">${b.matchup}</td>
+      <td style="font-weight: 700;">${b.matchup}</td>
       <td>
-        <span style="font-weight: 700; color: var(--accent-primary);">${b.selection}</span>
+        <span style="font-weight: 800; color: var(--bball-orange);">${b.selection}</span>
         <span style="font-family: 'JetBrains Mono', monospace; margin-left: 4px;">(${b.line > 0 ? '+' : ''}${b.line})</span>
       </td>
       <td><span class="bookmaker-badge">${b.sportsbook}</span></td>
-      <td style="font-family: 'JetBrains Mono', monospace;">${b.odds > 0 ? '+' : ''}${b.odds}</td>
-      <td style="font-weight: 700;">$${b.stake.toFixed(2)} (${b.units}U)</td>
-      <td style="color: var(--pos); font-weight: 700;">+$${b.potential_profit.toFixed(2)}</td>
+      <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">${b.odds > 0 ? '+' : ''}${b.odds}</td>
+      <td style="font-weight: 800;">$${b.stake.toFixed(2)} (${b.units}U)</td>
+      <td style="color: var(--pos); font-weight: 800;">+$${b.potential_profit.toFixed(2)}</td>
       <td>
-        <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700;">
           ${b.gemini_confidence}/100
         </span>
       </td>
@@ -296,21 +320,22 @@ function renderSettledTable(settledBets) {
     else if (b.result === 'PUSH') badgeClass = 'status-push';
 
     const pnlColor = b.net_pnl > 0 ? 'var(--pos)' : (b.net_pnl < 0 ? 'var(--neg)' : 'var(--text-muted)');
+    const bankrollAfter = b.bankroll_after ? `$${b.bankroll_after.toFixed(2)}` : '--';
 
     tr.innerHTML = `
-      <td style="color: var(--text-muted); font-size: 12.5px;">${b.settled_at ? b.settled_at.split(' ')[0] : 'N/A'}</td>
-      <td style="font-weight: 600;">${b.matchup}</td>
+      <td style="color: var(--text-muted); font-size: 12.5px; font-family: 'JetBrains Mono', monospace;">${b.settled_at ? b.settled_at.split(' ')[0] : 'N/A'}</td>
+      <td style="font-weight: 700;">${b.matchup}</td>
       <td>
-        <span style="font-weight: 700;">${b.selection}</span>
+        <span style="font-weight: 800;">${b.selection}</span>
         <span style="font-family: 'JetBrains Mono', monospace; margin-left: 4px;">(${b.line > 0 ? '+' : ''}${b.line})</span>
       </td>
-      <td style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">${b.final_score || 'N/A'}</td>
+      <td style="font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;">${b.final_score || 'N/A'}</td>
       <td><span class="status-badge ${badgeClass}">${b.result}</span></td>
-      <td>$${b.stake.toFixed(2)}</td>
-      <td style="font-weight: 700; color: ${pnlColor}; font-family: 'JetBrains Mono', monospace;">
+      <td style="font-weight: 600;">$${b.stake.toFixed(2)}</td>
+      <td style="font-weight: 800; color: ${pnlColor}; font-family: 'JetBrains Mono', monospace;">
         ${b.net_pnl >= 0 ? '+' : ''}$${b.net_pnl.toFixed(2)}
       </td>
-      <td style="font-family: 'JetBrains Mono', monospace;">--</td>
+      <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">${bankrollAfter}</td>
     `;
     tbody.appendChild(tr);
   });
@@ -328,17 +353,11 @@ function renderEquityChart(history, currentBalance) {
 
   document.getElementById('chart-latest-balance').textContent = `Balance: $${currentBalance.toFixed(2)}`;
 
-  // Default initial point if history is minimal
   let labels = history.map(h => h.date);
   let dataPoints = history.map(h => h.balance);
 
-  if (labels.length === 1) {
-    labels = ['Start', labels[0]];
-    dataPoints = [1000.0, dataPoints[0]];
-  }
-
   const textColor = isDark ? '#94a3b8' : '#64748b';
-  const gridColor = isDark ? 'rgba(51, 62, 84, 0.4)' : 'rgba(226, 232, 240, 0.7)';
+  const gridColor = isDark ? 'rgba(55, 68, 101, 0.4)' : 'rgba(226, 232, 240, 0.7)';
 
   if (equityChartInstance) {
     equityChartInstance.destroy();
@@ -352,20 +371,22 @@ function renderEquityChart(history, currentBalance) {
         {
           label: 'CourtVision Bankroll ($)',
           data: dataPoints,
-          borderColor: '#3b82f6',
-          backgroundColor: isDark ? 'rgba(59, 130, 246, 0.15)' : 'rgba(59, 130, 246, 0.08)',
+          borderColor: '#f97316',
+          backgroundColor: isDark ? 'rgba(249, 115, 22, 0.16)' : 'rgba(234, 88, 12, 0.08)',
           fill: true,
           tension: 0.25,
-          borderWidth: 2.5,
-          pointBackgroundColor: '#3b82f6',
-          pointRadius: 4,
-          pointHoverRadius: 6
+          borderWidth: 3,
+          pointBackgroundColor: '#f97316',
+          pointBorderColor: '#ffffff',
+          pointBorderWidth: 1.5,
+          pointRadius: 5,
+          pointHoverRadius: 7
         },
         {
-          label: 'Breakeven Baseline ($1,000)',
+          label: 'Starting Capital ($1,000 Breakeven)',
           data: labels.map(() => 1000.0),
           borderColor: isDark ? 'rgba(148, 163, 184, 0.5)' : 'rgba(100, 116, 139, 0.4)',
-          borderDash: [5, 5],
+          borderDash: [6, 6],
           borderWidth: 1.5,
           pointRadius: 0,
           fill: false
@@ -381,7 +402,7 @@ function renderEquityChart(history, currentBalance) {
           position: 'top',
           labels: {
             color: textColor,
-            font: { family: 'Inter', size: 12 }
+            font: { family: 'Plus Jakarta Sans', size: 12, weight: 700 }
           }
         },
         tooltip: {
@@ -395,13 +416,13 @@ function renderEquityChart(history, currentBalance) {
       scales: {
         x: {
           grid: { color: gridColor },
-          ticks: { color: textColor, font: { family: 'Inter', size: 11 } }
+          ticks: { color: textColor, font: { family: 'Inter', size: 11, weight: 600 } }
         },
         y: {
           grid: { color: gridColor },
           ticks: {
             color: textColor,
-            font: { family: 'JetBrains Mono', size: 11 },
+            font: { family: 'JetBrains Mono', size: 11, weight: 700 },
             callback: function(value) {
               return '$' + value;
             }
@@ -415,7 +436,7 @@ function renderEquityChart(history, currentBalance) {
 function updateChartTheme(chart, theme) {
   const isDark = theme === 'slate';
   const textColor = isDark ? '#94a3b8' : '#64748b';
-  const gridColor = isDark ? 'rgba(51, 62, 84, 0.4)' : 'rgba(226, 232, 240, 0.7)';
+  const gridColor = isDark ? 'rgba(55, 68, 101, 0.4)' : 'rgba(226, 232, 240, 0.7)';
 
   chart.options.plugins.legend.labels.color = textColor;
   chart.options.scales.x.grid.color = gridColor;
