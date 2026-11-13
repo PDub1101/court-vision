@@ -90,8 +90,8 @@
       "potential_profit": 36.36,
       "model_projected_spread": -2.2,
       "edge_points": 9.7,
-      "cover_prob_pct": 82.3,
-      "ev_pct": 57.14,
+      "cover_prob_pct": 79.7,
+      "ev_pct": 52.2,
       "se_pred": 10.44,
       "se_mean": 0.7,
       "pi_80": [
@@ -100,7 +100,7 @@
       ],
       "triggered_rule_id": "RULE-001",
       "gemini_confidence": 95,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 82.3% (+57.14% EV, SE_pred=10.44) exceeds high-conviction threshold for Chicago Bulls. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 79.7% (+52.2% EV, SE_pred=10.44) exceeds high-conviction threshold for Chicago Bulls. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
       "status": "PENDING"
     },
     {
@@ -144,8 +144,8 @@
       "potential_profit": 36.36,
       "model_projected_spread": -2.2,
       "edge_points": 12.3,
-      "cover_prob_pct": 88.0,
-      "ev_pct": 68.01,
+      "cover_prob_pct": 89.8,
+      "ev_pct": 71.44,
       "se_pred": 10.44,
       "se_mean": 0.7,
       "pi_80": [
@@ -154,7 +154,7 @@
       ],
       "triggered_rule_id": "RULE-001",
       "gemini_confidence": 95,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 88.0% (+68.01% EV, SE_pred=10.44) exceeds high-conviction threshold for Utah Jazz. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 89.8% (+71.44% EV, SE_pred=10.44) exceeds high-conviction threshold for Utah Jazz. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
       "status": "PENDING"
     },
     {
@@ -377,5 +377,5 @@
       "note": "WON: Charlotte Hornets (Charlotte Hornets 96 - Phoenix Suns 101)"
     }
   ],
-  "last_updated": "2026-11-13T19:05:40.111647+00:00"
+  "last_updated": "2026-11-13T20:22:21.178710+00:00"
 }
