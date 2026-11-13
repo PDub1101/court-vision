@@ -142,19 +142,50 @@
       "date": "2026-11-10",
       "balance": 1000.0,
       "pnl": 0.0,
-      "note": "Day 1 Starting Capital: $1,000.00"
+      "note": "Day 1 Starting Capital: $1,000.00",
+      "bets": []
     },
     {
       "date": "2026-11-11",
       "balance": 1018.18,
       "pnl": 18.18,
-      "note": "Day 1 Settlement: WON OKC -7.5 (+$18.18)"
+      "note": "Day 1 Settlement: WON OKC -7.5 (+$18.18)",
+      "bets": [
+        {
+          "bet_id": "bet_20261110_okc",
+          "matchup": "Oklahoma City Thunder @ Portland Trail Blazers",
+          "selection": "Oklahoma City Thunder",
+          "line": -7.5,
+          "odds": -110,
+          "stake": 20.0,
+          "units": 1,
+          "result": "WON",
+          "net_pnl": 18.18,
+          "final_score": "OKC 124 - POR 104",
+          "sportsbook": "DraftKings"
+        }
+      ]
     },
     {
       "date": "2026-11-12",
       "balance": 998.18,
       "pnl": -20.0,
-      "note": "Day 2 Settlement: LOST DEN -4.0 (-$20.00)"
+      "note": "Day 2 Settlement: LOST DEN -4.0 (-$20.00)",
+      "bets": [
+        {
+          "bet_id": "bet_20261111_den",
+          "matchup": "Denver Nuggets @ Minnesota Timberwolves",
+          "selection": "Denver Nuggets",
+          "line": -4.0,
+          "odds": -108,
+          "stake": 20.0,
+          "units": 1,
+          "result": "LOST",
+          "net_pnl": -20.0,
+          "final_score": "DEN 112 - MIN 115",
+          "sportsbook": "FanDuel"
+        }
+      ]
     }
   ],
   "last_updated": "2026-11-13T00:50:07.178857+00:00"
