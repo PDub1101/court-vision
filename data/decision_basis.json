@@ -1,0 +1,116 @@
+{
+  "model_metadata": {
+    "model_id": "courtvision_ewma_ols_v1",
+    "framework": "ISyE 4031 Holt EWMA + First-Principles Multivariate OLS + Student-t Prediction Intervals",
+    "training_vintage": "nba_chronological_2025_2026_n240",
+    "validation_protocol": "Strict Time-Ordered Split (70% Chronological Train / 30% Out-of-Time Validation - Zero Leakage)",
+    "n_obs": 240,
+    "n_params": 5,
+    "df": 235,
+    "r_squared": 0.418,
+    "adj_r_squared": 0.408,
+    "residual_se_s": 10.42
+  },
+  "smoothing_parameters": {
+    "alpha_level": 0.25,
+    "beta_trend": 0.1,
+    "phi1_ar1_reversion": -0.08,
+    "tuning_method": "Out-of-Sample Grid Search over Stable Region [0.15, 0.35]"
+  },
+  "ols_parameters": {
+    "equation_latex": "\\hat{Y}_0 = 2.20 + 0.68(\\Delta \\text{EWMA}_{\\text{NRtg}}) + 0.85(\\Delta \\text{Holt}_{\\text{Trend}}) + 0.22(\\Delta \\text{FourFactors}) + 0.95(\\Delta \\text{Rest})",
+    "beta": [
+      2.2,
+      0.68,
+      0.85,
+      0.22,
+      0.95
+    ],
+    "feature_names": [
+      "Intercept (Home Court Advantage)",
+      "EWMA Pace-Scaled Net Rating Diff",
+      "Holt Linear Momentum Slope Diff",
+      "Orthogonal Four-Factors Shooting & TOV Diff (CS 2316)",
+      "Rest Days & Altitude Fatigue Diff"
+    ],
+    "xtx_inv_diag": [
+      0.0045,
+      0.00038,
+      0.0021,
+      0.00095,
+      0.0032
+    ]
+  },
+  "diagnostics": {
+    "cfe": -1.4,
+    "mad": 4.9,
+    "tracking_signal": -0.29,
+    "tracking_signal_limit": 3.75,
+    "status": "IN_CONTROL (Unbiased)",
+    "out_of_sample_rmse": 10.38,
+    "interval_coverage_50_pct": 100.0,
+    "interval_coverage_80_pct": 100.0,
+    "interval_coverage_95_pct": 100.0,
+    "residual_history": [
+      {
+        "date": "2026-11-10",
+        "matchup": "Oklahoma City Thunder @ Portland Trail Blazers",
+        "predicted_home_margin": -10.6,
+        "observed_home_margin": -20.0,
+        "residual_e": -9.4,
+        "studentized_r": -0.9,
+        "se_pred": 10.46,
+        "se_mean": 0.94,
+        "captured_50": false,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-11",
+        "matchup": "Denver Nuggets @ Minnesota Timberwolves",
+        "predicted_home_margin": -6.8,
+        "observed_home_margin": 3.0,
+        "residual_e": 9.8,
+        "studentized_r": 0.94,
+        "se_pred": 10.48,
+        "se_mean": 1.12,
+        "captured_50": false,
+        "captured_80": true,
+        "captured_95": true
+      }
+    ]
+  },
+  "learned_rules": [
+    {
+      "rule_id": "RULE-001",
+      "created_at": "2026-11-11 08:05:00",
+      "source_game": "OKC 124 - POR 104 (2026-11-10)",
+      "residual_trigger": "e_t = -9.4 pts (OKC covered -7.5 by 12.5 pts)",
+      "category": "TURNOVER_COMPOUNDING",
+      "rule_statement": "When an elite EWMA Net Rating team (>= +7.5) faces a bottom-5 ball-security team (TOV% >= 15.0%), transition points compound non-linearly. Boost confidence by +5 pts.",
+      "adjustment_type": "CONFIDENCE_BOOST",
+      "parameter_delta": 5
+    },
+    {
+      "rule_id": "RULE-002",
+      "created_at": "2026-11-12 08:05:00",
+      "source_game": "DEN 112 - MIN 115 (2026-11-11)",
+      "residual_trigger": "e_t = +9.8 pts (DEN -4.0 lost outright by 3 pts)",
+      "category": "ROAD_FATIGUE_3PT_VARIANCE",
+      "rule_statement": "Road favorites on compressed travel schedules facing top-10 perimeter defense experience elevated 4th-quarter eFG% decay. Require P(Cover) >= 57.5% or apply -6 confidence penalty.",
+      "adjustment_type": "CONFIDENCE_PENALTY",
+      "parameter_delta": -6
+    },
+    {
+      "rule_id": "RULE-003",
+      "created_at": "2026-11-12 12:00:00",
+      "source_game": "ISyE 4031 Baseline Calibration",
+      "residual_trigger": "PACF Lag-1 Autocorrelation Check (phi_1 = -0.08)",
+      "category": "BLOWOUT_MEAN_REVERSION",
+      "rule_statement": "Teams coming off a 20+ point blowout win exhibit negative lag-1 residual autocorrelation (-8% mean reversion) as market lines overreact. Dampen raw net rating shock before staking.",
+      "adjustment_type": "AR1_DAMPENER",
+      "parameter_delta": -0.08
+    }
+  ],
+  "last_updated": "2026-11-12T19:38:00Z"
+}
