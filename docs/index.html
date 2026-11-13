@@ -783,6 +783,593 @@
       color: var(--text-muted);
       text-align: center;
     }
+
+    /* ==========================================================================
+       TV BROADCAST SCORE BUGS FOR GAMES BEING BET ON (INSP: ESPN, BALLY, YES, SN)
+       ========================================================================== */
+    .broadcast-section {
+      background: linear-gradient(180deg, rgba(19, 26, 42, 0.75) 0%, rgba(10, 14, 24, 0.9) 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 22px;
+      margin-bottom: 28px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      position: relative;
+      backdrop-filter: blur(12px);
+    }
+
+    html[data-theme="light"] .broadcast-section {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      border-color: #cbd5e1;
+    }
+
+    .broadcast-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .broadcast-title-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .live-on-air-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(239, 68, 68, 0.16);
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      color: #ef4444;
+      font-size: 11px;
+      font-weight: 900;
+      padding: 5px 10px;
+      border-radius: 8px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.25);
+    }
+
+    .live-pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ef4444;
+      animation: livePulseAnim 1.4s infinite ease-in-out;
+    }
+
+    @keyframes livePulseAnim {
+      0%, 100% { opacity: 0.4; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.25); box-shadow: 0 0 14px #ef4444; }
+    }
+
+    .broadcast-heading {
+      font-size: 19px;
+      font-weight: 900;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: -0.3px;
+    }
+
+    .broadcast-sub {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .broadcast-controls-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .bcast-filter-group {
+      display: flex;
+      background: var(--bg-card-alt);
+      padding: 3px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      gap: 3px;
+    }
+
+    .bcast-filter-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: 'Inter', sans-serif;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .bcast-filter-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .bcast-filter-btn.active {
+      background: var(--bg-card);
+      color: var(--bball-orange);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    html[data-theme="light"] .bcast-filter-btn.active {
+      background: #ffffff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+    }
+
+    .bcast-sim-btn {
+      background: rgba(249, 115, 22, 0.12);
+      border: 1px solid rgba(249, 115, 22, 0.4);
+      color: var(--bball-orange);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 7px 13px;
+      border-radius: 9px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .bcast-sim-btn:hover {
+      background: rgba(249, 115, 22, 0.22);
+      transform: translateY(-1px);
+    }
+
+    .bcast-sim-btn.simulating {
+      background: rgba(239, 68, 68, 0.18);
+      border-color: #ef4444;
+      color: #ef4444;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.3);
+    }
+
+    /* Score Bug Grid */
+    .bcast-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(430px, 1fr));
+      gap: 20px;
+    }
+
+    @media (max-width: 500px) {
+      .bcast-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Individual TV Score Bug Container */
+    .bcast-scorebug {
+      background: linear-gradient(180deg, #131b2e 0%, #0a0e1a 100%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+      position: relative;
+    }
+
+    html[data-theme="light"] .bcast-scorebug {
+      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    .bcast-scorebug:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.65);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .bcast-scorebug.bet-covering {
+      border-color: rgba(52, 211, 153, 0.5);
+      box-shadow: 0 8px 24px rgba(52, 211, 153, 0.18), inset 0 1px 0 rgba(52, 211, 153, 0.3);
+    }
+
+    .bcast-scorebug.bet-losing {
+      border-color: rgba(239, 68, 68, 0.45);
+      box-shadow: 0 8px 24px rgba(239, 68, 68, 0.14);
+    }
+
+    /* Top Broadcast Channel & Status Strip */
+    .bcast-top-ribbon {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.55);
+      padding: 7px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 11px;
+    }
+
+    .bcast-network-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.6px;
+      padding: 3px 8px;
+      border-radius: 5px;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .net-espn { background: #d00000; color: #fff; }
+    .net-bally { background: #d91c24; color: #fff; }
+    .net-yes { background: #002b66; color: #fff; }
+    .net-tnt { background: #111; color: #fff; border: 1px solid #555; }
+    .net-courtvision { background: #ea580c; color: #fff; box-shadow: 0 0 8px rgba(234, 88, 12, 0.5); }
+    .net-sn { background: #002d62; color: #fdbb30; }
+
+    .bcast-status-indicator {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .bcast-status-indicator.is-live {
+      color: #f87171;
+    }
+
+    .bcast-status-indicator.is-final {
+      color: #94a3b8;
+    }
+
+    .bcast-status-indicator.is-upcoming {
+      color: #38bdf8;
+    }
+
+    .bcast-sportsbook-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #cbd5e1;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2px 7px;
+      border-radius: 5px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Score Bug Main Rack: Away | HUD Clock | Home */
+    .bcast-rack {
+      display: grid;
+      grid-template-columns: 1fr 104px 1fr;
+      align-items: stretch;
+      background: #0d1322;
+      min-height: 108px;
+    }
+
+    .bcast-team-wing {
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bcast-team-wing.away {
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .bcast-team-wing.home {
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: right;
+    }
+
+    .bcast-team-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .bcast-team-wing.home .bcast-team-header {
+      flex-direction: row-reverse;
+    }
+
+    .bcast-team-logo {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+      filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.7));
+      flex-shrink: 0;
+    }
+
+    .bcast-team-meta {
+      flex-grow: 1;
+      overflow: hidden;
+    }
+
+    .bcast-team-abbr {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1.1;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .bcast-team-wing.home .bcast-team-abbr {
+      justify-content: flex-end;
+    }
+
+    .bcast-team-name {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Bet Badge on Wing */
+    .bcast-wing-bet-pill {
+      font-size: 10px;
+      font-weight: 900;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--bball-orange);
+      color: #000;
+      box-shadow: 0 0 10px rgba(249, 115, 22, 0.6);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Score numerals */
+    .bcast-score-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-top: 6px;
+    }
+
+    .bcast-team-wing.home .bcast-score-row {
+      flex-direction: row-reverse;
+    }
+
+    .bcast-score-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 34px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1;
+      letter-spacing: -1px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+    }
+
+    .bcast-score-num.winner-score {
+      color: #34d399;
+      text-shadow: 0 0 14px rgba(52, 211, 153, 0.4);
+    }
+
+    .bcast-score-num.pregame-dash {
+      font-size: 22px;
+      color: rgba(255, 255, 255, 0.3);
+      font-weight: 700;
+    }
+
+    /* Telemetry: Timeouts & Fouls (Inspo from image!) */
+    .bcast-telemetry-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 6px;
+      padding-top: 5px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .bcast-team-wing.home .bcast-telemetry-row {
+      flex-direction: row-reverse;
+    }
+
+    .bcast-timeout-ticks {
+      display: inline-flex;
+      gap: 3px;
+      align-items: center;
+    }
+
+    .timeout-dash {
+      width: 4px;
+      height: 7px;
+      background: rgba(255, 255, 255, 0.18);
+      border-radius: 1px;
+    }
+
+    .timeout-dash.active {
+      background: #f59e0b;
+      box-shadow: 0 0 4px #f59e0b;
+    }
+
+    .bcast-foul-text {
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    /* Center Broadcast HUD (Clock & Shot Clock) */
+    .bcast-hud {
+      background: #060910;
+      border-left: 1px solid rgba(255, 255, 255, 0.06);
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 4px;
+      position: relative;
+    }
+
+    .bcast-hud-period {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 900;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 2px;
+    }
+
+    .bcast-hud-clock {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 19px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+
+    .bcast-hud-shotclock {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 900;
+      color: #f59e0b;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      padding: 1px 7px;
+      border-radius: 4px;
+      text-shadow: 0 0 8px rgba(245, 158, 11, 0.65);
+      letter-spacing: 0.5px;
+    }
+
+    /* Lower-Third Betting Chyron */
+    .bcast-chyron-strip {
+      background: #090e1c;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 10px 14px;
+    }
+
+    .bcast-chyron-main {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .bcast-bet-summary {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      color: #e2e8f0;
+    }
+
+    .bcast-pick-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 900;
+      color: var(--bball-orange);
+      background: rgba(249, 115, 22, 0.15);
+      border: 1px solid rgba(249, 115, 22, 0.4);
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+
+    .bcast-cover-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 900;
+      padding: 4px 10px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .bcast-cover-badge.status-covering {
+      background: rgba(52, 211, 153, 0.18);
+      color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.4);
+      box-shadow: 0 0 10px rgba(52, 211, 153, 0.2);
+    }
+
+    .bcast-cover-badge.status-losing {
+      background: rgba(239, 68, 68, 0.18);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
+    .bcast-cover-badge.status-won {
+      background: rgba(52, 211, 153, 0.25);
+      color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.55);
+      box-shadow: 0 0 12px rgba(52, 211, 153, 0.3);
+    }
+
+    .bcast-cover-badge.status-lost {
+      background: rgba(239, 68, 68, 0.22);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.55);
+    }
+
+    .bcast-cover-badge.status-upcoming {
+      background: rgba(56, 189, 248, 0.14);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+    }
+
+    /* Live Cover Barometer Progress Bar */
+    .bcast-meter-track {
+      width: 100%;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      margin-top: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .bcast-meter-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.3s ease;
+    }
+
+    .bcast-meter-fill.fill-green {
+      background: linear-gradient(90deg, #10b981, #34d399);
+      box-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
+    }
+
+    .bcast-meter-fill.fill-red {
+      background: linear-gradient(90deg, #ef4444, #f87171);
+      box-shadow: 0 0 8px rgba(248, 113, 113, 0.5);
+    }
+
+    .bcast-meter-fill.fill-blue {
+      background: linear-gradient(90deg, #0284c7, #38bdf8);
+    }
+
   </style>
 </head>
 <body>
@@ -790,17 +1377,17 @@
   <!-- Arena Scoreboard Ticker Bar -->
   <div class="arena-ticker">
     <div class="ticker-inner" id="arena-ticker-content">
-      <span class="ticker-item"><span class="ticker-badge">ISyE 4031</span> COURTVISION EWMA + OLS ENGINE</span>
-      <span class="ticker-item">🏀 <strong>BOS (-1.5) @ NYK</strong> • P(Cover): 63.8% • +EV: +21.8% [DraftKings -110]</span>
-      <span class="ticker-item">🏀 <strong>GSW (-2.5) @ LAL</strong> • P(Cover): 59.1% • +EV: +12.8% [BetMGM -110]</span>
-      <span class="ticker-item">📐 <strong>DIAGNOSTICS</strong>: SE_pred = 10.45 pts • Tracking Signal = -0.29 (IN CONTROL)</span>
-      <span class="ticker-item">💰 <strong>$1,000 PAPER DESK</strong>: Day 3/30 • Active Capital: $998.18</span>
+      <span class="ticker-item"><span class="ticker-badge">ISyE 4031</span> COURTVISION EWMA + OLS RADAR</span>
+      <span class="ticker-item">🏀 <strong>NYK @ IND (7:00 PM ET)</strong> • IND (+8.5) • P(Cover): 83.7% • +EV: +59.7% [DraftKings -110]</span>
+      <span class="ticker-item">🏀 <strong>MIL @ ORL (7:00 PM ET)</strong> • MIL (+9.5) • P(Cover): 84.5% • +EV: +61.3% [DraftKings -110]</span>
+      <span class="ticker-item">🏀 <strong>GSW @ SAS (9:30 PM ET)</strong> • GSW (+12.5) • P(Cover): 94.3% • +EV: +80.0% [DraftKings -110]</span>
+      <span class="ticker-item">💰 <strong>$1,000 PAPER DESK</strong>: Day 3/30 • Bankroll: $1,034.54 • Eastern Time (ET)</span>
       <!-- Duplicate for seamless loop -->
-      <span class="ticker-item"><span class="ticker-badge">ISyE 4031</span> COURTVISION EWMA + OLS ENGINE</span>
-      <span class="ticker-item">🏀 <strong>BOS (-1.5) @ NYK</strong> • P(Cover): 63.8% • +EV: +21.8% [DraftKings -110]</span>
-      <span class="ticker-item">🏀 <strong>GSW (-2.5) @ LAL</strong> • P(Cover): 59.1% • +EV: +12.8% [BetMGM -110]</span>
-      <span class="ticker-item">📐 <strong>DIAGNOSTICS</strong>: SE_pred = 10.45 pts • Tracking Signal = -0.29 (IN CONTROL)</span>
-      <span class="ticker-item">💰 <strong>$1,000 PAPER DESK</strong>: Day 3/30 • Active Capital: $998.18</span>
+      <span class="ticker-item"><span class="ticker-badge">ISyE 4031</span> COURTVISION EWMA + OLS RADAR</span>
+      <span class="ticker-item">🏀 <strong>NYK @ IND (7:00 PM ET)</strong> • IND (+8.5) • P(Cover): 83.7% • +EV: +59.7% [DraftKings -110]</span>
+      <span class="ticker-item">🏀 <strong>MIL @ ORL (7:00 PM ET)</strong> • MIL (+9.5) • P(Cover): 84.5% • +EV: +61.3% [DraftKings -110]</span>
+      <span class="ticker-item">🏀 <strong>GSW @ SAS (9:30 PM ET)</strong> • GSW (+12.5) • P(Cover): 94.3% • +EV: +80.0% [DraftKings -110]</span>
+      <span class="ticker-item">💰 <strong>$1,000 PAPER DESK</strong>: Day 3/30 • Bankroll: $1,034.54 • Eastern Time (ET)</span>
     </div>
   </div>
 
@@ -876,6 +1463,38 @@
   <!-- Main Content Container -->
   <main class="container">
     
+    
+    <!-- TV BROADCAST SCOREBOARD FOR GAMES BEING BET ON -->
+    <section class="broadcast-section" id="broadcast-scoreboard-section">
+      <div class="broadcast-section-header">
+        <div class="broadcast-title-group">
+          <div class="live-on-air-badge">
+            <span class="live-pulse-dot"></span>
+            <span>ON-AIR CHYRON</span>
+          </div>
+          <div>
+            <h2 class="broadcast-heading">Games Being Bet On — Live & Final Score Bugs</h2>
+            <p class="broadcast-sub">Authentic arena & network broadcast graphics inspired by Bally Sports, ESPN & YES Network for in-play wagers, upcoming tip-offs, and final scores.</p>
+          </div>
+        </div>
+        <div class="broadcast-controls-group">
+          <div class="bcast-filter-group" id="bcast-filter-pills">
+            <button class="bcast-filter-btn active" id="btn-filter-active" onclick="setBroadcastFilter('active')">⚡ Tonight's Active Bets (<span id="bcast-count-active">7</span>)</button>
+            <button class="bcast-filter-btn" id="btn-filter-settled" onclick="setBroadcastFilter('settled')">📜 Final Scores / Settled (<span id="bcast-count-settled">3</span>)</button>
+            <button class="bcast-filter-btn" id="btn-filter-all" onclick="setBroadcastFilter('all')">🏀 All Bet Games (<span id="bcast-count-all">10</span>)</button>
+          </div>
+          <button class="bcast-sim-btn" id="bcast-sim-toggle" onclick="toggleBroadcastSimulation()" title="Switch between real ESPN live feed and active in-game demo simulation">
+            <span id="bcast-sim-icon">🔴</span>
+            <span id="bcast-sim-text">Simulate Live Game</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="bcast-grid" id="broadcast-bugs-container">
+        <!-- Dynamically rendered broadcast score bugs by app.js -->
+      </div>
+    </section>
+
     <!-- Navigation Tabs -->
     <div class="tabs-bar">
       <button class="tab-btn active" onclick="switchTab('today')">
@@ -933,11 +1552,20 @@
         </div>
       </div>
 
-      <div style="margin-bottom: 16px;">
+      <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
         <h3 style="font-size: 17px;">Active In-Play Positions (Tonight)</h3>
+        <div style="display: flex; gap: 8px;">
+          <button class="bcast-filter-btn active" id="desk-view-bugs-btn" onclick="toggleDeskView('bugs')">📺 Broadcast Score Bugs</button>
+          <button class="bcast-filter-btn" id="desk-view-table-btn" onclick="toggleDeskView('table')">📋 Table View</button>
+        </div>
       </div>
 
-      <div class="table-container">
+      <!-- Desk Broadcast Score Bugs View -->
+      <div class="bcast-grid" id="desk-broadcast-container" style="margin-bottom: 24px;">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+
+      <div class="table-container" style="display: none;">
         <table>
           <thead>
             <tr>
@@ -1075,8 +1703,8 @@
     </div>
   </footer>
 
-  <!-- Scripts -->
-  <script src="courtvision_data.js"></script>
-  <script src="app.js"></script>
+  <!-- Scripts with cache-busting -->
+  <script src="courtvision_data.js?v=20261113_2"></script>
+  <script src="app.js?v=20261113_2"></script>
 </body>
 </html>
