@@ -1,0 +1,54 @@
+{
+  "bankroll": {
+    "starting_capital": 1000.0,
+    "current_balance": 1000.0,
+    "available_cash": 980.0,
+    "in_play_equity": 20.0,
+    "total_profit_loss": 0.0,
+    "roi_percent": 0.0,
+    "currency": "USD"
+  },
+  "metrics": {
+    "total_bets": 0,
+    "wins": 0,
+    "losses": 0,
+    "pushes": 0,
+    "win_rate_percent": 0.0,
+    "current_streak": "NONE",
+    "longest_win_streak": 0,
+    "longest_loss_streak": 0,
+    "max_drawdown_percent": 0.0,
+    "average_edge_points": 0.0,
+    "clv_beat_rate_percent": 0.0
+  },
+  "active_bets": [
+    {
+      "bet_id": "bet_20261112_193853_bos",
+      "game_id": "nba_20261112_bos_nyk",
+      "date_placed": "2026-11-12 19:38:53",
+      "matchup": "Boston Celtics @ New York Knicks",
+      "selection": "Boston Celtics",
+      "line": -1.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 20.0,
+      "units": 1,
+      "potential_profit": 18.18,
+      "model_projected_spread": 4.3,
+      "edge_points": 2.8,
+      "gemini_confidence": 75,
+      "gemini_reasoning": "Clear 2.8 point discrepancy against DraftKings. Fundamentals support Boston Celtics covering the number.",
+      "status": "PENDING"
+    }
+  ],
+  "settled_bets": [],
+  "equity_history": [
+    {
+      "date": "2026-11-12",
+      "balance": 1000.0,
+      "pnl": 0.0,
+      "note": "Initial bankroll allocation"
+    }
+  ],
+  "last_updated": "2026-11-12T19:38:53.796031+00:00"
+}
