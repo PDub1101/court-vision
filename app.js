@@ -82,6 +82,542 @@ function switchTab(tabKey) {
 // ============================================================================
 // DATA RENDERING
 // ============================================================================
+
+// ============================================================================
+// TV BROADCAST SCORE BUGS ENGINE (INSPIRED BY ESPN, BALLY SPORTS, YES, TNT)
+// ============================================================================
+
+const NBA_TEAMS = {
+  BOS: { abbr: "BOS", name: "Boston Celtics", short: "Celtics", city: "Boston", primary: "#007A33", secondary: "#BA9653", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/bos.png", record: "10-3" },
+  NYK: { abbr: "NYK", name: "New York Knicks", short: "Knicks", city: "New York", primary: "#006BB6", secondary: "#F58426", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/nyk.png", record: "8-5" },
+  GSW: { abbr: "GSW", name: "Golden State Warriors", short: "Warriors", city: "Golden State", primary: "#1D428A", secondary: "#FFC72C", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/gsw.png", record: "9-4" },
+  LAL: { abbr: "LAL", name: "Los Angeles Lakers", short: "Lakers", city: "Los Angeles", primary: "#552583", secondary: "#FDB927", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/lal.png", record: "7-5" },
+  PHX: { abbr: "PHX", name: "Phoenix Suns", short: "Suns", city: "Phoenix", primary: "#1D1160", secondary: "#E56020", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/phx.png", record: "9-3" },
+  CHA: { abbr: "CHA", name: "Charlotte Hornets", short: "Hornets", city: "Charlotte", primary: "#1D1160", secondary: "#00788C", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/cha.png", record: "4-8" },
+  DEN: { abbr: "DEN", name: "Denver Nuggets", short: "Nuggets", city: "Denver", primary: "#0E2240", secondary: "#FEC524", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/den.png", record: "8-4" },
+  MIN: { abbr: "MIN", name: "Minnesota Timberwolves", short: "Timberwolves", city: "Minnesota", primary: "#0C2340", secondary: "#236192", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/min.png", record: "8-5" },
+  OKC: { abbr: "OKC", name: "Oklahoma City Thunder", short: "Thunder", city: "Oklahoma City", primary: "#007AC1", secondary: "#EF3B24", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/okc.png", record: "11-2" },
+  POR: { abbr: "POR", name: "Portland Trail Blazers", short: "Trail Blazers", city: "Portland", primary: "#E03A3E", secondary: "#000000", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/por.png", record: "4-9" },
+  MIL: { abbr: "MIL", name: "Milwaukee Bucks", short: "Bucks", city: "Milwaukee", primary: "#00471B", secondary: "#EEE1C6", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/mil.png", record: "6-6" },
+  MIA: { abbr: "MIA", name: "Miami Heat", short: "Heat", city: "Miami", primary: "#98002E", secondary: "#F9A01B", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/mia.png", record: "5-6" },
+  CLE: { abbr: "CLE", name: "Cleveland Cavaliers", short: "Cavaliers", city: "Cleveland", primary: "#860038", secondary: "#041E42", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/cle.png", record: "12-1" },
+  PHI: { abbr: "PHI", name: "Philadelphia 76ers", short: "76ers", city: "Philadelphia", primary: "#006BB6", secondary: "#ED174C", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/phi.png", record: "3-8" },
+  CHI: { abbr: "CHI", name: "Chicago Bulls", short: "Bulls", city: "Chicago", primary: "#CE1141", secondary: "#000000", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/chi.png", record: "5-7" },
+  BKN: { abbr: "BKN", name: "Brooklyn Nets", short: "Nets", city: "Brooklyn", primary: "#000000", secondary: "#707271", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/bkn.png", record: "5-7" },
+  TOR: { abbr: "TOR", name: "Toronto Raptors", short: "Raptors", city: "Toronto", primary: "#CE1141", secondary: "#000000", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/tor.png", record: "3-9" },
+  IND: { abbr: "IND", name: "Indiana Pacers", short: "Pacers", city: "Indiana", primary: "#002D62", secondary: "#FDBB30", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/ind.png", record: "6-6" },
+  ORL: { abbr: "ORL", name: "Orlando Magic", short: "Magic", city: "Orlando", primary: "#0077C0", secondary: "#C4CED4", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/orl.png", record: "7-6" },
+  ATL: { abbr: "ATL", name: "Atlanta Hawks", short: "Hawks", city: "Atlanta", primary: "#E03A3E", secondary: "#C1D32F", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/atl.png", record: "5-7" },
+  WAS: { abbr: "WAS", name: "Washington Wizards", short: "Wizards", city: "Washington", primary: "#002B5C", secondary: "#E31837", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/was.png", record: "2-9" },
+  DET: { abbr: "DET", name: "Detroit Pistons", short: "Pistons", city: "Detroit", primary: "#1D42BA", secondary: "#C8102E", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/det.png", record: "5-8" },
+  DAL: { abbr: "DAL", name: "Dallas Mavericks", short: "Mavericks", city: "Dallas", primary: "#00538C", secondary: "#002B5E", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/dal.png", record: "6-6" },
+  HOU: { abbr: "HOU", name: "Houston Rockets", short: "Rockets", city: "Houston", primary: "#CE1141", secondary: "#000000", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/hou.png", record: "8-4" },
+  MEM: { abbr: "MEM", name: "Memphis Grizzlies", short: "Grizzlies", city: "Memphis", primary: "#5D76A9", secondary: "#12173F", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/mem.png", record: "7-5" },
+  NOP: { abbr: "NOP", name: "New Orleans Pelicans", short: "Pelicans", city: "New Orleans", primary: "#0C2340", secondary: "#C8102E", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/nop.png", record: "4-8" },
+  SAS: { abbr: "SAS", name: "San Antonio Spurs", short: "Spurs", city: "San Antonio", primary: "#000000", secondary: "#C4CED4", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/sas.png", record: "6-6" },
+  SAC: { abbr: "SAC", name: "Sacramento Kings", short: "Kings", city: "Sacramento", primary: "#5A2D81", secondary: "#63727A", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/sac.png", record: "7-5" },
+  UTA: { abbr: "UTA", name: "Utah Jazz", short: "Jazz", city: "Utah", primary: "#002B5C", secondary: "#00471B", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/uta.png", record: "3-8" },
+  LAC: { abbr: "LAC", name: "LA Clippers", short: "Clippers", city: "Los Angeles", primary: "#C8102E", secondary: "#1D428A", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/lac.png", record: "6-5" }
+};
+
+function getTeamInfo(str) {
+  if (!str) return { abbr: "NBA", name: "NBA Team", short: "Team", primary: "#1e293b", secondary: "#334155", text: "#FFFFFF", logo: "https://a.espncdn.com/i/teamlogos/nba/500/nba.png", record: "" };
+  const s = str.trim().toLowerCase();
+  for (const key of Object.keys(NBA_TEAMS)) {
+    const t = NBA_TEAMS[key];
+    if (s === t.abbr.toLowerCase() || s === key.toLowerCase() || s === t.name.toLowerCase() || s === t.short.toLowerCase() || s.includes(t.short.toLowerCase()) || s.includes(t.name.toLowerCase())) {
+      return t;
+    }
+  }
+  const cleanAbbr = str.substring(0, 3).toUpperCase();
+  return {
+    abbr: cleanAbbr,
+    name: str,
+    short: str.split(' ').pop() || str,
+    city: str.split(' ')[0] || str,
+    primary: "#1e293b",
+    secondary: "#334155",
+    text: "#FFFFFF",
+    logo: `https://a.espncdn.com/i/teamlogos/nba/500/${cleanAbbr.toLowerCase()}.png`,
+    record: ""
+  };
+}
+
+let currentBroadcastFilter = 'active';
+let isBroadcastSimulating = false;
+let broadcastSimInterval = null;
+let simSecondsTicking = 17;
+let espnLiveStateCache = {};
+
+function formatToEasternTime(isoOrDate) {
+  if (!isoOrDate) return '7:00 PM ET';
+  try {
+    const d = new Date(isoOrDate);
+    if (isNaN(d.getTime())) return '7:00 PM ET';
+    return d.toLocaleTimeString('en-US', {
+      timeZone: 'America/New_York',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    }) + ' ET';
+  } catch (e) {
+    return '7:00 PM ET';
+  }
+}
+
+function formatGameTime(isoString) {
+  return formatToEasternTime(isoString);
+}
+
+function setBroadcastFilter(filter) {
+  currentBroadcastFilter = filter;
+  ['active', 'settled', 'all'].forEach(f => {
+    const btn = document.getElementById(`btn-filter-${f}`);
+    if (btn) {
+      if (f === filter) btn.classList.add('active');
+      else btn.classList.remove('active');
+    }
+  });
+  renderBroadcastScoreBugs();
+}
+
+function toggleBroadcastSimulation() {
+  isBroadcastSimulating = !isBroadcastSimulating;
+  const toggleBtn = document.getElementById('bcast-sim-toggle');
+  const iconEl = document.getElementById('bcast-sim-icon');
+  const textEl = document.getElementById('bcast-sim-text');
+
+  if (isBroadcastSimulating) {
+    if (toggleBtn) toggleBtn.classList.add('simulating');
+    if (iconEl) iconEl.textContent = '⏹️';
+    if (textEl) textEl.textContent = 'Exit Simulation';
+
+    if (broadcastSimInterval) clearInterval(broadcastSimInterval);
+    broadcastSimInterval = setInterval(() => {
+      simSecondsTicking--;
+      if (simSecondsTicking < 3) simSecondsTicking = 24;
+
+      const scElements = document.querySelectorAll('.bcast-hud-shotclock.sim-clock');
+      scElements.forEach(el => {
+        el.textContent = `:${simSecondsTicking < 10 ? '0' + simSecondsTicking : simSecondsTicking}`;
+      });
+    }, 1000);
+  } else {
+    if (toggleBtn) toggleBtn.classList.remove('simulating');
+    if (iconEl) iconEl.textContent = '🔴';
+    if (textEl) textEl.textContent = 'Simulate Live Game';
+    if (broadcastSimInterval) clearInterval(broadcastSimInterval);
+  }
+
+  renderBroadcastScoreBugs();
+}
+
+function getSimulatedGameData(bet, awayTeam, homeTeam) {
+  const hash = (bet.bet_id || '').split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  const periods = ["1ST", "2ND", "3RD", "4TH"];
+  const period = periods[hash % 4];
+  const minutes = 2 + (hash % 9);
+  const seconds = 10 + (hash % 48);
+  const clock = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+  const lineVal = parseFloat(bet.line || 0);
+  const isBetOnHome = bet.selection.includes(homeTeam.name) || bet.selection.includes(homeTeam.short) || bet.selection === homeTeam.abbr;
+
+  let awayScore = 0;
+  let homeScore = 0;
+
+  if (period === "1ST") {
+    awayScore = 26 + (hash % 8);
+    homeScore = 24 + ((hash * 2) % 8);
+  } else if (period === "2ND") {
+    awayScore = 54 + (hash % 10);
+    homeScore = 52 + ((hash * 3) % 10);
+  } else if (period === "3RD") {
+    awayScore = 78 + (hash % 12);
+    homeScore = 75 + ((hash * 5) % 12);
+  } else {
+    awayScore = 102 + (hash % 14);
+    homeScore = 98 + ((hash * 7) % 14);
+  }
+
+  // Adjust scores so pick is in a realistic game flow covering or close to the spread
+  if (isBetOnHome) {
+    if (lineVal > 0) {
+      // Underdog: e.g. Pacers +8.5, losing by only 3 points (102 to 99) = covering!
+      homeScore = Math.max(20, awayScore - Math.floor(lineVal / 2));
+    } else {
+      // Favorite: e.g. -4.5, leading by 7 = covering!
+      homeScore = awayScore + Math.abs(Math.floor(lineVal)) + 3;
+    }
+  } else {
+    if (lineVal > 0) {
+      awayScore = Math.max(20, homeScore - Math.floor(lineVal / 2));
+    } else {
+      awayScore = homeScore + Math.abs(Math.floor(lineVal)) + 3;
+    }
+  }
+
+  const networks = ["ESPN", "BALLY", "YES", "TNT", "COURTVISION"];
+  const net = networks[hash % networks.length];
+  const netClasses = { ESPN: "net-espn", BALLY: "net-bally", YES: "net-yes", TNT: "net-tnt", COURTVISION: "net-courtvision" };
+
+  return {
+    awayScore,
+    homeScore,
+    period,
+    clock,
+    shotClock: `:${simSecondsTicking < 10 ? '0' + simSecondsTicking : simSecondsTicking}`,
+    networkName: net,
+    networkClass: netClasses[net] || "net-courtvision",
+    awayTimeouts: 3 + (hash % 3),
+    homeTimeouts: 2 + ((hash + 1) % 4),
+    awayFouls: 1 + (hash % 4),
+    homeFouls: 2 + ((hash + 2) % 3)
+  };
+}
+
+function renderBroadcastScoreBugs() {
+  const container = document.getElementById('broadcast-bugs-container');
+  const deskContainer = document.getElementById('desk-broadcast-container');
+  if (!container && !deskContainer) return;
+
+  const data = window.COURTVISION_DATA;
+  if (!data || !data.bankroll_state) return;
+
+  const activeBets = data.bankroll_state.active_bets || [];
+  const settledBets = data.bankroll_state.settled_bets || [];
+
+  // Update filter pill counts dynamically
+  const activeCountEl = document.getElementById('bcast-count-active');
+  const settledCountEl = document.getElementById('bcast-count-settled');
+  const allCountEl = document.getElementById('bcast-count-all');
+  if (activeCountEl) activeCountEl.textContent = activeBets.length;
+  if (settledCountEl) settledCountEl.textContent = settledBets.length;
+  if (allCountEl) allCountEl.textContent = activeBets.length + settledBets.length;
+
+  let betsToRender = [];
+  if (currentBroadcastFilter === 'active') {
+    betsToRender = activeBets;
+  } else if (currentBroadcastFilter === 'settled') {
+    betsToRender = settledBets;
+  } else {
+    betsToRender = [...activeBets, ...settledBets];
+  }
+
+  const html = betsToRender.length > 0
+    ? betsToRender.map(b => buildScoreBugHtml(b)).join('')
+    : '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">No wagers match the selected filter.</div>';
+
+  if (container) container.innerHTML = html;
+  if (deskContainer) {
+    deskContainer.innerHTML = activeBets.map(b => buildScoreBugHtml(b)).join('');
+  }
+}
+
+function buildScoreBugHtml(bet) {
+  const isSettled = bet.status === 'SETTLED' || bet.result !== undefined;
+  const matchupStr = bet.matchup || "";
+  
+  // Robust matchup splitting supporting "@", "at", "vs"
+  let awayName = "Away Team", homeName = "Home Team";
+  if (matchupStr.includes(" @ ")) {
+    const parts = matchupStr.split(" @ ");
+    awayName = parts[0].trim();
+    homeName = parts[1].trim();
+  } else if (matchupStr.includes(" at ")) {
+    const parts = matchupStr.split(" at ");
+    awayName = parts[0].trim();
+    homeName = parts[1].trim();
+  } else if (matchupStr.includes(" vs ")) {
+    const parts = matchupStr.split(" vs ");
+    awayName = parts[0].trim();
+    homeName = parts[1].trim();
+  }
+
+  const awayTeam = getTeamInfo(awayName);
+  const homeTeam = getTeamInfo(homeName);
+
+  const isBetOnAway = bet.selection.includes(awayTeam.name) || bet.selection.includes(awayTeam.short) || bet.selection === awayTeam.abbr;
+  const isBetOnHome = bet.selection.includes(homeTeam.name) || bet.selection.includes(homeTeam.short) || bet.selection === homeTeam.abbr;
+
+  const lineVal = parseFloat(bet.line || 0);
+  const lineStr = lineVal > 0 ? `+${lineVal}` : `${lineVal}`;
+  const oddsVal = bet.odds || -110;
+  const oddsStr = oddsVal > 0 ? `+${oddsVal}` : `${oddsVal}`;
+  const stakeVal = bet.stake ? parseFloat(bet.stake).toFixed(2) : '40.00';
+  const unitsVal = bet.units || 2;
+  const profitVal = bet.potential_profit ? parseFloat(bet.potential_profit).toFixed(2) : '36.36';
+
+  // Find real scheduled tip-off time in Eastern Time
+  const slate = (window.COURTVISION_DATA && window.COURTVISION_DATA.todays_slate) || [];
+  const slateGame = slate.find(g => 
+    g.game_id === bet.game_id || 
+    (g.away_team && (g.away_team.includes(awayTeam.short) || awayTeam.name.includes(g.away_team))) ||
+    (g.home_team && (g.home_team.includes(homeTeam.short) || homeTeam.name.includes(g.home_team)))
+  );
+
+  const scheduledTipOffET = slateGame && slateGame.commence_time 
+    ? formatToEasternTime(slateGame.commence_time) 
+    : '7:00 PM ET';
+
+  let awayScore = 0;
+  let homeScore = 0;
+  let periodText = "PRE-GAME";
+  let clockText = scheduledTipOffET;
+  let shotClockText = "--";
+  let isLive = false;
+  let isFinal = false;
+  let networkName = "COURTVISION";
+  let networkClass = "net-courtvision";
+  let awayTimeouts = 5;
+  let homeTimeouts = 5;
+  let awayFouls = 1;
+  let homeFouls = 2;
+
+  if (isSettled) {
+    isFinal = true;
+    periodText = "FINAL";
+    clockText = "FINAL";
+    shotClockText = "OFF";
+    networkName = "FINAL";
+    networkClass = "net-courtvision";
+
+    if (bet.final_score) {
+      const scoreParts = bet.final_score.split("-");
+      if (scoreParts.length === 2) {
+        const aPart = scoreParts[0].trim().split(" ");
+        const hPart = scoreParts[1].trim().split(" ");
+        awayScore = parseInt(aPart[aPart.length - 1], 10) || 0;
+        homeScore = parseInt(hPart[hPart.length - 1], 10) || 0;
+      }
+    }
+  } else if (isBroadcastSimulating) {
+    isLive = true;
+    const simData = getSimulatedGameData(bet, awayTeam, homeTeam);
+    awayScore = simData.awayScore;
+    homeScore = simData.homeScore;
+    periodText = simData.period;
+    clockText = simData.clock;
+    shotClockText = simData.shotClock;
+    networkName = simData.networkName;
+    networkClass = simData.networkClass;
+    awayTimeouts = simData.awayTimeouts;
+    homeTimeouts = simData.homeTimeouts;
+    awayFouls = simData.awayFouls;
+    homeFouls = simData.homeFouls;
+  } else if (espnLiveStateCache[bet.bet_id]) {
+    const live = espnLiveStateCache[bet.bet_id];
+    awayScore = live.awayScore;
+    homeScore = live.homeScore;
+    periodText = live.periodText;
+    clockText = live.clockText;
+    shotClockText = live.shotClockText;
+    isLive = live.isLive;
+    isFinal = live.isFinal;
+    networkName = live.networkName || "ESPN";
+    networkClass = live.networkClass || "net-espn";
+    awayTimeouts = live.awayTimeouts || 4;
+    homeTimeouts = live.homeTimeouts || 4;
+    awayFouls = live.awayFouls || 2;
+    homeFouls = live.homeFouls || 2;
+  } else {
+    periodText = "PRE-GAME";
+    clockText = scheduledTipOffET;
+    shotClockText = "--";
+    awayScore = null;
+    homeScore = null;
+  }
+
+  // Cover Status & Meter Calculations
+  let coverBadgeHtml = "";
+  let meterFillHtml = "";
+  let cardCoverClass = "";
+
+  if (isSettled) {
+    const isWon = bet.result === 'WON';
+    const margin = bet.cover_margin !== undefined ? bet.cover_margin : 0;
+    const marginStr = margin > 0 ? `+${margin}` : `${margin}`;
+    cardCoverClass = isWon ? "bet-covering" : "bet-losing";
+
+    if (isWon) {
+      coverBadgeHtml = `<span class="bcast-cover-badge status-won">🏆 BET WON • COVERED BY ${marginStr} PTS (+$${bet.net_pnl.toFixed(2)})</span>`;
+      meterFillHtml = `<div class="bcast-meter-fill fill-green" style="width: 100%;"></div>`;
+    } else {
+      coverBadgeHtml = `<span class="bcast-cover-badge status-lost">❌ BET LOST • MISSED BY ${marginStr} PTS (-$${Math.abs(bet.net_pnl).toFixed(2)})</span>`;
+      meterFillHtml = `<div class="bcast-meter-fill fill-red" style="width: 100%;"></div>`;
+    }
+  } else if (isLive) {
+    let liveMarginAgainstLine = 0;
+    if (isBetOnHome) {
+      liveMarginAgainstLine = (homeScore - awayScore) + lineVal;
+    } else {
+      liveMarginAgainstLine = (awayScore - homeScore) + lineVal;
+    }
+
+    const marginStr = liveMarginAgainstLine > 0 ? `+${liveMarginAgainstLine.toFixed(1)}` : `${liveMarginAgainstLine.toFixed(1)}`;
+    const isCovering = liveMarginAgainstLine > 0;
+    cardCoverClass = isCovering ? "bet-covering" : "bet-losing";
+    const progressPct = Math.min(100, Math.max(10, 50 + (liveMarginAgainstLine * 3)));
+
+    if (liveMarginAgainstLine > 0) {
+      coverBadgeHtml = `<span class="bcast-cover-badge status-covering">🟢 COVERING (${marginStr} PTS) • LIVE MARGIN</span>`;
+      meterFillHtml = `<div class="bcast-meter-fill fill-green" style="width: ${progressPct}%;"></div>`;
+    } else if (liveMarginAgainstLine < 0) {
+      coverBadgeHtml = `<span class="bcast-cover-badge status-losing">🔴 NOT COVERING (${marginStr} PTS) • DEFICIT</span>`;
+      meterFillHtml = `<div class="bcast-meter-fill fill-red" style="width: ${progressPct}%;"></div>`;
+    } else {
+      coverBadgeHtml = `<span class="bcast-cover-badge status-upcoming">🟡 AT SPREAD (PUSH)</span>`;
+      meterFillHtml = `<div class="bcast-meter-fill fill-blue" style="width: 50%;"></div>`;
+    }
+  } else {
+    // Upcoming
+    const prob = bet.cover_prob_pct || 60.5;
+    const ev = bet.ev_pct || 15.5;
+    coverBadgeHtml = `<span class="bcast-cover-badge status-upcoming">⏳ PRE-GAME • P(Cover): ${prob}% (+${ev}% EV)</span>`;
+    meterFillHtml = `<div class="bcast-meter-fill fill-blue" style="width: ${Math.min(100, prob)}%;"></div>`;
+  }
+
+  const awayTicks = Array.from({length: 5}, (_, i) => `<span class="timeout-dash ${i < awayTimeouts ? 'active' : ''}"></span>`).join('');
+  const homeTicks = Array.from({length: 5}, (_, i) => `<span class="timeout-dash ${i < homeTimeouts ? 'active' : ''}"></span>`).join('');
+
+  const awayScoreDisplay = awayScore !== null
+    ? `<span class="bcast-score-num ${isFinal && awayScore > homeScore ? 'winner-score' : ''}">${awayScore}</span>`
+    : `<span class="bcast-score-num pregame-dash">--</span>`;
+
+  const homeScoreDisplay = homeScore !== null
+    ? `<span class="bcast-score-num ${isFinal && homeScore > awayScore ? 'winner-score' : ''}">${homeScore}</span>`
+    : `<span class="bcast-score-num pregame-dash">--</span>`;
+
+  const awayBetPill = isBetOnAway ? `<span class="bcast-wing-bet-pill">★ OUR BET ${lineStr}</span>` : '';
+  const homeBetPill = isBetOnHome ? `<span class="bcast-wing-bet-pill">★ OUR BET ${lineStr}</span>` : '';
+
+  let topStatusClass = "is-upcoming";
+  let topStatusLabel = `TONIGHT • ${clockText}`;
+  if (isLive) {
+    topStatusClass = "is-live";
+    topStatusLabel = `🔴 LIVE • ${periodText} ${clockText}`;
+  } else if (isFinal) {
+    topStatusClass = "is-final";
+    topStatusLabel = "FINAL SCORE";
+  }
+
+  return `
+    <div class="bcast-scorebug ${cardCoverClass}" id="scorebug-${bet.bet_id}">
+      
+      <!-- Top Broadcast Ribbon -->
+      <div class="bcast-top-ribbon">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="bcast-network-badge ${networkClass}">${networkName} HD</span>
+          <span class="bcast-status-indicator ${topStatusClass}">
+            ${isLive ? '<span class="live-pulse-dot"></span>' : ''}
+            <span>${topStatusLabel}</span>
+          </span>
+        </div>
+        <span class="bcast-sportsbook-tag">${bet.sportsbook || 'DraftKings'} ${oddsStr}</span>
+      </div>
+
+      <!-- Main Scoreboard Chassis -->
+      <div class="bcast-rack">
+        
+        <!-- Away Team Wing -->
+        <div class="bcast-team-wing away" style="background: linear-gradient(135deg, ${awayTeam.primary}44 0%, rgba(13, 19, 34, 0.95) 75%);">
+          <div>
+            <div class="bcast-team-header">
+              <img src="${awayTeam.logo}" alt="${awayTeam.abbr}" class="bcast-team-logo" loading="lazy" onerror="this.style.opacity='0.4'">
+              <div class="bcast-team-meta">
+                <div class="bcast-team-abbr">${awayTeam.abbr} ${awayBetPill}</div>
+                <div class="bcast-team-name">${awayTeam.short}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bcast-score-row">
+            ${awayScoreDisplay}
+          </div>
+
+          <div class="bcast-telemetry-row">
+            <span class="bcast-foul-text">FLS: ${awayFouls}</span>
+            <div class="bcast-timeout-ticks" title="Timeouts Remaining: ${awayTimeouts}/5">
+              <span style="font-size: 9px; margin-right: 2px;">TO:</span>
+              ${awayTicks}
+            </div>
+          </div>
+        </div>
+
+        <!-- Center Game Clock HUD (Recessed Display) -->
+        <div class="bcast-hud">
+          <div class="bcast-hud-period">${periodText}</div>
+          <div class="bcast-hud-clock">${clockText}</div>
+          <div class="bcast-hud-shotclock ${isLive ? 'sim-clock' : ''}">${shotClockText}</div>
+        </div>
+
+        <!-- Home Team Wing -->
+        <div class="bcast-team-wing home" style="background: linear-gradient(225deg, ${homeTeam.primary}44 0%, rgba(13, 19, 34, 0.95) 75%);">
+          <div>
+            <div class="bcast-team-header">
+              <img src="${homeTeam.logo}" alt="${homeTeam.abbr}" class="bcast-team-logo" loading="lazy" onerror="this.style.opacity='0.4'">
+              <div class="bcast-team-meta">
+                <div class="bcast-team-abbr">${homeBetPill} ${homeTeam.abbr}</div>
+                <div class="bcast-team-name">${homeTeam.short}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bcast-score-row">
+            ${homeScoreDisplay}
+          </div>
+
+          <div class="bcast-telemetry-row">
+            <div class="bcast-timeout-ticks" title="Timeouts Remaining: ${homeTimeouts}/5">
+              <span style="font-size: 9px; margin-right: 2px;">TO:</span>
+              ${homeTicks}
+            </div>
+            <span class="bcast-foul-text">FLS: ${homeFouls}</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Lower-Third Betting Chyron Strip -->
+      <div class="bcast-chyron-strip">
+        <div class="bcast-chyron-main">
+          <div class="bcast-bet-summary">
+            <span>🎯</span>
+            <span style="font-weight: 700;">Wager:</span>
+            <span class="bcast-pick-pill">${bet.selection} (${lineStr})</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);">$${stakeVal} (${unitsVal}U) ➔ +$${profitVal}</span>
+          </div>
+          <div>
+            ${coverBadgeHtml}
+          </div>
+        </div>
+        <div class="bcast-meter-track" title="Cover Margin Meter">
+          ${meterFillHtml}
+        </div>
+      </div>
+
+    </div>
+  `;
+}
+
+function toggleDeskView(mode) {
+  const bugsContainer = document.getElementById('desk-broadcast-container');
+  const tableContainer = document.querySelector('#pane-desk .table-container');
+  const bugsBtn = document.getElementById('desk-view-bugs-btn');
+  const tableBtn = document.getElementById('desk-view-table-btn');
+
+  if (mode === 'bugs') {
+    if (bugsContainer) bugsContainer.style.display = 'grid';
+    if (tableContainer) tableContainer.style.display = 'none';
+    if (bugsBtn) bugsBtn.classList.add('active');
+    if (tableBtn) tableBtn.classList.remove('active');
+  } else {
+    if (bugsContainer) bugsContainer.style.display = 'none';
+    if (tableContainer) tableContainer.style.display = 'block';
+    if (bugsBtn) bugsBtn.classList.remove('active');
+    if (tableBtn) tableBtn.classList.add('active');
+  }
+}
+
 function renderDashboard() {
   const data = window.COURTVISION_DATA;
   if (!data) {
@@ -143,11 +679,20 @@ function renderDashboard() {
   document.getElementById('rules-count-badge').textContent = `${learnedRules.length} Learned Rules`;
   document.getElementById('settled-bets-badge').textContent = `${settledBets.length} Settled`;
 
-  if (data.generated_at) {
-    document.getElementById('slate-updated-time').textContent = `Sync: ${data.generated_at}`;
-  }
+  const nowET = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  }).format(new Date()) + ' ET';
+  document.getElementById('slate-updated-time').textContent = `Sync: ${nowET}`;
 
   // 6. Render Tab 1: Game Slate with ISyE 4031 Telemetry
+  // Render Broadcast Score Bugs for games being bet on
+  renderBroadcastScoreBugs();
+
   renderSlateCards(slate, evaluatedPicks);
 
   // 7. Render Tab 2: Money Lifecycle, Active Desk & Equity Chart
@@ -509,6 +1054,34 @@ async function fetchLiveScoresAndUpdateDesk() {
       });
 
       // Also match against slate cards on Tab 1
+      
+      // Also update TV Broadcast Score Bug cache
+      activeBets.forEach(b => {
+        const matchup = b.matchup || '';
+        const isMatch = (matchup.includes(awayName) || matchup.includes(away.team.shortDisplayName)) &&
+                        (matchup.includes(homeName) || matchup.includes(home.team.shortDisplayName));
+        if (!isMatch) return;
+
+        espnLiveStateCache[b.bet_id] = {
+          awayScore: awayScore,
+          homeScore: homeScore,
+          periodText: state === 'pre' ? 'PRE-GAME' : (isFinal ? 'FINAL' : `Q${status.period || 1}`),
+          clockText: state === 'pre' ? (status.type ? status.type.shortDetail || '7:30 PM' : '7:30 PM') : (isFinal ? 'FINAL' : (status.displayClock || '10:00')),
+          shotClockText: state === 'in' ? ':24' : (isFinal ? 'OFF' : '--'),
+          isLive: state === 'in',
+          isFinal: isFinal || state === 'post',
+          networkName: 'ESPN',
+          networkClass: 'net-espn',
+          awayTimeouts: 4,
+          homeTimeouts: 4,
+          awayFouls: 2,
+          homeFouls: 3
+        };
+      });
+      if (!isBroadcastSimulating) {
+        renderBroadcastScoreBugs();
+      }
+
       const slate = (window.COURTVISION_DATA && window.COURTVISION_DATA.todays_slate) || [];
       slate.forEach(g => {
         const isMatch = (g.away_team.includes(awayName) || awayName.includes(g.away_team)) &&
@@ -950,14 +1523,24 @@ function updateChartTheme(chart, theme) {
   chart.update();
 }
 
-function formatGameTime(isoString) {
-  if (!isoString) return 'Tonight';
+function formatToEasternTime(isoOrDate) {
+  if (!isoOrDate) return '7:00 PM ET';
   try {
-    const d = new Date(isoString);
-    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const d = new Date(isoOrDate);
+    if (isNaN(d.getTime())) return '7:00 PM ET';
+    return d.toLocaleTimeString('en-US', {
+      timeZone: 'America/New_York',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    }) + ' ET';
   } catch (e) {
-    return 'Tonight';
+    return '7:00 PM ET';
   }
+}
+
+function formatGameTime(isoString) {
+  return formatToEasternTime(isoString);
 }
 
 // ============================================================================
