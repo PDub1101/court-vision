@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CourtVision — Autonomous NBA Spread Radar & $1,000 Paper Bankroll</title>
-  <meta name="description" content="CourtVision: Daily autonomous NBA spread predictor, legal sportsbook odds tracking, Gemini 2.5 Flash injury veto, and 30-day $1,000 paper bankroll performance tracker." />
+  <title>CourtVision — ISyE 4031 NBA Forecasting Engine & $1,000 Paper Bankroll</title>
+  <meta name="description" content="CourtVision: Autonomous NBA spread forecasting model using ISyE 4031 Holt Exponential Smoothing, Multivariate OLS SE_pred Prediction Intervals, Student-t +EV staking, and Gemini 2.5 Flash Self-Learning Decision Basis." />
 
   <!-- Fonts matching your ecosystem -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700;800&family=Chakra+Petch:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Chart.js for real equity tracking -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -44,7 +44,7 @@
       --text-muted: #64748b;
 
       --bball-orange: #ea580c;
-      --bball-orange-glow: rgba(234, 88, 12, 0.18);
+      --bball-orange-glow: rgba(234, 88, 12, 0.14);
       --bball-court: #fff7ed;
       --bball-border: #fed7aa;
 
@@ -65,13 +65,16 @@
       --amber-bg: #fffbeb;
       --amber-border: #fde68a;
 
+      --purple: #7c3aed;
+      --purple-bg: #f5f3ff;
+      --purple-border: #ddd6fe;
+
       --sky: #0284c7;
       --sky-bg: #f0f9ff;
       --sky-border: #bae6fd;
 
       --shadow-subtle: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
       --shadow-card: 0 4px 8px -1px rgba(15, 23, 42, 0.06), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
-      --shadow-court: 0 10px 25px -5px rgba(234, 88, 12, 0.12);
     }
 
     html[data-theme="slate"] {
@@ -90,7 +93,7 @@
       --text-muted: #64748b;
 
       --bball-orange: #f97316;
-      --bball-orange-glow: rgba(249, 115, 22, 0.25);
+      --bball-orange-glow: rgba(249, 115, 22, 0.22);
       --bball-court: #1c1510;
       --bball-border: #7c2d12;
 
@@ -111,13 +114,16 @@
       --amber-bg: rgba(251, 191, 36, 0.12);
       --amber-border: rgba(251, 191, 36, 0.28);
 
+      --purple: #a78bfa;
+      --purple-bg: rgba(167, 139, 250, 0.14);
+      --purple-border: rgba(167, 139, 250, 0.32);
+
       --sky: #38bdf8;
       --sky-bg: rgba(56, 189, 248, 0.12);
       --sky-border: rgba(56, 189, 248, 0.28);
 
       --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.4);
       --shadow-card: 0 6px 16px rgba(0, 0, 0, 0.45);
-      --shadow-court: 0 12px 28px rgba(249, 115, 22, 0.15);
     }
 
     html.is-embedded header {
@@ -175,7 +181,7 @@
       display: inline-flex;
       align-items: center;
       gap: 24px;
-      animation: ticker-slide 35s linear infinite;
+      animation: ticker-slide 38s linear infinite;
     }
 
     .ticker-inner:hover {
@@ -236,7 +242,6 @@
       color: #ffffff;
       font-size: 22px;
       box-shadow: 0 3px 12px rgba(234, 88, 12, 0.5);
-      position: relative;
       border: 1.5px solid rgba(255, 255, 255, 0.25);
     }
 
@@ -289,13 +294,12 @@
       background: var(--bg-card-alt);
     }
 
-    /* KPI Ribbon & Court Banner */
+    /* KPI Ribbon */
     .metrics-ribbon {
       background: var(--bg-ribbon);
       border-bottom: 1px solid var(--border-subtle);
       padding: 22px 0;
       margin-bottom: 24px;
-      position: relative;
     }
 
     .kpi-grid {
@@ -324,11 +328,6 @@
       position: relative;
       overflow: hidden;
       box-shadow: var(--shadow-card);
-      transition: transform 0.15s ease;
-    }
-
-    .kpi-card:hover {
-      transform: translateY(-2px);
     }
 
     .kpi-card::before {
@@ -359,7 +358,7 @@
 
     .kpi-val {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 27px;
+      font-size: 26px;
       font-weight: 900;
       color: var(--text-primary);
       letter-spacing: -0.02em;
@@ -394,14 +393,15 @@
     /* Tabs Bar */
     .tabs-bar {
       display: flex;
-      gap: 10px;
+      flex-wrap: wrap;
+      gap: 8px;
       border-bottom: 2px solid var(--border-subtle);
       margin-bottom: 26px;
     }
 
     .tab-btn {
-      padding: 13px 20px;
-      font-size: 14.5px;
+      padding: 13px 18px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--text-secondary);
       background: transparent;
@@ -445,7 +445,7 @@
     /* Matchup Cards Grid */
     .slate-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(370px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
       gap: 20px;
       margin-bottom: 32px;
     }
@@ -467,7 +467,7 @@
 
     .game-card.has-edge {
       border-left: 5px solid var(--bball-orange);
-      box-shadow: 0 4px 14px rgba(234, 88, 12, 0.15);
+      box-shadow: 0 4px 16px rgba(234, 88, 12, 0.16);
     }
 
     .game-header {
@@ -482,7 +482,7 @@
     }
 
     .bookmaker-badge {
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 800;
       padding: 3px 9px;
       border-radius: 6px;
@@ -506,8 +506,8 @@
     }
 
     .team-chip {
-      width: 32px;
-      height: 32px;
+      width: 34px;
+      height: 34px;
       border-radius: 8px;
       display: inline-flex;
       align-items: center;
@@ -521,8 +521,15 @@
 
     .team-name {
       font-weight: 800;
-      font-size: 15.5px;
+      font-size: 15px;
       color: var(--text-primary);
+    }
+
+    .ewma-sub {
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      display: block;
     }
 
     .spread-pill {
@@ -548,24 +555,55 @@
       border-radius: 10px;
       padding: 14px;
       margin-top: 14px;
-      font-size: 13px;
+      font-size: 12.5px;
+      border: 1px solid var(--border-subtle);
     }
 
     .comparison-row {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 5px;
+      align-items: center;
+      margin-bottom: 6px;
     }
 
     .comparison-row:last-child {
       margin-bottom: 0;
     }
 
+    /* Probability Meter */
+    .prob-bar-wrap {
+      width: 100%;
+      height: 6px;
+      background: var(--border-subtle);
+      border-radius: 999px;
+      margin: 6px 0 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .prob-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #3b82f6, var(--pos));
+    }
+
+    .pi-bands-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border-subtle);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
     .veto-box {
       margin-top: 14px;
-      padding: 14px;
+      padding: 13px;
       border-radius: 10px;
-      font-size: 13px;
+      font-size: 12.5px;
       line-height: 1.45;
     }
 
@@ -633,12 +671,29 @@
       margin-top: 4px;
     }
 
+    /* ISyE 4031 Rules Cards */
+    .rules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .rule-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-left: 4px solid var(--purple);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: var(--shadow-card);
+    }
+
     /* Desk & Ledger Tables */
     .table-container {
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
       border-radius: 14px;
-      overflow: hidden;
+      overflow-x: auto;
       box-shadow: var(--shadow-card);
       margin-bottom: 28px;
     }
@@ -651,7 +706,7 @@
 
     th {
       background: var(--bg-card-alt);
-      padding: 13px 18px;
+      padding: 13px 16px;
       font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
@@ -661,7 +716,7 @@
     }
 
     td {
-      padding: 15px 18px;
+      padding: 14px 16px;
       font-size: 13.5px;
       border-bottom: 1px solid var(--border-subtle);
       color: var(--text-primary);
@@ -734,18 +789,18 @@
 
   <!-- Arena Scoreboard Ticker Bar -->
   <div class="arena-ticker">
-    <div class="ticker-inner">
-      <span class="ticker-item"><span class="ticker-badge">COURTVISION</span> NBA VALUE RADAR</span>
-      <span class="ticker-item">🏀 <strong>BOS (-1.5) @ NYK</strong> • Model: BOS -4.3 • Edge: +2.8 pts [DraftKings -110]</span>
-      <span class="ticker-item">🏀 <strong>DEN @ PHX</strong> • Total: 228.0 • Model Total: 227.1</span>
-      <span class="ticker-item">🏀 <strong>MIL @ MIA</strong> • Model Spread: MIL -4.8</span>
-      <span class="ticker-item">💰 <strong>$1,000 PAPER DESK</strong>: Day 3/30 • Current Capital: $998.18 (+$20 In-Play)</span>
-      <!-- Duplicate for smooth seamless loop -->
-      <span class="ticker-item"><span class="ticker-badge">COURTVISION</span> NBA VALUE RADAR</span>
-      <span class="ticker-item">🏀 <strong>BOS (-1.5) @ NYK</strong> • Model: BOS -4.3 • Edge: +2.8 pts [DraftKings -110]</span>
-      <span class="ticker-item">🏀 <strong>DEN @ PHX</strong> • Total: 228.0 • Model Total: 227.1</span>
-      <span class="ticker-item">🏀 <strong>MIL @ MIA</strong> • Model Spread: MIL -4.8</span>
-      <span class="ticker-item">💰 <strong>$1,000 PAPER DESK</strong>: Day 3/30 • Current Capital: $998.18 (+$20 In-Play)</span>
+    <div class="ticker-inner" id="arena-ticker-content">
+      <span class="ticker-item"><span class="ticker-badge">ISyE 4031</span> COURTVISION EWMA + OLS ENGINE</span>
+      <span class="ticker-item">🏀 <strong>BOS (-1.5) @ NYK</strong> • P(Cover): 63.8% • +EV: +21.8% [DraftKings -110]</span>
+      <span class="ticker-item">🏀 <strong>GSW (-2.5) @ LAL</strong> • P(Cover): 59.1% • +EV: +12.8% [BetMGM -110]</span>
+      <span class="ticker-item">📐 <strong>DIAGNOSTICS</strong>: SE_pred = 10.45 pts • Tracking Signal = -0.29 (IN CONTROL)</span>
+      <span class="ticker-item">💰 <strong>$1,000 PAPER DESK</strong>: Day 3/30 • Active Capital: $998.18</span>
+      <!-- Duplicate for seamless loop -->
+      <span class="ticker-item"><span class="ticker-badge">ISyE 4031</span> COURTVISION EWMA + OLS ENGINE</span>
+      <span class="ticker-item">🏀 <strong>BOS (-1.5) @ NYK</strong> • P(Cover): 63.8% • +EV: +21.8% [DraftKings -110]</span>
+      <span class="ticker-item">🏀 <strong>GSW (-2.5) @ LAL</strong> • P(Cover): 59.1% • +EV: +12.8% [BetMGM -110]</span>
+      <span class="ticker-item">📐 <strong>DIAGNOSTICS</strong>: SE_pred = 10.45 pts • Tracking Signal = -0.29 (IN CONTROL)</span>
+      <span class="ticker-item">💰 <strong>$1,000 PAPER DESK</strong>: Day 3/30 • Active Capital: $998.18</span>
     </div>
   </div>
 
@@ -756,13 +811,13 @@
         <span class="brand-ball">🏀</span>
         <div>
           <span class="brand-title">COURT<span>VISION</span></span>
-          <span class="brand-subtitle">Autonomous NBA Spread Radar & Paper Bankroll</span>
+          <span class="brand-subtitle">ISyE 4031 NBA Forecasting Engine & $1,000 Paper Bankroll</span>
         </div>
       </div>
       <div class="header-links">
         <span class="bookmaker-badge" style="display: inline-flex; align-items: center; gap: 6px;">
           <span style="width: 7px; height: 7px; border-radius: 50%; background: var(--pos); display: inline-block;"></span>
-          Auto Sync (4PM & 8AM EST)
+          courtvision_ewma_ols_v1
         </span>
         <button id="theme-toggle" class="btn-header" onclick="toggleTheme()">
           <span id="theme-icon">☀️</span>
@@ -781,7 +836,7 @@
           <div class="kpi-label">🏀 30-Day Evaluation Period</div>
           <div class="kpi-val" id="trial-day-display">Day 3 <span style="font-size: 16px; color: var(--text-muted); font-weight: 600;">/ 30</span></div>
           <div class="kpi-sub">
-            <span id="trial-sub-text">Tracking live model accuracy before real wagers</span>
+            <span id="trial-sub-text">Out-of-time sequential validation</span>
           </div>
           <div class="trial-progress-bar">
             <div id="trial-progress-fill" class="trial-progress-fill" style="width: 10%;"></div>
@@ -811,7 +866,7 @@
           <div class="kpi-label">🎯 Record Against The Spread</div>
           <div class="kpi-val" id="record-val">1 - 1 - 0</div>
           <div class="kpi-sub" id="winrate-sub">
-            <span>Win Rate: 50.0%</span> • <span>Streak: L1</span>
+            <span>Win Rate: 50.0%</span> • <span>TS: -0.29 (Unbiased)</span>
           </div>
         </div>
       </div>
@@ -824,12 +879,16 @@
     <!-- Navigation Tabs -->
     <div class="tabs-bar">
       <button class="tab-btn active" onclick="switchTab('today')">
-        <span>🎯 Tonight's Action & Slate</span>
-        <span class="tab-badge" id="picks-count-badge">1 Edge</span>
+        <span>🎯 Tonight's Forecasts & +EV Slate</span>
+        <span class="tab-badge" id="picks-count-badge">2 +EV Edges</span>
       </button>
       <button class="tab-btn" onclick="switchTab('desk')">
         <span>💼 Live $1,000 Paper Desk</span>
-        <span class="tab-badge" id="active-bets-badge" style="background: var(--sky-bg); color: var(--sky); border-color: var(--sky-border);">1 Active ($20)</span>
+        <span class="tab-badge" id="active-bets-badge" style="background: var(--sky-bg); color: var(--sky); border-color: var(--sky-border);">Active</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('model')">
+        <span>🧠 ISyE 4031 Model & AI Memory</span>
+        <span class="tab-badge" id="rules-count-badge" style="background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border);">3 Learned Rules</span>
       </button>
       <button class="tab-btn" onclick="switchTab('ledger')">
         <span>📜 30-Day Settlement Ledger</span>
@@ -839,12 +898,12 @@
 
     <!-- TAB 1: Today's Picks & Slate -->
     <div id="pane-today" class="tab-pane active">
-      <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+      <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
         <div>
-          <h2 style="font-size: 19px;">Tonight's NBA Spread Radar</h2>
-          <p style="font-size: 13.5px; color: var(--text-muted);">Audited live spreads from legal sportsbooks (DraftKings, FanDuel, BetMGM) vs CourtVision Quant Model.</p>
+          <h2 style="font-size: 19px;">Tonight's ISyE 4031 Prospective Nowcasts & Spread Radar</h2>
+          <p style="font-size: 13.5px; color: var(--text-muted);">Holt's Exponential Smoothing ($\alpha=0.25, \beta=0.10$) + Multivariate OLS ($SE_{\text{pred}}$ Nested 50%/80%/95% Intervals) + Student-$t$ Cover Probability.</p>
         </div>
-        <div style="font-size: 12px; color: var(--text-muted);" id="slate-updated-time">
+        <div style="font-size: 12px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;" id="slate-updated-time">
           Updated: Just now
         </div>
       </div>
@@ -859,37 +918,18 @@
       
       <!-- Visual Step-by-Step Money Investment Lifecycle -->
       <div class="money-lifecycle-box">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
           <div>
             <h3 style="font-size: 16px;">💰 How CourtVision Tracks Your $1,000 Capital Day-by-Day</h3>
-            <p style="font-size: 13px; color: var(--text-muted);">Every afternoon, the model allocates 1 Unit ($20 / 2%) or 2 Units ($40 / 4%). The next morning, final scores settle real dollar outcomes.</p>
+            <p style="font-size: 13px; color: var(--text-muted);">Every afternoon, +EV picks passing both the Student-$t$ probability filter ($\ge 55.5\%$) and Gemini's learned-rule audit are staked from your $1,000 bankroll.</p>
           </div>
           <span class="bookmaker-badge" style="background: var(--bball-orange-glow); color: var(--bball-orange); border-color: var(--bball-border);">
-            Active Simulation
+            Live Paper Simulation
           </span>
         </div>
 
-        <div class="lifecycle-steps-grid">
-          <div class="lifecycle-step">
-            <div class="lifecycle-step-num">Step 1 • Starting Capital</div>
-            <div class="lifecycle-step-val">$1,000.00</div>
-            <div class="lifecycle-step-sub">Initial evaluation bankroll</div>
-          </div>
-          <div class="lifecycle-step">
-            <div class="lifecycle-step-num">Step 2 • Tonight's Wager</div>
-            <div class="lifecycle-step-val">$20.00 (1 Unit)</div>
-            <div class="lifecycle-step-sub">On Celtics -1.5 at -110 odds</div>
-          </div>
-          <div class="lifecycle-step">
-            <div class="lifecycle-step-num">Step 3 • Cash In Reserve</div>
-            <div class="lifecycle-step-val">$978.18</div>
-            <div class="lifecycle-step-sub">Safe uninvested liquidity</div>
-          </div>
-          <div class="lifecycle-step">
-            <div class="lifecycle-step-num">Step 4 • Morning Settlement</div>
-            <div class="lifecycle-step-val" style="color: var(--pos); font-size: 15px;">Win: $1,016.36</div>
-            <div class="lifecycle-step-sub" style="color: var(--neg);">Loss: $978.18 • Push: $998.18</div>
-          </div>
+        <div class="lifecycle-steps-grid" id="lifecycle-steps-container">
+          <!-- Dynamically updated in app.js -->
         </div>
       </div>
 
@@ -905,9 +945,10 @@
               <th>Selection & Line</th>
               <th>Sportsbook</th>
               <th>Odds</th>
+              <th>P(Cover) & +EV</th>
               <th>Invested Stake</th>
               <th>Potential Profit</th>
-              <th>Gemini Confidence</th>
+              <th>Rule / Conf</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -921,8 +962,8 @@
       <div class="chart-box">
         <div class="chart-header">
           <div>
-            <h3 style="font-size: 16px;">📈 30-Day Paper Bankroll Journey</h3>
-            <p style="font-size: 12.5px; color: var(--text-muted);">Real day-by-day balance curve starting at $1,000 against breakeven.</p>
+            <h3 style="font-size: 16px;">📈 30-Day Paper Bankroll Trajectory</h3>
+            <p style="font-size: 12.5px; color: var(--text-muted);">Real day-by-day balance curve starting at $1,000.00 against breakeven.</p>
           </div>
           <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 800; color: var(--bball-orange);" id="chart-latest-balance">
             Balance: $998.18
@@ -934,7 +975,68 @@
       </div>
     </div>
 
-    <!-- TAB 3: 30-Day Settlement Ledger -->
+    <!-- TAB 3: ISyE 4031 Forecasting Model & Self-Learning AI Memory -->
+    <div id="pane-model" class="tab-pane">
+      <div style="margin-bottom: 20px;">
+        <h2 style="font-size: 19px;">🧠 ISyE 4031 Forecasting Architecture & Self-Learning Decision Basis</h2>
+        <p style="font-size: 13.5px; color: var(--text-muted);">Combines Exponential Smoothing, First-Principles OLS Prediction Intervals ($SE_{\text{pred}}$ vs $SE_{\text{mean}}$), CFE/MAD Tracking Signal diagnostics, and Gemini's persistent post-mortem rule memory.</p>
+      </div>
+
+      <!-- Model Diagnostics KPI Strip -->
+      <div class="kpi-grid" style="margin-bottom: 24px;" id="model-telemetry-grid">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+
+      <!-- OLS Equation & Regression Specification -->
+      <div class="money-lifecycle-box" style="margin-bottom: 26px;">
+        <h3 style="font-size: 16px; margin-bottom: 6px;">📐 First-Principles Multivariate OLS & Prediction Standard Error ($SE_{\text{pred}}$)</h3>
+        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">
+          Because sports wagering depends on a <strong>single future game outcome</strong> $Y_0$ rather than the long-run conditional mean $E[Y|\mathbf{x}_0]$, CourtVision computes out-of-sample prediction standard error $SE_{\text{pred}}(\mathbf{x}_0) = s\sqrt{1 + \mathbf{x}_0^\top(\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{x}_0}$ to construct strictly nested $50\%, 80\%, 95\%$ Student-$t$ intervals:
+        </p>
+        <div style="background: var(--bg-card-alt); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 14px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--bball-orange); overflow-x: auto;" id="ols-equation-box">
+          Ŷ₀ = +2.20 (HCA) + 0.94(ΔEWMA_NRtg) + 1.35(ΔHolt_Trend) + 0.42(ΔFourFactors_CS2316) + 1.15(ΔRest_Fatigue) - 0.08(ΔAR1_Shock)
+        </div>
+      </div>
+
+      <!-- Gemini Self-Learning Decision Basis Rules -->
+      <div style="margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <h3 style="font-size: 17px;">🔄 Gemini 2.5 Flash Self-Learning Decision Basis (`decision_basis.json`)</h3>
+          <p style="font-size: 13px; color: var(--text-muted);">Every morning after games settle, Gemini audits the forecast residual ($e_t = y_t - \hat{y}_t$) and updates its active rulebook for future slates.</p>
+        </div>
+      </div>
+
+      <div class="rules-grid" id="learned-rules-container">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+
+      <!-- Residual Diagnostics & Interval Coverage Table -->
+      <div style="margin-bottom: 14px;">
+        <h3 style="font-size: 17px;">📊 Out-of-Sample Residual Diagnostics & Prediction Interval Coverage</h3>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Matchup</th>
+              <th>Pred Margin ($\hat{y}_t$)</th>
+              <th>Actual ($y_t$)</th>
+              <th>Residual ($e_t$)</th>
+              <th>Studentized ($r_t$)</th>
+              <th>$SE_{\text{pred}}$ vs $SE_{\text{mean}}$</th>
+              <th>80% / 95% PI Capture</th>
+            </tr>
+          </thead>
+          <tbody id="residuals-tbody">
+            <!-- Rendered dynamically by app.js -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 4: 30-Day Settlement Ledger -->
     <div id="pane-ledger" class="tab-pane">
       <div style="margin-bottom: 20px;">
         <h2 style="font-size: 19px;">30-Day Auditable Settlement Ledger</h2>
@@ -967,8 +1069,8 @@
   <!-- Footer -->
   <footer>
     <div class="container">
-      <p>🏀 CourtVision NBA Predictor • Autonomous Sports Analytics & Paper Bankroll Simulation</p>
-      <p style="margin-top: 4px; font-size: 11.5px;">For evaluation and educational modeling purposes. Audits real lines from licensed sports betting platforms.</p>
+      <p>🏀 CourtVision (`courtvision_ewma_ols_v1`) • ISyE 4031 Forecasting Engine & $1,000 Paper Bankroll</p>
+      <p style="margin-top: 4px; font-size: 11.5px;">Strict Time-Ordered Validation • Holt EWMA + Multivariate OLS $SE_{\text{pred}}$ Intervals • Gemini 2.5 Flash Self-Learning Memory</p>
     </div>
   </footer>
 
