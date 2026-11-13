@@ -73,6 +73,10 @@ def place_simulated_wager(candidate, veto_verdict):
         return None
 
     stake = UNIT_2_AMOUNT if units == 2 else UNIT_1_AMOUNT
+    if state["bankroll"]["available_cash"] < stake:
+        print(f"[Bankroll] Insufficient available cash (${state['bankroll']['available_cash']}) to stake ${stake} on {candidate['recommended_side']}.")
+        return None
+
     odds = candidate.get("target_odds", -110)
     potential_profit = calculate_potential_profit(stake, odds)
 
@@ -198,12 +202,41 @@ def settle_bet(bet_id, actual_margin, final_score_str):
     }
     state["settled_bets"].insert(0, settled_entry)
 
-    state["equity_history"].append({
-        "date": now_utc.strftime("%Y-%m-%d"),
-        "balance": state["bankroll"]["current_balance"],
-        "pnl": pnl,
-        "note": f"{result}: {bet['selection']} ({final_score_str})"
-    })
+    bet_summary = {
+        "bet_id": bet["bet_id"],
+        "matchup": bet.get("matchup", ""),
+        "selection": bet["selection"],
+        "line": bet["line"],
+        "odds": odds,
+        "stake": stake,
+        "units": bet.get("units", 1),
+        "result": result,
+        "net_pnl": pnl,
+        "final_score": final_score_str,
+        "sportsbook": bet.get("sportsbook", "")
+    }
+
+    today_str = now_utc.strftime("%Y-%m-%d")
+    existing_entry = next((h for h in state["equity_history"] if h["date"] == today_str), None)
+    if existing_entry:
+        existing_entry["balance"] = state["bankroll"]["current_balance"]
+        existing_entry["pnl"] = round(existing_entry.get("pnl", 0.0) + pnl, 2)
+        if "bets" not in existing_entry:
+            existing_entry["bets"] = []
+        existing_entry["bets"].append(bet_summary)
+        won_cnt = sum(1 for b in existing_entry["bets"] if b.get("result") == "WON")
+        lost_cnt = sum(1 for b in existing_entry["bets"] if b.get("result") == "LOST")
+        pnl_val = existing_entry["pnl"]
+        sign = "+" if pnl_val >= 0 else ""
+        existing_entry["note"] = f"Day Settlement: {len(existing_entry['bets'])} bets ({won_cnt}W-{lost_cnt}L, {sign}${pnl_val:.2f})"
+    else:
+        state["equity_history"].append({
+            "date": today_str,
+            "balance": state["bankroll"]["current_balance"],
+            "pnl": pnl,
+            "bets": [bet_summary],
+            "note": f"{result}: {bet['selection']} ({final_score_str})"
+        })
 
     save_bankroll_state(state)
     print(f"[Bankroll] Settled {bet_id} as {result} ({pnl:+$g}). New balance: ${state['bankroll']['current_balance']}")
