@@ -364,7 +364,7 @@ function renderActiveBetsTable(activeBets) {
   if (!activeBets || activeBets.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="9" style="text-align: center; color: var(--text-muted); padding: 32px;">
+        <td colspan="10" style="text-align: center; color: var(--text-muted); padding: 32px;">
           No active wagers pending tonight. Next automated scan occurs at 4:00 PM EST.
         </td>
       </tr>
@@ -374,6 +374,7 @@ function renderActiveBetsTable(activeBets) {
 
   activeBets.forEach(b => {
     const tr = document.createElement('tr');
+    tr.id = `bet-row-${b.bet_id}`;
     const coverProb = b.cover_prob_pct !== undefined ? `${b.cover_prob_pct}%` : '60.5%';
     const evPct = b.ev_pct !== undefined ? `+${b.ev_pct}%` : '+15.5%';
     const ruleId = b.triggered_rule_id || 'RULE-001';
@@ -383,6 +384,9 @@ function renderActiveBetsTable(activeBets) {
       <td>
         <span style="font-weight: 800; color: var(--bball-orange);">${b.selection}</span>
         <span style="font-family: 'JetBrains Mono', monospace; margin-left: 4px;">(${b.line > 0 ? '+' : ''}${b.line})</span>
+      </td>
+      <td id="live-score-${b.bet_id}" style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">
+        <span style="color: var(--text-muted);">Syncing live...</span>
       </td>
       <td><span class="bookmaker-badge">${b.sportsbook}</span></td>
       <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">${b.odds > 0 ? '+' : ''}${b.odds}</td>
@@ -395,10 +399,124 @@ function renderActiveBetsTable(activeBets) {
       <td>
         <span class="bookmaker-badge" style="font-size: 10.5px;">${ruleId} • ${b.gemini_confidence}/100</span>
       </td>
-      <td><span class="status-badge status-pending">IN-PLAY</span></td>
+      <td id="live-cover-${b.bet_id}">
+        <span class="status-badge status-pending">IN-PLAY</span>
+      </td>
     `;
     tbody.appendChild(tr);
   });
+}
+
+// ============================================================================
+// LIVE NBA SCOREBOARD & REAL-TIME COVER TRACKER (ESPN PUBLIC FEED)
+// ============================================================================
+let livePollInterval = null;
+
+async function fetchLiveScoresAndUpdateDesk() {
+  try {
+    const res = await fetch('https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard');
+    if (!res.ok) return;
+    const data = await res.json();
+    const events = data.events || [];
+
+    const activeBets = (window.COURTVISION_DATA && window.COURTVISION_DATA.bankroll_state)
+      ? (window.COURTVISION_DATA.bankroll_state.active_bets || [])
+      : [];
+
+    events.forEach(ev => {
+      const comp = ev.competitions && ev.competitions[0];
+      if (!comp) return;
+
+      const competitors = comp.competitors || [];
+      if (competitors.length < 2) return;
+
+      const home = competitors.find(c => c.homeAway === 'home') || competitors[0];
+      const away = competitors.find(c => c.homeAway === 'away') || competitors[1];
+
+      const homeName = home.team.displayName;
+      const awayName = away.team.displayName;
+      const homeScore = parseInt(home.score || '0', 10);
+      const awayScore = parseInt(away.score || '0', 10);
+
+      const status = ev.status || {};
+      const state = status.type ? status.type.state : 'pre';
+      const detail = status.type ? status.type.detail : 'Scheduled';
+      const isFinal = status.type ? status.type.completed : false;
+
+      // Match against active bets
+      activeBets.forEach(b => {
+        const matchup = b.matchup || '';
+        const isMatch = (matchup.includes(awayName) || matchup.includes(away.team.shortDisplayName)) &&
+                        (matchup.includes(homeName) || matchup.includes(home.team.shortDisplayName));
+
+        if (!isMatch) return;
+
+        const scoreCell = document.getElementById(`live-score-${b.bet_id}`);
+        const coverCell = document.getElementById(`live-cover-${b.bet_id}`);
+        if (!scoreCell || !coverCell) return;
+
+        if (state === 'pre') {
+          scoreCell.innerHTML = `<span style="color: var(--text-muted); font-size: 12px;">⏳ ${detail}</span>`;
+          coverCell.innerHTML = `<span class="status-badge status-pending">PRE-GAME</span>`;
+          return;
+        }
+
+        // Live In-Progress or Final
+        scoreCell.innerHTML = `
+          <div style="font-weight: 800; color: var(--text-primary); font-size: 13px;">
+            ${getTeamAbbr(awayName)} ${awayScore} - ${homeScore} ${getTeamAbbr(homeName)}
+          </div>
+          <div style="font-size: 11px; color: ${isFinal ? 'var(--text-muted)' : 'var(--bball-orange)'}; font-weight: 700;">
+            ${isFinal ? 'FINAL' : `🔴 ${detail}`}
+          </div>
+        `;
+
+        // Calculate current cover margin
+        const isBetOnHome = b.selection.includes(homeName) || b.selection.includes(home.team.shortDisplayName) || b.selection === homeName;
+        const line = parseFloat(b.line);
+
+        let liveMarginAgainstLine = 0;
+        if (isBetOnHome) {
+          // Home margin + line: e.g. Home 100, Away 95 (+5 margin). If line -1.5 -> +5 + (-1.5) = +3.5
+          liveMarginAgainstLine = (homeScore - awayScore) + line;
+        } else {
+          // Away margin + line: e.g. Away 95, Home 100 (-5 margin). If line +1.5 -> -5 + 1.5 = -3.5
+          liveMarginAgainstLine = (awayScore - homeScore) + line;
+        }
+
+        const marginStr = liveMarginAgainstLine > 0 ? `+${liveMarginAgainstLine.toFixed(1)}` : `${liveMarginAgainstLine.toFixed(1)}`;
+
+        if (liveMarginAgainstLine > 0) {
+          coverCell.innerHTML = `
+            <span class="status-badge status-won" style="font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">
+              🟢 COVERING (${marginStr})
+            </span>
+          `;
+        } else if (liveMarginAgainstLine < 0) {
+          coverCell.innerHTML = `
+            <span class="status-badge status-lost" style="font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">
+              🔴 NOT COVERING (${marginStr})
+            </span>
+          `;
+        } else {
+          coverCell.innerHTML = `
+            <span class="status-badge status-push" style="font-size: 11px; font-weight: 800;">
+              🟡 PUSH (${marginStr})
+            </span>
+          `;
+        }
+      });
+    });
+  } catch (err) {
+    console.warn('[CourtVision Live] ESPN polling notice:', err);
+  }
+}
+
+function startLiveScoreboardPolling() {
+  if (livePollInterval) clearInterval(livePollInterval);
+  fetchLiveScoresAndUpdateDesk();
+  // Poll ESPN every 25 seconds for real-time live updates
+  livePollInterval = setInterval(fetchLiveScoresAndUpdateDesk, 25000);
 }
 
 // ============================================================================
@@ -821,4 +939,5 @@ function formatGameTime(isoString) {
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   renderDashboard();
+  startLiveScoreboardPolling();
 });
