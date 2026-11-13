@@ -21,6 +21,23 @@
     }
     const savedTheme = localStorage.getItem('theme') || 'slate';
     document.documentElement.setAttribute('data-theme', savedTheme);
+
+    // Support bidirectional theme sync with portfolio host
+    window.applyTheme = function(theme) {
+      if (theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        try { localStorage.setItem('theme', theme); } catch (e) {}
+        if (typeof updateThemeButton === 'function') updateThemeButton(theme);
+        if (typeof equityChartInstance !== 'undefined' && equityChartInstance && typeof updateChartTheme === 'function') {
+          updateChartTheme(equityChartInstance, theme);
+        }
+      }
+    };
+    window.addEventListener('message', function(e) {
+      if (e.data && e.data.type === 'SET_THEME' && e.data.theme) {
+        window.applyTheme(e.data.theme);
+      }
+    });
   </script>
 
   <style>
@@ -31,7 +48,9 @@
     html[data-theme="light"] {
       --bg-page: #f4f6f9;
       --bg-header: rgba(255, 255, 255, 0.96);
-      --bg-ticker: #0f172a;
+      --bg-ticker: #ffffff;
+      --ticker-text: #334155;
+      --ticker-border: #e2e8f0;
       --bg-ribbon: #ffffff;
       --bg-card: #ffffff;
       --bg-card-alt: #f1f5f9;
@@ -75,12 +94,39 @@
 
       --shadow-subtle: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
       --shadow-card: 0 4px 8px -1px rgba(15, 23, 42, 0.06), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+
+      /* Broadcast TV Score Bug Tokens - Light Mode */
+      --bcast-bg: #ffffff;
+      --bcast-border: #e2e8f0;
+      --bcast-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+      --bcast-top-bg: #f8fafc;
+      --bcast-top-border: #e2e8f0;
+      --bcast-wing-base: #ffffff;
+      --bcast-wing-border: #f1f5f9;
+      --bcast-text-primary: #0f172a;
+      --bcast-text-secondary: #64748b;
+      --bcast-hud-bg: #f8fafc;
+      --bcast-hud-border: #e2e8f0;
+      --bcast-hud-clock: #0f172a;
+      --bcast-shotclock-bg: #fef3c7;
+      --bcast-shotclock-text: #b45309;
+      --bcast-shotclock-border: #fde68a;
+      --bcast-chyron-bg: #f8fafc;
+      --bcast-chyron-border: #e2e8f0;
+      --bcast-chyron-text: #1e293b;
+      --bcast-tag-bg: #e2e8f0;
+      --bcast-tag-text: #334155;
+      --bcast-tag-border: #cbd5e1;
+      --bcast-timeout-off: #cbd5e1;
+      --bcast-timeout-on: #f59e0b;
     }
 
     html[data-theme="slate"] {
       --bg-page: #0a0d14;
       --bg-header: rgba(13, 17, 26, 0.94);
       --bg-ticker: #07090e;
+      --ticker-text: #cbd5e1;
+      --ticker-border: rgba(255, 255, 255, 0.08);
       --bg-ribbon: #111622;
       --bg-card: #141a29;
       --bg-card-alt: #1a2235;
@@ -124,6 +170,31 @@
 
       --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.4);
       --shadow-card: 0 6px 16px rgba(0, 0, 0, 0.45);
+
+      /* Broadcast TV Score Bug Tokens - Dark Mode */
+      --bcast-bg: linear-gradient(180deg, #131b2e 0%, #0a0e1a 100%);
+      --bcast-border: rgba(255, 255, 255, 0.12);
+      --bcast-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      --bcast-top-bg: rgba(0, 0, 0, 0.55);
+      --bcast-top-border: rgba(255, 255, 255, 0.08);
+      --bcast-wing-base: rgba(13, 19, 34, 0.95);
+      --bcast-wing-border: rgba(255, 255, 255, 0.08);
+      --bcast-text-primary: #ffffff;
+      --bcast-text-secondary: rgba(255, 255, 255, 0.7);
+      --bcast-hud-bg: #060910;
+      --bcast-hud-border: rgba(255, 255, 255, 0.06);
+      --bcast-hud-clock: #ffffff;
+      --bcast-shotclock-bg: rgba(245, 158, 11, 0.15);
+      --bcast-shotclock-text: #f59e0b;
+      --bcast-shotclock-border: rgba(245, 158, 11, 0.4);
+      --bcast-chyron-bg: #090e1c;
+      --bcast-chyron-border: rgba(255, 255, 255, 0.1);
+      --bcast-chyron-text: #e2e8f0;
+      --bcast-tag-bg: rgba(255, 255, 255, 0.08);
+      --bcast-tag-text: #cbd5e1;
+      --bcast-tag-border: rgba(255, 255, 255, 0.1);
+      --bcast-timeout-off: rgba(255, 255, 255, 0.18);
+      --bcast-timeout-on: #f59e0b;
     }
 
     html.is-embedded header {
@@ -169,13 +240,31 @@
     /* Arena Sports Ticker Bar */
     .arena-ticker {
       background: var(--bg-ticker);
-      color: #cbd5e1;
+      color: var(--ticker-text, #cbd5e1);
       font-family: 'JetBrains Mono', monospace;
       font-size: 11.5px;
       padding: 7px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid var(--ticker-border, rgba(255, 255, 255, 0.08));
       overflow: hidden;
       white-space: nowrap;
+      transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+    }
+
+    html[data-theme="light"] .arena-ticker {
+      background: #ffffff;
+      color: #334155;
+      border-bottom: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    }
+
+    html[data-theme="light"] .arena-ticker strong {
+      color: #0f172a;
+    }
+
+    html[data-theme="light"] .ticker-badge {
+      background: #ea580c;
+      color: #ffffff;
+      box-shadow: 0 1px 3px rgba(234, 88, 12, 0.3);
     }
 
     .ticker-inner {
@@ -959,18 +1048,19 @@
 
     /* Individual TV Score Bug Container */
     .bcast-scorebug {
-      background: linear-gradient(180deg, #131b2e 0%, #0a0e1a 100%);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: var(--bcast-bg);
+      border: 1px solid var(--bcast-border);
       border-radius: 14px;
       overflow: hidden;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.14);
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+      box-shadow: var(--bcast-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease, background 0.25s ease;
       position: relative;
     }
 
     html[data-theme="light"] .bcast-scorebug {
-      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      background: #ffffff;
+      border-color: #e2e8f0;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.04);
     }
 
     .bcast-scorebug:hover {
@@ -979,9 +1069,19 @@
       border-color: rgba(255, 255, 255, 0.25);
     }
 
+    html[data-theme="light"] .bcast-scorebug:hover {
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+      border-color: #cbd5e1;
+    }
+
     .bcast-scorebug.bet-covering {
       border-color: rgba(52, 211, 153, 0.5);
       box-shadow: 0 8px 24px rgba(52, 211, 153, 0.18), inset 0 1px 0 rgba(52, 211, 153, 0.3);
+    }
+
+    html[data-theme="light"] .bcast-scorebug.bet-covering {
+      border-color: #34d399;
+      box-shadow: 0 6px 18px rgba(16, 185, 129, 0.14);
     }
 
     .bcast-scorebug.bet-losing {
@@ -989,15 +1089,26 @@
       box-shadow: 0 8px 24px rgba(239, 68, 68, 0.14);
     }
 
+    html[data-theme="light"] .bcast-scorebug.bet-losing {
+      border-color: #f87171;
+      box-shadow: 0 6px 18px rgba(239, 68, 68, 0.12);
+    }
+
     /* Top Broadcast Channel & Status Strip */
     .bcast-top-ribbon {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(0, 0, 0, 0.55);
+      background: var(--bcast-top-bg);
       padding: 7px 14px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid var(--bcast-top-border);
       font-size: 11px;
+      transition: background 0.25s ease, border-color 0.25s ease;
+    }
+
+    html[data-theme="light"] .bcast-top-ribbon {
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
     }
 
     .bcast-network-badge {
@@ -1033,23 +1144,36 @@
       color: #f87171;
     }
 
+    html[data-theme="light"] .bcast-status-indicator.is-live {
+      color: #dc2626;
+    }
+
     .bcast-status-indicator.is-final {
       color: #94a3b8;
+    }
+
+    html[data-theme="light"] .bcast-status-indicator.is-final {
+      color: #64748b;
     }
 
     .bcast-status-indicator.is-upcoming {
       color: #38bdf8;
     }
 
+    html[data-theme="light"] .bcast-status-indicator.is-upcoming {
+      color: #0284c7;
+    }
+
     .bcast-sportsbook-tag {
       font-family: 'JetBrains Mono', monospace;
       font-size: 10.5px;
       font-weight: 700;
-      color: #cbd5e1;
-      background: rgba(255, 255, 255, 0.08);
+      color: var(--bcast-tag-text);
+      background: var(--bcast-tag-bg);
       padding: 2px 7px;
       border-radius: 5px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--bcast-tag-border);
+      transition: all 0.25s ease;
     }
 
     /* Score Bug Main Rack: Away | HUD Clock | Home */
@@ -1057,8 +1181,13 @@
       display: grid;
       grid-template-columns: 1fr 104px 1fr;
       align-items: stretch;
-      background: #0d1322;
+      background: var(--bcast-wing-base);
       min-height: 108px;
+      transition: background 0.25s ease;
+    }
+
+    html[data-theme="light"] .bcast-rack {
+      background: #ffffff;
     }
 
     .bcast-team-wing {
@@ -1068,14 +1197,15 @@
       justify-content: space-between;
       position: relative;
       overflow: hidden;
+      transition: background 0.25s ease;
     }
 
     .bcast-team-wing.away {
-      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      border-right: 1px solid var(--bcast-wing-border);
     }
 
     .bcast-team-wing.home {
-      border-left: 1px solid rgba(255, 255, 255, 0.08);
+      border-left: 1px solid var(--bcast-wing-border);
       text-align: right;
     }
 
@@ -1093,7 +1223,7 @@
       width: 42px;
       height: 42px;
       object-fit: contain;
-      filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.7));
+      filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.35));
       flex-shrink: 0;
     }
 
@@ -1106,12 +1236,13 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 18px;
       font-weight: 900;
-      color: #ffffff;
+      color: var(--bcast-text-primary);
       line-height: 1.1;
       letter-spacing: 0.5px;
       display: flex;
       align-items: center;
       gap: 6px;
+      transition: color 0.25s ease;
     }
 
     .bcast-team-wing.home .bcast-team-abbr {
@@ -1120,13 +1251,14 @@
 
     .bcast-team-name {
       font-size: 11px;
-      color: rgba(255, 255, 255, 0.7);
+      color: var(--bcast-text-secondary);
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.4px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      transition: color 0.25s ease;
     }
 
     /* Bet Badge on Wing */
@@ -1137,8 +1269,8 @@
       padding: 2px 6px;
       border-radius: 4px;
       background: var(--bball-orange);
-      color: #000;
-      box-shadow: 0 0 10px rgba(249, 115, 22, 0.6);
+      color: #fff;
+      box-shadow: 0 0 10px rgba(249, 115, 22, 0.4);
       display: inline-flex;
       align-items: center;
       gap: 4px;
@@ -1160,21 +1292,32 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 34px;
       font-weight: 900;
-      color: #ffffff;
+      color: var(--bcast-text-primary);
       line-height: 1;
       letter-spacing: -1px;
       text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+      transition: color 0.25s ease;
+    }
+
+    html[data-theme="light"] .bcast-score-num {
+      text-shadow: none;
     }
 
     .bcast-score-num.winner-score {
-      color: #34d399;
+      color: var(--accent-win);
       text-shadow: 0 0 14px rgba(52, 211, 153, 0.4);
+    }
+
+    html[data-theme="light"] .bcast-score-num.winner-score {
+      color: #059669;
+      text-shadow: none;
     }
 
     .bcast-score-num.pregame-dash {
       font-size: 22px;
-      color: rgba(255, 255, 255, 0.3);
+      color: var(--text-muted);
       font-weight: 700;
+      text-shadow: none;
     }
 
     /* Telemetry: Timeouts & Fouls (Inspo from image!) */
@@ -1184,10 +1327,11 @@
       justify-content: space-between;
       font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
-      color: rgba(255, 255, 255, 0.6);
+      color: var(--bcast-text-secondary);
       margin-top: 6px;
       padding-top: 5px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1px solid var(--bcast-wing-border);
+      transition: color 0.25s ease, border-color 0.25s ease;
     }
 
     .bcast-team-wing.home .bcast-telemetry-row {
@@ -1203,13 +1347,18 @@
     .timeout-dash {
       width: 4px;
       height: 7px;
-      background: rgba(255, 255, 255, 0.18);
+      background: var(--bcast-timeout-off);
       border-radius: 1px;
+      transition: background 0.25s ease;
     }
 
     .timeout-dash.active {
-      background: #f59e0b;
-      box-shadow: 0 0 4px #f59e0b;
+      background: var(--bcast-timeout-on);
+      box-shadow: 0 0 4px var(--bcast-timeout-on);
+    }
+
+    html[data-theme="light"] .timeout-dash.active {
+      box-shadow: 0 0 3px rgba(245, 158, 11, 0.4);
     }
 
     .bcast-foul-text {
@@ -1219,55 +1368,79 @@
 
     /* Center Broadcast HUD (Clock & Shot Clock) */
     .bcast-hud {
-      background: #060910;
-      border-left: 1px solid rgba(255, 255, 255, 0.06);
-      border-right: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--bcast-hud-bg);
+      border-left: 1px solid var(--bcast-hud-border);
+      border-right: 1px solid var(--bcast-hud-border);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 8px 4px;
       position: relative;
+      transition: background 0.25s ease, border-color 0.25s ease;
+    }
+
+    html[data-theme="light"] .bcast-hud {
+      background: #f8fafc;
+      border-left: 1px solid #e2e8f0;
+      border-right: 1px solid #e2e8f0;
     }
 
     .bcast-hud-period {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       font-weight: 900;
-      color: #94a3b8;
+      color: var(--bcast-text-secondary);
       text-transform: uppercase;
       letter-spacing: 0.6px;
       margin-bottom: 2px;
+      transition: color 0.25s ease;
     }
 
     .bcast-hud-clock {
       font-family: 'JetBrains Mono', monospace;
       font-size: 19px;
       font-weight: 900;
-      color: #ffffff;
+      color: var(--bcast-hud-clock);
       line-height: 1.1;
       letter-spacing: -0.5px;
       margin-bottom: 4px;
+      transition: color 0.25s ease;
+    }
+
+    html[data-theme="light"] .bcast-hud-clock {
+      text-shadow: none;
     }
 
     .bcast-hud-shotclock {
       font-family: 'JetBrains Mono', monospace;
       font-size: 13px;
       font-weight: 900;
-      color: #f59e0b;
-      background: rgba(245, 158, 11, 0.15);
-      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: var(--bcast-shotclock-text);
+      background: var(--bcast-shotclock-bg);
+      border: 1px solid var(--bcast-shotclock-border);
       padding: 1px 7px;
       border-radius: 4px;
       text-shadow: 0 0 8px rgba(245, 158, 11, 0.65);
       letter-spacing: 0.5px;
+      transition: all 0.25s ease;
+    }
+
+    html[data-theme="light"] .bcast-hud-shotclock {
+      text-shadow: none;
     }
 
     /* Lower-Third Betting Chyron */
     .bcast-chyron-strip {
-      background: #090e1c;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      background: var(--bcast-chyron-bg);
+      border-top: 1px solid var(--bcast-chyron-border);
       padding: 10px 14px;
+      transition: background 0.25s ease, border-color 0.25s ease;
+    }
+
+    html[data-theme="light"] .bcast-chyron-strip {
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
     }
 
     .bcast-chyron-main {
@@ -1283,18 +1456,26 @@
       align-items: center;
       gap: 8px;
       font-size: 12.5px;
-      color: #e2e8f0;
+      color: var(--bcast-chyron-text);
+      transition: color 0.25s ease;
     }
 
     .bcast-pick-pill {
       font-family: 'JetBrains Mono', monospace;
       font-weight: 900;
       color: var(--bball-orange);
-      background: rgba(249, 115, 22, 0.15);
-      border: 1px solid rgba(249, 115, 22, 0.4);
+      background: var(--bball-orange-light);
+      border: 1px solid var(--bball-orange-border);
       padding: 2px 7px;
       border-radius: 6px;
       font-size: 12px;
+      transition: all 0.25s ease;
+    }
+
+    html[data-theme="light"] .bcast-pick-pill {
+      background: #fff7ed;
+      color: #c2410c;
+      border-color: #fdba74;
     }
 
     .bcast-cover-badge {
@@ -1306,49 +1487,62 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      transition: all 0.25s ease;
     }
 
     .bcast-cover-badge.status-covering {
-      background: rgba(52, 211, 153, 0.18);
-      color: #34d399;
-      border: 1px solid rgba(52, 211, 153, 0.4);
+      background: var(--pos-bg);
+      color: var(--pos);
+      border: 1px solid var(--pos-border);
       box-shadow: 0 0 10px rgba(52, 211, 153, 0.2);
     }
 
+    html[data-theme="light"] .bcast-cover-badge.status-covering {
+      box-shadow: none;
+    }
+
     .bcast-cover-badge.status-losing {
-      background: rgba(239, 68, 68, 0.18);
-      color: #f87171;
-      border: 1px solid rgba(239, 68, 68, 0.4);
+      background: var(--neg-bg);
+      color: var(--neg);
+      border: 1px solid var(--neg-border);
     }
 
     .bcast-cover-badge.status-won {
-      background: rgba(52, 211, 153, 0.25);
-      color: #34d399;
-      border: 1px solid rgba(52, 211, 153, 0.55);
+      background: var(--pos-bg);
+      color: var(--pos);
+      border: 1px solid var(--pos-border);
       box-shadow: 0 0 12px rgba(52, 211, 153, 0.3);
     }
 
+    html[data-theme="light"] .bcast-cover-badge.status-won {
+      box-shadow: none;
+    }
+
     .bcast-cover-badge.status-lost {
-      background: rgba(239, 68, 68, 0.22);
-      color: #f87171;
-      border: 1px solid rgba(239, 68, 68, 0.55);
+      background: var(--neg-bg);
+      color: var(--neg);
+      border: 1px solid var(--neg-border);
     }
 
     .bcast-cover-badge.status-upcoming {
-      background: rgba(56, 189, 248, 0.14);
-      color: #38bdf8;
-      border: 1px solid rgba(56, 189, 248, 0.35);
+      background: var(--sky-bg);
+      color: var(--sky);
+      border: 1px solid var(--sky-border);
     }
 
     /* Live Cover Barometer Progress Bar */
     .bcast-meter-track {
       width: 100%;
       height: 5px;
-      background: rgba(255, 255, 255, 0.08);
+      background: var(--bcast-top-border);
       border-radius: 999px;
       margin-top: 8px;
       overflow: hidden;
       position: relative;
+    }
+
+    html[data-theme="light"] .bcast-meter-track {
+      background: #e2e8f0;
     }
 
     .bcast-meter-fill {
