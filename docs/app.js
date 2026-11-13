@@ -153,7 +153,7 @@ function renderDashboard() {
   // 7. Render Tab 2: Money Lifecycle, Active Desk & Equity Chart
   renderMoneyLifecycle(bankroll, activeBets);
   renderActiveBetsTable(activeBets);
-  renderEquityChart(equityHistory, bankroll.current_balance);
+  renderEquityChart(equityHistory, bankroll.current_balance, bankrollState);
 
   // 8. Render Tab 3: ISyE 4031 Model Telemetry & Self-Learning Decision Basis
   renderModelAndMemoryTab(decisionBasis);
@@ -560,9 +560,48 @@ function renderSettledTable(settledBets) {
 }
 
 // ============================================================================
-// EQUITY CHART (CHART.JS)
+// EQUITY CHART (CHART.JS) - CASH FLOW & DAILY BETS HOVER TELEMETRY
 // ============================================================================
-function renderEquityChart(history, currentBalance) {
+function getBetsForDate(targetDate, historyItem, bankrollState) {
+  let bets = [];
+  if (historyItem && Array.isArray(historyItem.bets) && historyItem.bets.length > 0) {
+    bets = [...historyItem.bets];
+  }
+
+  // If not already in historyItem.bets, check settled_bets
+  if (bets.length === 0 && bankrollState && Array.isArray(bankrollState.settled_bets)) {
+    const matched = bankrollState.settled_bets.filter(b => {
+      const settledDate = b.settled_at ? b.settled_at.split(' ')[0] : '';
+      const placedDate = b.date_placed ? b.date_placed.split(' ')[0] : '';
+      return settledDate === targetDate || placedDate === targetDate;
+    });
+    bets = matched.map(b => ({
+      bet_id: b.bet_id,
+      matchup: b.matchup,
+      selection: b.selection,
+      line: b.line,
+      odds: b.odds,
+      stake: b.stake,
+      units: b.units,
+      result: b.result,
+      net_pnl: b.net_pnl,
+      final_score: b.final_score
+    }));
+  }
+  return bets;
+}
+
+function getActiveBetsForDate(targetDate, isLatestDay, bankrollState) {
+  if (!bankrollState || !Array.isArray(bankrollState.active_bets) || bankrollState.active_bets.length === 0) {
+    return [];
+  }
+  return bankrollState.active_bets.filter(b => {
+    const placedDate = b.date_placed ? b.date_placed.split(' ')[0] : '';
+    return placedDate === targetDate || isLatestDay;
+  });
+}
+
+function renderEquityChart(history, currentBalance, bankrollState) {
   const ctx = document.getElementById('equityChart');
   if (!ctx) return;
 
@@ -597,8 +636,11 @@ function renderEquityChart(history, currentBalance) {
           pointBackgroundColor: '#f97316',
           pointBorderColor: '#ffffff',
           pointBorderWidth: 1.5,
-          pointRadius: 5,
-          pointHoverRadius: 7
+          pointRadius: 6,
+          pointHoverRadius: 9,
+          pointHoverBackgroundColor: '#ea580c',
+          pointHoverBorderColor: '#ffffff',
+          pointHoverBorderWidth: 2
         },
         {
           label: 'Starting Capital ($1,000 Breakeven)',
@@ -607,6 +649,7 @@ function renderEquityChart(history, currentBalance) {
           borderDash: [6, 6],
           borderWidth: 1.5,
           pointRadius: 0,
+          pointHoverRadius: 0,
           fill: false
         }
       ]
@@ -614,6 +657,10 @@ function renderEquityChart(history, currentBalance) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      interaction: {
+        mode: 'index',
+        intersect: false
+      },
       plugins: {
         legend: {
           display: true,
@@ -624,9 +671,95 @@ function renderEquityChart(history, currentBalance) {
           }
         },
         tooltip: {
+          enabled: true,
+          backgroundColor: isDark ? 'rgba(15, 23, 42, 0.96)' : 'rgba(255, 255, 255, 0.98)',
+          titleColor: isDark ? '#f8fafc' : '#0f172a',
+          bodyColor: isDark ? '#cbd5e1' : '#334155',
+          borderColor: isDark ? 'rgba(249, 115, 22, 0.5)' : 'rgba(234, 88, 12, 0.4)',
+          borderWidth: 1.5,
+          padding: 14,
+          cornerRadius: 10,
+          displayColors: false,
+          titleFont: { family: 'Plus Jakarta Sans', size: 13, weight: 800 },
+          bodyFont: { family: 'JetBrains Mono, monospace', size: 11.5 },
           callbacks: {
+            title: function(items) {
+              if (!items || !items.length) return '';
+              const idx = items[0].dataIndex;
+              const date = labels[idx];
+              const h = history[idx] || {};
+              const bal = h.balance !== undefined ? h.balance : items[0].parsed.y;
+              const pnl = h.pnl !== undefined ? h.pnl : 0;
+              const pnlSign = pnl > 0 ? '+' : (pnl < 0 ? '-' : '');
+              const pnlStr = pnl !== 0 ? ` (${pnlSign}$${Math.abs(pnl).toFixed(2)})` : '';
+              return `📅 ${date} • Bankroll: $${bal.toFixed(2)}${pnlStr}`;
+            },
             label: function(context) {
-              return ` ${context.dataset.label}: $${context.parsed.y.toFixed(2)}`;
+              if (context.datasetIndex === 0) {
+                return `💰 Portfolio Equity: $${context.parsed.y.toFixed(2)}`;
+              }
+              return null;
+            },
+            afterBody: function(items) {
+              if (!items || !items.length) return [];
+              const idx = items[0].dataIndex;
+              const targetDate = labels[idx];
+              const h = history[idx] || {};
+
+              const bets = getBetsForDate(targetDate, h, bankrollState);
+              const activeForDate = getActiveBetsForDate(targetDate, idx === labels.length - 1, bankrollState);
+
+              const lines = [];
+              lines.push('────────────────────────────────────────');
+
+              if (bets.length === 0 && activeForDate.length === 0) {
+                if (idx === 0) {
+                  lines.push('🏁 Starting Capital: $1,000.00 (Breakeven Baseline)');
+                  lines.push('   No bets placed prior to Day 1');
+                } else {
+                  lines.push('⚪ No bets placed on this date');
+                  lines.push('   (No games met the +EV edge & Student-t threshold)');
+                }
+                return lines;
+              }
+
+              if (bets.length > 0) {
+                lines.push(`🎯 Settled Wagers (${bets.length} Bet${bets.length === 1 ? '' : 's'}):`);
+                bets.forEach((b, i) => {
+                  const num = bets.length > 1 ? `${i + 1}. ` : '• ';
+                  const lineStr = b.line !== undefined ? (b.line > 0 ? `+${b.line}` : `${b.line}`) : '';
+                  const oddsStr = b.odds ? ` @ ${b.odds > 0 ? '+' : ''}${b.odds}` : '';
+                  const stakeStr = b.stake ? `$${b.stake.toFixed(0)}` : '';
+                  const res = b.result || 'SETTLED';
+                  const pnlSign = b.net_pnl >= 0 ? '+' : '';
+                  const pnlStr = b.net_pnl !== undefined ? ` (${pnlSign}$${b.net_pnl.toFixed(2)})` : '';
+
+                  lines.push(` ${num}${b.selection} ${lineStr} [${stakeStr}${oddsStr}]`);
+                  const scoreStr = b.final_score ? ` | Final: ${b.final_score}` : '';
+                  lines.push(`    Outcome: ${res}${pnlStr}${scoreStr}`);
+                });
+              }
+
+              if (activeForDate.length > 0) {
+                if (bets.length > 0) lines.push('');
+                lines.push(`⚡ Active In-Play (${activeForDate.length} Bet${activeForDate.length === 1 ? '' : 's'} Placed Tonight):`);
+                activeForDate.forEach((b, i) => {
+                  const num = activeForDate.length > 1 ? `${i + 1}. ` : '• ';
+                  const lineStr = b.line !== undefined ? (b.line > 0 ? `+${b.line}` : `${b.line}`) : '';
+                  const oddsStr = b.odds ? ` @ ${b.odds > 0 ? '+' : ''}${b.odds}` : '';
+                  const stakeStr = b.stake ? `$${b.stake.toFixed(0)}` : '';
+                  const unitsStr = b.units ? ` [${b.units}U]` : '';
+                  const probStr = b.cover_prob_pct ? ` | P(Cover): ${b.cover_prob_pct}%` : '';
+                  const evStr = b.ev_pct ? ` (+${b.ev_pct}% EV)` : '';
+
+                  lines.push(` ${num}${b.selection} ${lineStr} [${stakeStr}${unitsStr}${oddsStr}] • PENDING`);
+                  if (b.matchup) {
+                    lines.push(`    ${b.matchup}${probStr}${evStr}`);
+                  }
+                });
+              }
+
+              return lines;
             }
           }
         }
@@ -661,6 +794,14 @@ function updateChartTheme(chart, theme) {
   chart.options.scales.x.ticks.color = textColor;
   chart.options.scales.y.grid.color = gridColor;
   chart.options.scales.y.ticks.color = textColor;
+
+  if (chart.options.plugins.tooltip) {
+    chart.options.plugins.tooltip.backgroundColor = isDark ? 'rgba(15, 23, 42, 0.96)' : 'rgba(255, 255, 255, 0.98)';
+    chart.options.plugins.tooltip.titleColor = isDark ? '#f8fafc' : '#0f172a';
+    chart.options.plugins.tooltip.bodyColor = isDark ? '#cbd5e1' : '#334155';
+    chart.options.plugins.tooltip.borderColor = isDark ? 'rgba(249, 115, 22, 0.5)' : 'rgba(234, 88, 12, 0.4)';
+  }
+
   chart.update();
 }
 
