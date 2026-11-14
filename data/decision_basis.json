@@ -42,15 +42,15 @@
     ]
   },
   "diagnostics": {
-    "cfe": -1.4,
-    "mad": 4.9,
-    "tracking_signal": -0.29,
+    "cfe": 14.3,
+    "mad": 14.43,
+    "tracking_signal": 0.99,
     "tracking_signal_limit": 3.75,
     "status": "IN_CONTROL (Unbiased)",
-    "out_of_sample_rmse": 10.38,
-    "interval_coverage_50_pct": 100.0,
-    "interval_coverage_80_pct": 100.0,
-    "interval_coverage_95_pct": 100.0,
+    "out_of_sample_rmse": 19.57,
+    "interval_coverage_50_pct": 33.3,
+    "interval_coverage_80_pct": 66.7,
+    "interval_coverage_95_pct": 77.8,
     "residual_history": [
       {
         "date": "2026-11-10",
@@ -76,6 +76,97 @@
         "se_mean": 1.12,
         "captured_50": false,
         "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-14",
+        "matchup": "New York Knicks @ Indiana Pacers",
+        "predicted_home_margin": 1.8,
+        "observed_home_margin": 2,
+        "residual_e": 0.2,
+        "studentized_r": 0.02,
+        "se_pred": 10.45,
+        "se_mean": 0.73,
+        "captured_50": true,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-14",
+        "matchup": "Milwaukee Bucks @ Orlando Magic",
+        "predicted_home_margin": -1.2,
+        "observed_home_margin": 8,
+        "residual_e": 9.2,
+        "studentized_r": 0.88,
+        "se_pred": 10.5,
+        "se_mean": 1.29,
+        "captured_50": false,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-14",
+        "matchup": "Atlanta Hawks @ Chicago Bulls",
+        "predicted_home_margin": 2.2,
+        "observed_home_margin": 8,
+        "residual_e": 5.8,
+        "studentized_r": 0.56,
+        "se_pred": 10.44,
+        "se_mean": 0.7,
+        "captured_50": true,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-14",
+        "matchup": "Memphis Grizzlies @ New Orleans Pelicans",
+        "predicted_home_margin": 2.2,
+        "observed_home_margin": -31,
+        "residual_e": -33.2,
+        "studentized_r": -3.18,
+        "se_pred": 10.44,
+        "se_mean": 0.7,
+        "captured_50": false,
+        "captured_80": false,
+        "captured_95": false
+      },
+      {
+        "date": "2026-11-14",
+        "matchup": "Utah Jazz @ Houston Rockets",
+        "predicted_home_margin": 2.2,
+        "observed_home_margin": 7,
+        "residual_e": 4.8,
+        "studentized_r": 0.46,
+        "se_pred": 10.44,
+        "se_mean": 0.7,
+        "captured_50": true,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-14",
+        "matchup": "Golden State Warriors @ San Antonio Spurs",
+        "predicted_home_margin": -4.3,
+        "observed_home_margin": 38,
+        "residual_e": 42.3,
+        "studentized_r": 3.99,
+        "se_pred": 10.6,
+        "se_mean": 1.93,
+        "captured_50": false,
+        "captured_80": false,
+        "captured_95": false
+      },
+      {
+        "date": "2026-11-14",
+        "matchup": "Portland Trail Blazers @ Sacramento Kings",
+        "predicted_home_margin": 2.2,
+        "observed_home_margin": -13,
+        "residual_e": -15.2,
+        "studentized_r": -1.46,
+        "se_pred": 10.44,
+        "se_mean": 0.7,
+        "captured_50": false,
+        "captured_80": false,
         "captured_95": true
       }
     ]
@@ -110,7 +201,47 @@
       "rule_statement": "Teams coming off a 20+ point blowout win exhibit negative lag-1 residual autocorrelation (-8% mean reversion) as market lines overreact. Dampen raw net rating shock before staking.",
       "adjustment_type": "AR1_DAMPENER",
       "parameter_delta": -0.08
+    },
+    {
+      "rule_id": "RULE-004",
+      "created_at": "2026-11-14 18:39:54",
+      "source_game": "Milwaukee Bucks 99 - Orlando Magic 107",
+      "residual_trigger": "e_t = +9.2 pts (r = +0.88)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Milwaukee Bucks @ Orlando Magic: Observed residual of +9.2 pts (SE_pred = 10.5). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": 2
+    },
+    {
+      "rule_id": "RULE-005",
+      "created_at": "2026-11-14 18:39:54",
+      "source_game": "Memphis Grizzlies 142 - New Orleans Pelicans 111",
+      "residual_trigger": "e_t = -33.2 pts (r = -3.18)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Memphis Grizzlies @ New Orleans Pelicans: Observed residual of -33.2 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": -3
+    },
+    {
+      "rule_id": "RULE-006",
+      "created_at": "2026-11-14 18:39:54",
+      "source_game": "Golden State Warriors 85 - San Antonio Spurs 123",
+      "residual_trigger": "e_t = +42.3 pts (r = +3.99)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Golden State Warriors @ San Antonio Spurs: Observed residual of +42.3 pts (SE_pred = 10.6). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": -3
+    },
+    {
+      "rule_id": "RULE-007",
+      "created_at": "2026-11-14 18:39:54",
+      "source_game": "Portland Trail Blazers 120 - Sacramento Kings 107",
+      "residual_trigger": "e_t = -15.2 pts (r = -1.46)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Portland Trail Blazers @ Sacramento Kings: Observed residual of -15.2 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": -3
     }
   ],
-  "last_updated": "2026-11-12T19:38:00Z"
+  "last_updated": "2026-11-14T18:39:54Z"
 }
