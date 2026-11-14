@@ -1033,17 +1033,11 @@
       box-shadow: 0 0 12px rgba(239, 68, 68, 0.3);
     }
 
-    /* Score Bug Grid */
+    /* Score Bug Grid - Wide ESPN-Style Cards */
     .bcast-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(430px, 1fr));
+      display: flex;
+      flex-direction: column;
       gap: 20px;
-    }
-
-    @media (max-width: 500px) {
-      .bcast-grid {
-        grid-template-columns: 1fr;
-      }
     }
 
     /* Individual TV Score Bug Container */
@@ -1174,6 +1168,446 @@
       border-radius: 5px;
       border: 1px solid var(--bcast-tag-border);
       transition: all 0.25s ease;
+    }
+
+    /* Header rule & confidence badges */
+    .bcast-rule-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 800;
+      background: rgba(249, 115, 22, 0.14);
+      color: var(--bball-orange);
+      border: 1px solid rgba(249, 115, 22, 0.35);
+      padding: 2px 7px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .bcast-confidence-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--bcast-text-secondary);
+      background: var(--bcast-tag-bg);
+      border: 1px solid var(--bcast-tag-border);
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+    .bcast-confidence-pill strong {
+      color: var(--pos);
+    }
+
+    /* Tri-Column Body Architecture */
+    .bcast-tri-body {
+      display: grid;
+      grid-template-columns: 310px 1fr 290px;
+      background: var(--bcast-wing-base);
+      min-height: 148px;
+      transition: background 0.25s ease;
+    }
+    @media (max-width: 980px) {
+      .bcast-tri-body {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .tri-col {
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .tri-col-scoreboard {
+      border-right: 1px solid var(--bcast-wing-border);
+      background: var(--bcast-wing-base);
+    }
+    .tri-col-command {
+      border-right: 1px solid var(--bcast-wing-border);
+      background: var(--bcast-top-bg);
+    }
+    .tri-col-model {
+      background: var(--bcast-wing-base);
+    }
+    @media (max-width: 980px) {
+      .tri-col-scoreboard,
+      .tri-col-command {
+        border-right: none;
+        border-bottom: 1px solid var(--bcast-wing-border);
+      }
+    }
+
+    .tri-col-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px dashed var(--bcast-wing-border);
+    }
+    .tri-subhead {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: var(--bcast-text-secondary);
+      text-transform: uppercase;
+    }
+    .tri-clock-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--sky);
+      background: var(--sky-bg);
+      border: 1px solid var(--sky-border);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+    .tri-target-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 900;
+      color: var(--bball-orange);
+      background: var(--bball-orange-light);
+      border: 1px solid var(--bball-orange-border);
+      padding: 1px 7px;
+      border-radius: 4px;
+    }
+    .tri-edge-grade {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+    .tri-edge-grade.grade-5star {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--pos);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .tri-edge-grade.grade-solid {
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--sky);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    /* Scoreboard Column 1 Elements */
+    .tri-team-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid transparent;
+      margin-bottom: 2px;
+    }
+    html[data-theme="light"] .tri-team-row {
+      background: #f8fafc;
+      border-color: #f1f5f9;
+    }
+    .tri-team-row.is-our-pick {
+      background: rgba(249, 115, 22, 0.1);
+      border: 1px solid rgba(249, 115, 22, 0.35);
+    }
+    html[data-theme="light"] .tri-team-row.is-our-pick {
+      background: #fff7ed;
+      border-color: #fed7aa;
+    }
+    .tri-team-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tri-team-logo {
+      width: 30px;
+      height: 30px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+    .tri-team-names {
+      display: flex;
+      flex-direction: column;
+    }
+    .tri-team-abbr {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--bcast-text-primary);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      line-height: 1.1;
+    }
+    .our-pick-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 900;
+      background: var(--bball-orange);
+      color: #fff;
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+    .tri-team-full {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--bcast-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .tri-score-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--bcast-text-primary);
+    }
+    .tri-score-val.winner-score {
+      color: var(--pos);
+    }
+    .tri-rack-hud {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2px 0;
+    }
+    .tri-hud-center-clock {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--bcast-text-secondary);
+      letter-spacing: 0.4px;
+    }
+    .tri-hud-center-clock .sim-clock {
+      color: var(--amber);
+      font-weight: 900;
+    }
+    .tri-telemetry-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--bcast-text-secondary);
+      margin-top: 6px;
+      padding-top: 4px;
+      border-top: 1px solid var(--bcast-wing-border);
+    }
+    .tri-telem-side {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tri-dots {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    /* Command Center Column 2 Elements (What Needs to Happen) */
+    .tri-goal-box {
+      background: var(--bball-orange-light);
+      border: 1px solid var(--bball-orange-border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+    }
+    .goal-box-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10.5px;
+      font-weight: 900;
+      color: var(--bball-orange);
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.4px;
+      margin-bottom: 3px;
+    }
+    .goal-box-rule {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--bcast-text-primary);
+      line-height: 1.35;
+    }
+    .tri-cushion-card {
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+    }
+    .tri-cushion-card.status-cushion-covering {
+      background: var(--pos-bg);
+      border: 1px solid var(--pos-border);
+    }
+    .tri-cushion-card.status-cushion-losing {
+      background: var(--neg-bg);
+      border: 1px solid var(--neg-border);
+    }
+    .tri-cushion-card.status-cushion-pregame {
+      background: var(--sky-bg);
+      border: 1px solid var(--sky-border);
+    }
+    .cushion-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      font-weight: 800;
+    }
+    .cushion-label {
+      color: var(--bcast-text-secondary);
+    }
+    .cushion-badge {
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 900;
+    }
+    .cushion-badge.covering {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--pos);
+    }
+    .cushion-badge.losing {
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--neg);
+    }
+    .cushion-badge.pregame {
+      background: rgba(2, 132, 199, 0.15);
+      color: var(--sky);
+    }
+    .cushion-explanation {
+      font-size: 11.5px;
+      color: var(--bcast-text-primary);
+      font-weight: 600;
+      margin-top: 3px;
+      margin-bottom: 6px;
+      line-height: 1.35;
+    }
+    .tri-wager-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 7px;
+      padding: 6px 10px;
+    }
+    .wager-col {
+      display: flex;
+      flex-direction: column;
+    }
+    .wager-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+    .wager-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+    .wager-val.highlight {
+      color: var(--bball-orange);
+    }
+    .wager-val.profit {
+      color: var(--pos);
+    }
+
+    /* Model Column 3 Elements (ISyE Quant Radar) */
+    .tri-edge-compare {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 7px 10px;
+      margin-bottom: 8px;
+    }
+    .edge-data-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      margin-bottom: 2px;
+    }
+    .edge-data-label {
+      color: var(--bcast-text-secondary);
+      font-size: 10.5px;
+    }
+    .edge-data-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      font-size: 11px;
+    }
+    .edge-data-val.vegas {
+      color: var(--text-primary);
+    }
+    .edge-data-val.model {
+      color: var(--sky);
+    }
+    .edge-data-val.edge {
+      color: var(--pos);
+      font-weight: 900;
+    }
+    .edge-data-row.highlight-edge {
+      border-top: 1px dashed var(--border-subtle);
+      margin-top: 4px;
+      padding-top: 4px;
+    }
+    .tri-prob-matrix {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .prob-chip {
+      background: var(--sky-bg);
+      border: 1px solid var(--sky-border);
+      border-radius: 6px;
+      padding: 5px 6px;
+      text-align: center;
+    }
+    .prob-chip.ev-chip {
+      background: var(--pos-bg);
+      border-color: var(--pos-border);
+    }
+    .prob-num {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--sky);
+      line-height: 1.1;
+    }
+    .prob-chip.ev-chip .prob-num {
+      color: var(--pos);
+    }
+    .prob-desc {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--bcast-text-secondary);
+      letter-spacing: 0.2px;
+    }
+    .tri-ai-reasoning {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-size: 10.5px;
+      line-height: 1.35;
+      color: var(--text-secondary);
+    }
+    .ai-brain-icon {
+      flex-shrink: 0;
+      font-size: 12px;
+    }
+    .ai-reason-text {
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
     }
 
     /* Score Bug Main Rack: Away | HUD Clock | Home */
