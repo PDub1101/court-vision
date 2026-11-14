@@ -427,8 +427,23 @@ function buildScoreBugHtml(bet) {
     homeScore = null;
   }
 
-  // Cover Status & Meter Calculations
-  let coverBadgeHtml = "";
+  // Win Condition Computation
+  let winRuleText = "";
+  if (lineVal > 0) {
+    const maxLoss = Math.floor(lineVal);
+    winRuleText = `<strong>${bet.selection}</strong> must win outright, OR lose by <strong>${maxLoss} or fewer points</strong>.`;
+  } else if (lineVal < 0) {
+    const minWin = Math.ceil(Math.abs(lineVal));
+    winRuleText = `<strong>${bet.selection}</strong> must win the game by <strong>${minWin} or more points</strong>.`;
+  } else {
+    winRuleText = `<strong>${bet.selection}</strong> must win the game outright (pick'em).`;
+  }
+
+  // Live Cushion / Cover status
+  let cushionCardClass = "status-cushion-pregame";
+  let cushionStatusClass = "pregame";
+  let cushionBadgeText = "";
+  let cushionExplanationText = "";
   let meterFillHtml = "";
   let cardCoverClass = "";
 
@@ -437,58 +452,74 @@ function buildScoreBugHtml(bet) {
     const margin = bet.cover_margin !== undefined ? bet.cover_margin : 0;
     const marginStr = margin > 0 ? `+${margin}` : `${margin}`;
     cardCoverClass = isWon ? "bet-covering" : "bet-losing";
+    cushionCardClass = isWon ? "status-cushion-covering" : "status-cushion-losing";
+    cushionStatusClass = isWon ? "covering" : "losing";
 
     if (isWon) {
-      coverBadgeHtml = `<span class="bcast-cover-badge status-won">🏆 BET WON • COVERED BY ${marginStr} PTS (+$${bet.net_pnl.toFixed(2)})</span>`;
+      cushionBadgeText = `🏆 COVERED BY ${marginStr} PTS`;
+      cushionExplanationText = `<strong>${bet.selection}</strong> covered the spread (+$${bet.net_pnl.toFixed(2)} return).`;
       meterFillHtml = `<div class="bcast-meter-fill fill-green" style="width: 100%;"></div>`;
     } else {
-      coverBadgeHtml = `<span class="bcast-cover-badge status-lost">❌ BET LOST • MISSED BY ${marginStr} PTS (-$${Math.abs(bet.net_pnl).toFixed(2)})</span>`;
+      cushionBadgeText = `❌ MISSED BY ${marginStr} PTS`;
+      cushionExplanationText = `<strong>${bet.selection}</strong> failed to cover the spread (-$${Math.abs(bet.net_pnl).toFixed(2)}).`;
       meterFillHtml = `<div class="bcast-meter-fill fill-red" style="width: 100%;"></div>`;
     }
   } else if (isLive) {
-    let liveMarginAgainstLine = 0;
-    if (isBetOnHome) {
-      liveMarginAgainstLine = (homeScore - awayScore) + lineVal;
-    } else {
-      liveMarginAgainstLine = (awayScore - homeScore) + lineVal;
-    }
-
+    let betScore = isBetOnHome ? homeScore : awayScore;
+    let oppScore = isBetOnHome ? awayScore : homeScore;
+    let rawMargin = (betScore !== null && oppScore !== null) ? (betScore - oppScore) : 0;
+    let liveMarginAgainstLine = rawMargin + lineVal;
     const marginStr = liveMarginAgainstLine > 0 ? `+${liveMarginAgainstLine.toFixed(1)}` : `${liveMarginAgainstLine.toFixed(1)}`;
     const isCovering = liveMarginAgainstLine > 0;
     cardCoverClass = isCovering ? "bet-covering" : "bet-losing";
-    const progressPct = Math.min(100, Math.max(10, 50 + (liveMarginAgainstLine * 3)));
+    cushionCardClass = isCovering ? "status-cushion-covering" : "status-cushion-losing";
+    cushionStatusClass = isCovering ? "covering" : "losing";
+    const progressPct = Math.min(100, Math.max(10, 50 + (liveMarginAgainstLine * 4)));
 
     if (liveMarginAgainstLine > 0) {
-      coverBadgeHtml = `<span class="bcast-cover-badge status-covering">🟢 COVERING (${marginStr} PTS) • LIVE MARGIN</span>`;
+      cushionBadgeText = `🟢 COVERING (${marginStr} PTS)`;
+      const leadOrTrail = rawMargin >= 0 ? `leads by ${rawMargin} pts` : `trails by ${Math.abs(rawMargin)} pts`;
+      cushionExplanationText = `<strong>${bet.selection}</strong> ${leadOrTrail}, within the <strong>${lineStr}</strong> spread cushion.`;
       meterFillHtml = `<div class="bcast-meter-fill fill-green" style="width: ${progressPct}%;"></div>`;
     } else if (liveMarginAgainstLine < 0) {
-      coverBadgeHtml = `<span class="bcast-cover-badge status-losing">🔴 NOT COVERING (${marginStr} PTS) • DEFICIT</span>`;
+      cushionBadgeText = `🔴 DEFICIT (${marginStr} PTS)`;
+      const needPts = Math.abs(liveMarginAgainstLine).toFixed(1);
+      cushionExplanationText = `<strong>${bet.selection}</strong> trails by ${Math.abs(rawMargin)} pts (needs <strong>+${needPts} more pts</strong> to cover).`;
       meterFillHtml = `<div class="bcast-meter-fill fill-red" style="width: ${progressPct}%;"></div>`;
     } else {
-      coverBadgeHtml = `<span class="bcast-cover-badge status-upcoming">🟡 AT SPREAD (PUSH)</span>`;
+      cushionBadgeText = `🟡 AT SPREAD (PUSH)`;
+      cushionExplanationText = `Exact tie with line. Stake refunded if final.`;
       meterFillHtml = `<div class="bcast-meter-fill fill-blue" style="width: 50%;"></div>`;
     }
   } else {
-    // Upcoming
+    // Upcoming / Pre-game
     const prob = bet.cover_prob_pct || 60.5;
-    const ev = bet.ev_pct || 15.5;
-    coverBadgeHtml = `<span class="bcast-cover-badge status-upcoming">⏳ PRE-GAME • P(Cover): ${prob}% (+${ev}% EV)</span>`;
+    cushionBadgeText = `⏳ PRE-GAME CUSHION`;
+    if (lineVal > 0) {
+      cushionExplanationText = `<strong>${bet.selection}</strong> starts with a <strong>+${lineVal} pt head start</strong> against the spread.`;
+    } else {
+      cushionExplanationText = `<strong>${bet.selection}</strong> is favored and must build a <strong>${Math.abs(lineVal)} pt lead</strong>.`;
+    }
     meterFillHtml = `<div class="bcast-meter-fill fill-blue" style="width: ${Math.min(100, prob)}%;"></div>`;
+  }
+
+  // Model Quant Metrics
+  const modelSpread = bet.model_projected_spread !== undefined ? bet.model_projected_spread : 0;
+  const modelSpreadStr = modelSpread > 0 ? `+${modelSpread.toFixed(1)}` : `${modelSpread.toFixed(1)}`;
+  const edgePts = bet.edge_points ? Number(bet.edge_points).toFixed(1) : Math.abs(bet.line - modelSpread).toFixed(1);
+  const prob = bet.cover_prob_pct ? Number(bet.cover_prob_pct).toFixed(1) : "60.5";
+  const ev = bet.ev_pct ? Number(bet.ev_pct).toFixed(1) : "15.5";
+  const ruleId = bet.triggered_rule_id || "ISyE 4031";
+  const confidence = bet.gemini_confidence || 92;
+  const edgeGrade = parseFloat(edgePts) >= 5.0 ? "5★ High Value" : (parseFloat(edgePts) >= 2.5 ? "Solid +EV" : "Marginal Edge");
+  const edgeGradeClass = parseFloat(edgePts) >= 5.0 ? "grade-5star" : "grade-solid";
+  let shortReason = bet.gemini_reasoning || "ISyE 4031 Student-t cover probability exceeds edge threshold.";
+  if (shortReason.length > 115) {
+    shortReason = shortReason.substring(0, 112) + "...";
   }
 
   const awayTicks = Array.from({length: 5}, (_, i) => `<span class="timeout-dash ${i < awayTimeouts ? 'active' : ''}"></span>`).join('');
   const homeTicks = Array.from({length: 5}, (_, i) => `<span class="timeout-dash ${i < homeTimeouts ? 'active' : ''}"></span>`).join('');
-
-  const awayScoreDisplay = awayScore !== null
-    ? `<span class="bcast-score-num ${isFinal && awayScore > homeScore ? 'winner-score' : ''}">${awayScore}</span>`
-    : `<span class="bcast-score-num pregame-dash">--</span>`;
-
-  const homeScoreDisplay = homeScore !== null
-    ? `<span class="bcast-score-num ${isFinal && homeScore > awayScore ? 'winner-score' : ''}">${homeScore}</span>`
-    : `<span class="bcast-score-num pregame-dash">--</span>`;
-
-  const awayBetPill = isBetOnAway ? `<span class="bcast-wing-bet-pill">★ OUR BET ${lineStr}</span>` : '';
-  const homeBetPill = isBetOnHome ? `<span class="bcast-wing-bet-pill">★ OUR BET ${lineStr}</span>` : '';
 
   let topStatusClass = "is-upcoming";
   let topStatusLabel = `TONIGHT • ${clockText}`;
@@ -501,98 +532,177 @@ function buildScoreBugHtml(bet) {
   }
 
   return `
-    <div class="bcast-scorebug ${cardCoverClass}" id="scorebug-${bet.bet_id}">
+    <div class="bcast-scorebug tri-card ${cardCoverClass}" id="scorebug-${bet.bet_id}">
       
-      <!-- Top Broadcast Ribbon -->
+      <!-- Top Broadcast Master Ribbon -->
       <div class="bcast-top-ribbon">
-        <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
           <span class="bcast-network-badge ${networkClass}">${networkName} HD</span>
           <span class="bcast-status-indicator ${topStatusClass}">
             ${isLive ? '<span class="live-pulse-dot"></span>' : ''}
             <span>${topStatusLabel}</span>
           </span>
+          <span class="bcast-rule-pill"><span class="rule-icon">🧠</span> ${ruleId}</span>
         </div>
-        <span class="bcast-sportsbook-tag">${bet.sportsbook || 'DraftKings'} ${oddsStr}</span>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="bcast-sportsbook-tag">${bet.sportsbook || 'DraftKings'} ${oddsStr}</span>
+          <span class="bcast-confidence-pill">Conviction: <strong>${confidence}%</strong></span>
+        </div>
       </div>
 
-      <!-- Main Scoreboard Chassis -->
-      <div class="bcast-rack">
-        
-        <!-- Away Team Wing -->
-        <div class="bcast-team-wing away" style="background: linear-gradient(135deg, ${awayTeam.primary}26 0%, var(--bcast-wing-base) 80%);">
-          <div>
-            <div class="bcast-team-header">
-              <img src="${awayTeam.logo}" alt="${awayTeam.abbr}" class="bcast-team-logo" loading="lazy" onerror="this.style.opacity='0.4'">
-              <div class="bcast-team-meta">
-                <div class="bcast-team-abbr">${awayTeam.abbr} ${awayBetPill}</div>
-                <div class="bcast-team-name">${awayTeam.short}</div>
+      <!-- Tri-Column Command Architecture -->
+      <div class="bcast-tri-body">
+
+        <!-- Column 1: Matchup & Live Scoreboard -->
+        <div class="tri-col tri-col-scoreboard">
+          <div class="tri-col-header">
+            <span class="tri-subhead">MATCHUP & SCOREBOARD</span>
+            <span class="tri-clock-badge">${isLive ? `${periodText} ${clockText}` : (isFinal ? 'FINAL' : 'TIP-OFF')}</span>
+          </div>
+
+          <div class="tri-scoreboard-rack">
+            <!-- Away Team Row -->
+            <div class="tri-team-row ${isBetOnAway ? 'is-our-pick' : ''}">
+              <div class="tri-team-left">
+                <img src="${awayTeam.logo}" alt="${awayTeam.abbr}" class="tri-team-logo" loading="lazy" onerror="this.style.opacity='0.4'">
+                <div class="tri-team-names">
+                  <span class="tri-team-abbr">${awayTeam.abbr} ${isBetOnAway ? '<span class="our-pick-pill">★ OUR BET</span>' : ''}</span>
+                  <span class="tri-team-full">${awayTeam.short}</span>
+                </div>
+              </div>
+              <div class="tri-score-val ${isFinal && awayScore > homeScore ? 'winner-score' : ''}">
+                ${awayScore !== null ? awayScore : '--'}
+              </div>
+            </div>
+
+            <!-- In-game Shot Clock / Status Line -->
+            <div class="tri-rack-hud">
+              <span class="tri-hud-center-clock">${isLive ? `<span class="sim-clock">${shotClockText}</span> SHOT CLOCK` : (isFinal ? 'FINAL SCORE' : `${clockText}`)}</span>
+            </div>
+
+            <!-- Home Team Row -->
+            <div class="tri-team-row ${isBetOnHome ? 'is-our-pick' : ''}">
+              <div class="tri-team-left">
+                <img src="${homeTeam.logo}" alt="${homeTeam.abbr}" class="tri-team-logo" loading="lazy" onerror="this.style.opacity='0.4'">
+                <div class="tri-team-names">
+                  <span class="tri-team-abbr">${homeTeam.abbr} ${isBetOnHome ? '<span class="our-pick-pill">★ OUR BET</span>' : ''}</span>
+                  <span class="tri-team-full">${homeTeam.short}</span>
+                </div>
+              </div>
+              <div class="tri-score-val ${isFinal && homeScore > awayScore ? 'winner-score' : ''}">
+                ${homeScore !== null ? homeScore : '--'}
               </div>
             </div>
           </div>
 
-          <div class="bcast-score-row">
-            ${awayScoreDisplay}
-          </div>
-
-          <div class="bcast-telemetry-row">
-            <span class="bcast-foul-text">FLS: ${awayFouls}</span>
-            <div class="bcast-timeout-ticks" title="Timeouts Remaining: ${awayTimeouts}/5">
-              <span style="font-size: 9px; margin-right: 2px;">TO:</span>
-              ${awayTicks}
+          <!-- Telemetry (Timeouts & Fouls) -->
+          <div class="tri-telemetry-strip">
+            <div class="tri-telem-side">
+              <span>FLS: ${awayFouls}</span>
+              <span class="tri-dots">TO: ${awayTicks}</span>
+            </div>
+            <div class="tri-telem-side">
+              <span class="tri-dots">TO: ${homeTicks}</span>
+              <span>FLS: ${homeFouls}</span>
             </div>
           </div>
         </div>
 
-        <!-- Center Game Clock HUD (Recessed Display) -->
-        <div class="bcast-hud">
-          <div class="bcast-hud-period">${periodText}</div>
-          <div class="bcast-hud-clock">${clockText}</div>
-          <div class="bcast-hud-shotclock ${isLive ? 'sim-clock' : ''}">${shotClockText}</div>
-        </div>
+        <!-- Column 2: The Bet Command Center (WHAT NEEDS TO HAPPEN TO WIN) -->
+        <div class="tri-col tri-col-command">
+          <div class="tri-col-header">
+            <span class="tri-subhead">🎯 WHAT NEEDS TO HAPPEN TO WIN</span>
+            <span class="tri-target-badge">SPREAD ${lineStr}</span>
+          </div>
 
-        <!-- Home Team Wing -->
-        <div class="bcast-team-wing home" style="background: linear-gradient(225deg, ${homeTeam.primary}26 0%, var(--bcast-wing-base) 80%);">
-          <div>
-            <div class="bcast-team-header">
-              <img src="${homeTeam.logo}" alt="${homeTeam.abbr}" class="bcast-team-logo" loading="lazy" onerror="this.style.opacity='0.4'">
-              <div class="bcast-team-meta">
-                <div class="bcast-team-abbr">${homeBetPill} ${homeTeam.abbr}</div>
-                <div class="bcast-team-name">${homeTeam.short}</div>
+          <div class="tri-command-inner">
+            <!-- Plain English Rule Callout -->
+            <div class="tri-goal-box">
+              <div class="goal-box-title">
+                <span>🎯</span>
+                <strong>CONDITION TO WIN:</strong>
+              </div>
+              <div class="goal-box-rule">
+                ${winRuleText}
+              </div>
+            </div>
+
+            <!-- Live Cushion Barometer -->
+            <div class="tri-cushion-card ${cushionCardClass}">
+              <div class="cushion-header">
+                <span class="cushion-label">SPREAD CUSHION STATUS:</span>
+                <span class="cushion-badge ${cushionStatusClass}">${cushionBadgeText}</span>
+              </div>
+              <div class="cushion-explanation">
+                ${cushionExplanationText}
+              </div>
+              <div class="bcast-meter-track" title="Cover Cushion Meter">
+                ${meterFillHtml}
+              </div>
+            </div>
+
+            <!-- Wager Economics Bar -->
+            <div class="tri-wager-bar">
+              <div class="wager-col">
+                <span class="wager-label">OUR WAGER</span>
+                <span class="wager-val highlight">${bet.selection} (${lineStr})</span>
+              </div>
+              <div class="wager-col">
+                <span class="wager-label">STAKE RISKED</span>
+                <span class="wager-val">$${stakeVal} (${unitsVal}U)</span>
+              </div>
+              <div class="wager-col">
+                <span class="wager-label">TO WIN</span>
+                <span class="wager-val profit">+$${profitVal}</span>
               </div>
             </div>
           </div>
+        </div>
 
-          <div class="bcast-score-row">
-            ${homeScoreDisplay}
+        <!-- Column 3: ISyE Quant Model & Edge Intelligence -->
+        <div class="tri-col tri-col-model">
+          <div class="tri-col-header">
+            <span class="tri-subhead">🔬 ISyE 4031 QUANT RADAR</span>
+            <span class="tri-edge-grade ${edgeGradeClass}">${edgeGrade}</span>
           </div>
 
-          <div class="bcast-telemetry-row">
-            <div class="bcast-timeout-ticks" title="Timeouts Remaining: ${homeTimeouts}/5">
-              <span style="font-size: 9px; margin-right: 2px;">TO:</span>
-              ${homeTicks}
+          <div class="tri-model-inner">
+            <!-- Line Discrepancy Compare Table -->
+            <div class="tri-edge-compare">
+              <div class="edge-data-row">
+                <span class="edge-data-label">Vegas Market Line:</span>
+                <span class="edge-data-val vegas">${lineStr}</span>
+              </div>
+              <div class="edge-data-row">
+                <span class="edge-data-label">ISyE OLS Spread:</span>
+                <span class="edge-data-val model">${modelSpreadStr}</span>
+              </div>
+              <div class="edge-data-row highlight-edge">
+                <span class="edge-data-label">Model Edge:</span>
+                <span class="edge-data-val edge">+${edgePts} PTS</span>
+              </div>
             </div>
-            <span class="bcast-foul-text">FLS: ${homeFouls}</span>
+
+            <!-- Probability & Expected Value Grid -->
+            <div class="tri-prob-matrix">
+              <div class="prob-chip">
+                <span class="prob-num">${prob}%</span>
+                <span class="prob-desc">Student-t P(Cover)</span>
+              </div>
+              <div class="prob-chip ev-chip">
+                <span class="prob-num">+${ev}%</span>
+                <span class="prob-desc">Expected Value</span>
+              </div>
+            </div>
+
+            <!-- Gemini AI Reasoning -->
+            <div class="tri-ai-reasoning" title="${bet.gemini_reasoning || ''}">
+              <span class="ai-brain-icon">🧠</span>
+              <span class="ai-reason-text">${shortReason}</span>
+            </div>
           </div>
         </div>
 
-      </div>
-
-      <!-- Lower-Third Betting Chyron Strip -->
-      <div class="bcast-chyron-strip">
-        <div class="bcast-chyron-main">
-          <div class="bcast-bet-summary">
-            <span>🎯</span>
-            <span style="font-weight: 700;">Wager:</span>
-            <span class="bcast-pick-pill">${bet.selection} (${lineStr})</span>
-            <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);">$${stakeVal} (${unitsVal}U) ➔ +$${profitVal}</span>
-          </div>
-          <div>
-            ${coverBadgeHtml}
-          </div>
-        </div>
-        <div class="bcast-meter-track" title="Cover Margin Meter">
-          ${meterFillHtml}
-        </div>
       </div>
 
     </div>
