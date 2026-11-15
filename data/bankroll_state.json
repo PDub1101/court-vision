@@ -63,8 +63,8 @@
       "potential_profit": 36.36,
       "model_projected_spread": 1.1,
       "edge_points": 3.4,
-      "cover_prob_pct": 62.9,
-      "ev_pct": 20.01,
+      "cover_prob_pct": 76.1,
+      "ev_pct": 45.21,
       "se_pred": 10.5,
       "se_mean": 1.32,
       "pi_80": [
@@ -72,8 +72,8 @@
         12.4
       ],
       "triggered_rule_id": "RULE-001",
-      "gemini_confidence": 87,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 62.9% (+20.01% EV, SE_pred=10.5) exceeds high-conviction threshold for Cleveland Cavaliers. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 76.1% (+45.21% EV, SE_pred=10.5) exceeds high-conviction threshold for Cleveland Cavaliers. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
       "status": "PENDING"
     },
     {
@@ -90,8 +90,8 @@
       "potential_profit": 36.36,
       "model_projected_spread": -2.3,
       "edge_points": 5.8,
-      "cover_prob_pct": 70.9,
-      "ev_pct": 35.39,
+      "cover_prob_pct": 74.1,
+      "ev_pct": 41.47,
       "se_pred": 10.44,
       "se_mean": 0.71,
       "pi_80": [
@@ -100,7 +100,7 @@
       ],
       "triggered_rule_id": "RULE-001",
       "gemini_confidence": 95,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 70.9% (+35.39% EV, SE_pred=10.44) exceeds high-conviction threshold for Miami Heat. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 74.1% (+41.47% EV, SE_pred=10.44) exceeds high-conviction threshold for Miami Heat. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
       "status": "PENDING"
     },
     {
@@ -117,8 +117,8 @@
       "potential_profit": 36.36,
       "model_projected_spread": -5.7,
       "edge_points": 9.8,
-      "cover_prob_pct": 82.5,
-      "ev_pct": 57.54,
+      "cover_prob_pct": 84.9,
+      "ev_pct": 61.99,
       "se_pred": 10.51,
       "se_mean": 1.35,
       "pi_80": [
@@ -127,7 +127,7 @@
       ],
       "triggered_rule_id": "RULE-003",
       "gemini_confidence": 95,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 82.5% (+57.54% EV, SE_pred=10.51) exceeds high-conviction threshold for Chicago Bulls. Applied RULE-003 (AR(1) blowout mean-reversion dampener of -0.56 pts).",
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 84.9% (+61.99% EV, SE_pred=10.51) exceeds high-conviction threshold for Chicago Bulls. Applied RULE-003 (AR(1) blowout mean-reversion dampener of -0.56 pts).",
       "status": "PENDING"
     }
   ],
@@ -626,5 +626,5 @@
       "note": "Day Settlement: 7 bets (4W-3L, +$25.44)"
     }
   ],
-  "last_updated": "2026-11-14T18:40:04.539587+00:00"
+  "last_updated": "2026-11-15T00:40:19.623372+00:00"
 }
