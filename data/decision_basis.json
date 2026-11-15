@@ -42,15 +42,15 @@
     ]
   },
   "diagnostics": {
-    "cfe": 14.3,
-    "mad": 14.43,
-    "tracking_signal": 0.99,
+    "cfe": 19.9,
+    "mad": 13.99,
+    "tracking_signal": 1.42,
     "tracking_signal_limit": 3.75,
     "status": "IN_CONTROL (Unbiased)",
-    "out_of_sample_rmse": 19.57,
-    "interval_coverage_50_pct": 33.3,
-    "interval_coverage_80_pct": 66.7,
-    "interval_coverage_95_pct": 77.8,
+    "out_of_sample_rmse": 17.99,
+    "interval_coverage_50_pct": 30.8,
+    "interval_coverage_80_pct": 61.5,
+    "interval_coverage_95_pct": 84.6,
     "residual_history": [
       {
         "date": "2026-11-10",
@@ -168,6 +168,58 @@
         "captured_50": false,
         "captured_80": false,
         "captured_95": true
+      },
+      {
+        "date": "2026-11-15",
+        "matchup": "Denver Nuggets @ New Orleans Pelicans",
+        "predicted_home_margin": -1.5,
+        "observed_home_margin": -8,
+        "residual_e": -6.5,
+        "studentized_r": -0.62,
+        "se_pred": 10.53,
+        "se_mean": 1.51,
+        "captured_50": true,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-15",
+        "matchup": "Dallas Mavericks @ Cleveland Cavaliers",
+        "predicted_home_margin": -1.1,
+        "observed_home_margin": 10,
+        "residual_e": 11.1,
+        "studentized_r": 1.06,
+        "se_pred": 10.5,
+        "se_mean": 1.32,
+        "captured_50": false,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-15",
+        "matchup": "Detroit Pistons @ Miami Heat",
+        "predicted_home_margin": 2.3,
+        "observed_home_margin": 20,
+        "residual_e": 17.7,
+        "studentized_r": 1.7,
+        "se_pred": 10.44,
+        "se_mean": 0.71,
+        "captured_50": false,
+        "captured_80": false,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-15",
+        "matchup": "Chicago Bulls @ Minnesota Timberwolves",
+        "predicted_home_margin": 5.7,
+        "observed_home_margin": -11,
+        "residual_e": -16.7,
+        "studentized_r": -1.59,
+        "se_pred": 10.51,
+        "se_mean": 1.35,
+        "captured_50": false,
+        "captured_80": false,
+        "captured_95": true
       }
     ]
   },
@@ -241,7 +293,37 @@
       "rule_statement": "Post-mortem on Portland Trail Blazers @ Sacramento Kings: Observed residual of -15.2 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
       "adjustment_type": "VARIANCE_GUARD",
       "parameter_delta": -3
+    },
+    {
+      "rule_id": "RULE-008",
+      "created_at": "2026-11-15 19:17:09",
+      "source_game": "Dallas Mavericks 117 - Cleveland Cavaliers 127",
+      "residual_trigger": "e_t = +11.1 pts (r = +1.06)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Dallas Mavericks @ Cleveland Cavaliers: Observed residual of +11.1 pts (SE_pred = 10.5). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": 2
+    },
+    {
+      "rule_id": "RULE-009",
+      "created_at": "2026-11-15 19:17:09",
+      "source_game": "Detroit Pistons 117 - Miami Heat 137",
+      "residual_trigger": "e_t = +17.7 pts (r = +1.7)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Detroit Pistons @ Miami Heat: Observed residual of +17.7 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": 2
+    },
+    {
+      "rule_id": "RULE-010",
+      "created_at": "2026-11-15 19:17:09",
+      "source_game": "Chicago Bulls 117 - Minnesota Timberwolves 106",
+      "residual_trigger": "e_t = -16.7 pts (r = -1.59)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Chicago Bulls @ Minnesota Timberwolves: Observed residual of -16.7 pts (SE_pred = 10.51). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": 2
     }
   ],
-  "last_updated": "2026-11-14T18:39:54Z"
+  "last_updated": "2026-11-15T19:17:09Z"
 }
