@@ -2,8 +2,8 @@
   "bankroll": {
     "starting_capital": 1000.0,
     "current_balance": 1034.54,
-    "available_cash": 754.54,
-    "in_play_equity": 280.0,
+    "available_cash": 514.54,
+    "in_play_equity": 520.0,
     "total_profit_loss": 34.54,
     "roi_percent": 3.45,
     "currency": "USD"
@@ -210,6 +210,168 @@
       "gemini_confidence": 95,
       "gemini_reasoning": "ISyE 4031 Student-t cover probability of 88.7% (+69.43% EV, SE_pred=10.44) exceeds high-conviction threshold for Sacramento Kings. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
       "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261116_224552_chi",
+      "game_id": "espn_nba_401909995",
+      "date_placed": "2026-11-16 22:45:52",
+      "matchup": "Chicago Bulls @ Cleveland Cavaliers",
+      "selection": "Chicago Bulls",
+      "line": 8.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -2.2,
+      "edge_points": 6.3,
+      "cover_prob_pct": 72.7,
+      "ev_pct": 38.72,
+      "se_pred": 10.44,
+      "se_mean": 0.7,
+      "pi_80": [
+        -11.2,
+        15.6
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 72.7% (+38.72% EV, SE_pred=10.44) exceeds high-conviction threshold for Chicago Bulls. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261116_224552_was",
+      "game_id": "espn_nba_401909996",
+      "date_placed": "2026-11-16 22:45:52",
+      "matchup": "Memphis Grizzlies @ Washington Wizards",
+      "selection": "Washington Wizards",
+      "line": 3.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -2.2,
+      "edge_points": 5.7,
+      "cover_prob_pct": 70.7,
+      "ev_pct": 35.01,
+      "se_pred": 10.44,
+      "se_mean": 0.7,
+      "pi_80": [
+        -11.2,
+        15.6
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 70.7% (+35.01% EV, SE_pred=10.44) exceeds high-conviction threshold for Washington Wizards. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261116_224552_bro",
+      "game_id": "espn_nba_401909997",
+      "date_placed": "2026-11-16 22:45:52",
+      "matchup": "Philadelphia 76ers @ Brooklyn Nets",
+      "selection": "Brooklyn Nets",
+      "line": 4.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -1.5,
+      "edge_points": 6.0,
+      "cover_prob_pct": 71.6,
+      "ev_pct": 36.72,
+      "se_pred": 10.45,
+      "se_mean": 0.74,
+      "pi_80": [
+        -12.0,
+        14.9
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 71.6% (+36.72% EV, SE_pred=10.45) exceeds high-conviction threshold for Brooklyn Nets. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261116_224552_mia",
+      "game_id": "espn_nba_401909998",
+      "date_placed": "2026-11-16 22:45:52",
+      "matchup": "Houston Rockets @ Miami Heat",
+      "selection": "Miami Heat",
+      "line": 1.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -2.3,
+      "edge_points": 3.8,
+      "cover_prob_pct": 64.0,
+      "ev_pct": 22.27,
+      "se_pred": 10.44,
+      "se_mean": 0.71,
+      "pi_80": [
+        -11.2,
+        15.7
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 90,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 64.0% (+22.27% EV, SE_pred=10.44) exceeds high-conviction threshold for Miami Heat. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261116_224552_min",
+      "game_id": "espn_nba_401909999",
+      "date_placed": "2026-11-16 22:45:52",
+      "matchup": "Portland Trail Blazers @ Minnesota Timberwolves",
+      "selection": "Minnesota Timberwolves",
+      "line": -2.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -5.7,
+      "edge_points": 3.2,
+      "cover_prob_pct": 61.8,
+      "ev_pct": 17.92,
+      "se_pred": 10.51,
+      "se_mean": 1.35,
+      "pi_80": [
+        -7.9,
+        19.2
+      ],
+      "triggered_rule_id": "RULE-003",
+      "gemini_confidence": 82,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 61.8% (+17.92% EV, SE_pred=10.51) exceeds high-conviction threshold for Minnesota Timberwolves. Applied RULE-003 (AR(1) blowout mean-reversion dampener of -0.56 pts).",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261116_224552_pho",
+      "game_id": "espn_nba_401910001",
+      "date_placed": "2026-11-16 22:45:52",
+      "matchup": "Phoenix Suns @ Denver Nuggets",
+      "selection": "Phoenix Suns",
+      "line": 9.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -4.6,
+      "edge_points": 4.9,
+      "cover_prob_pct": 67.9,
+      "ev_pct": 29.64,
+      "se_pred": 10.5,
+      "se_mean": 1.29,
+      "pi_80": [
+        -8.9,
+        18.1
+      ],
+      "triggered_rule_id": "RULE-003",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 67.9% (+29.64% EV, SE_pred=10.5) exceeds high-conviction threshold for Phoenix Suns. Applied RULE-003 (AR(1) blowout mean-reversion dampener of +0.9 pts).",
+      "status": "PENDING"
     }
   ],
   "settled_bets": [
@@ -377,5 +539,5 @@
       "note": "WON: Charlotte Hornets (Charlotte Hornets 96 - Phoenix Suns 101)"
     }
   ],
-  "last_updated": "2026-11-13T19:05:40.111647+00:00"
+  "last_updated": "2026-11-16T22:45:52.232163+00:00"
 }
