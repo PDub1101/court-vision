@@ -42,15 +42,15 @@
     ]
   },
   "diagnostics": {
-    "cfe": 19.9,
-    "mad": 13.99,
-    "tracking_signal": 1.42,
+    "cfe": 4.0,
+    "mad": 13.09,
+    "tracking_signal": 0.31,
     "tracking_signal_limit": 3.75,
     "status": "IN_CONTROL (Unbiased)",
-    "out_of_sample_rmse": 17.99,
-    "interval_coverage_50_pct": 30.8,
-    "interval_coverage_80_pct": 61.5,
-    "interval_coverage_95_pct": 84.6,
+    "out_of_sample_rmse": 16.73,
+    "interval_coverage_50_pct": 31.2,
+    "interval_coverage_80_pct": 68.8,
+    "interval_coverage_95_pct": 87.5,
     "residual_history": [
       {
         "date": "2026-11-10",
@@ -220,6 +220,45 @@
         "captured_50": false,
         "captured_80": false,
         "captured_95": true
+      },
+      {
+        "date": "2026-11-16",
+        "matchup": "Los Angeles Lakers @ Phoenix Suns",
+        "predicted_home_margin": 3.5,
+        "observed_home_margin": -8,
+        "residual_e": -11.5,
+        "studentized_r": -1.1,
+        "se_pred": 10.45,
+        "se_mean": 0.83,
+        "captured_50": false,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-16",
+        "matchup": "Charlotte Hornets @ LA Clippers",
+        "predicted_home_margin": 2.2,
+        "observed_home_margin": 8,
+        "residual_e": 5.8,
+        "studentized_r": 0.56,
+        "se_pred": 10.44,
+        "se_mean": 0.7,
+        "captured_50": true,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-16",
+        "matchup": "San Antonio Spurs @ Utah Jazz",
+        "predicted_home_margin": 2.2,
+        "observed_home_margin": -8,
+        "residual_e": -10.2,
+        "studentized_r": -0.98,
+        "se_pred": 10.44,
+        "se_mean": 0.7,
+        "captured_50": false,
+        "captured_80": true,
+        "captured_95": true
       }
     ]
   },
@@ -323,7 +362,27 @@
       "rule_statement": "Post-mortem on Chicago Bulls @ Minnesota Timberwolves: Observed residual of -16.7 pts (SE_pred = 10.51). Tightening variance filter on similar pace/shooting profiles.",
       "adjustment_type": "VARIANCE_GUARD",
       "parameter_delta": 2
+    },
+    {
+      "rule_id": "RULE-011",
+      "created_at": "2026-11-16 00:39:34",
+      "source_game": "Los Angeles Lakers 131 - Phoenix Suns 123",
+      "residual_trigger": "e_t = -11.5 pts (r = -1.1)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Los Angeles Lakers @ Phoenix Suns: Observed residual of -11.5 pts (SE_pred = 10.45). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": -3
+    },
+    {
+      "rule_id": "RULE-012",
+      "created_at": "2026-11-16 00:39:34",
+      "source_game": "San Antonio Spurs 110 - Utah Jazz 102",
+      "residual_trigger": "e_t = -10.2 pts (r = -0.98)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on San Antonio Spurs @ Utah Jazz: Observed residual of -10.2 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": 2
     }
   ],
-  "last_updated": "2026-11-15T19:17:09Z"
+  "last_updated": "2026-11-16T00:39:34Z"
 }
