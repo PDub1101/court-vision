@@ -60,7 +60,7 @@
 
       --text-primary: #0f172a;
       --text-secondary: #475569;
-      --text-muted: #64748b;
+      --text-muted: #475569;
 
       --bball-orange: #ea580c;
       --bball-orange-glow: rgba(234, 88, 12, 0.14);
@@ -104,7 +104,7 @@
       --bcast-wing-base: #ffffff;
       --bcast-wing-border: #f1f5f9;
       --bcast-text-primary: #0f172a;
-      --bcast-text-secondary: #64748b;
+      --bcast-text-secondary: #475569;
       --bcast-hud-bg: #f8fafc;
       --bcast-hud-border: #e2e8f0;
       --bcast-hud-clock: #0f172a;
@@ -136,14 +136,14 @@
 
       --text-primary: #f8fafc;
       --text-secondary: #94a3b8;
-      --text-muted: #64748b;
+      --text-muted: #94a3b8;
 
-      --bball-orange: #f97316;
+      --bball-orange: #ea580c;
       --bball-orange-glow: rgba(249, 115, 22, 0.22);
       --bball-court: #1c1510;
       --bball-border: #7c2d12;
 
-      --accent-primary: #f97316;
+      --accent-primary: #ea580c;
       --accent-primary-hover: #ea580c;
       --accent-primary-bg: rgba(249, 115, 22, 0.14);
       --accent-primary-border: rgba(249, 115, 22, 0.35);
@@ -264,9 +264,16 @@
     html[data-theme="light"] .ticker-badge {
       background: #ea580c;
       color: #ffffff;
-      box-shadow: 0 1px 3px rgba(234, 88, 12, 0.3);
+      box-shadow: none;
     }
 
+    
+    @media (prefers-reduced-motion: reduce) {
+      .ticker-inner {
+        animation: none !important;
+        overflow-x: auto;
+      }
+    }
     .ticker-inner {
       display: inline-flex;
       align-items: center;
@@ -293,7 +300,7 @@
       background: var(--bball-orange);
       color: #fff;
       font-weight: 800;
-      font-size: 10px;
+      font-size: 11.5px;
       padding: 1px 6px;
       border-radius: 4px;
     }
@@ -331,7 +338,7 @@
       background: radial-gradient(circle at 35% 35%, #fb923c, #ea580c 70%, #9a3412);
       color: #ffffff;
       font-size: 22px;
-      box-shadow: 0 3px 12px rgba(234, 88, 12, 0.5);
+      box-shadow: none;
       border: 1.5px solid rgba(255, 255, 255, 0.25);
     }
 
@@ -389,7 +396,7 @@
       background: var(--bg-ribbon);
       border-top: 1px solid var(--border-subtle);
       border-bottom: 1px solid var(--border-subtle);
-      padding: 0;
+      padding: 8px 0;
       margin-bottom: 28px;
     }
 
@@ -450,7 +457,7 @@
       height: 100%;
     }
 
-    .kpi-card.accent-trial::before { background: #f97316; }
+    .kpi-card.accent-trial::before { background: #ea580c; }
     .kpi-card.accent-bankroll::before { background: #3b82f6; }
     .kpi-card.accent-pnl::before { background: var(--pos); }
     .kpi-card.accent-ats::before { background: #8b5cf6; }
@@ -496,7 +503,7 @@
 
     .trial-progress-fill {
       height: 100%;
-      background: #f97316;
+      background: #ea580c;
       border-radius: 2px;
       transition: width 0.4s ease;
     }
@@ -536,7 +543,7 @@
     }
 
     .tab-badge {
-      font-size: 10.5px;
+      font-size: 11.5px;
       font-weight: 700;
       padding: 2px 7px;
       border-radius: 4px;
@@ -762,7 +769,7 @@
     }
 
     .lifecycle-step-num {
-      font-size: 10.5px;
+      font-size: 11.5px;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.08em;
@@ -802,9 +809,8 @@
 
     /* Desk & Ledger Tables */
     .table-container {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 4px;
+      background: transparent;
+      border: none;
       overflow-x: auto;
       box-shadow: none;
       margin-bottom: 28px;
@@ -947,7 +953,7 @@
       letter-spacing: 0.8px;
       text-transform: uppercase;
       font-family: 'JetBrains Mono', monospace;
-      box-shadow: 0 0 12px rgba(239, 68, 68, 0.25);
+      box-shadow: none;
     }
 
     .live-pulse-dot {
@@ -955,13 +961,13 @@
       height: 8px;
       background: #ef4444;
       border-radius: 50%;
-      box-shadow: 0 0 10px #ef4444;
+      box-shadow: none;
       animation: livePulseAnim 1.4s infinite ease-in-out;
     }
 
     @keyframes livePulseAnim {
       0%, 100% { opacity: 0.4; transform: scale(0.9); }
-      50% { opacity: 1; transform: scale(1.25); box-shadow: 0 0 14px #ef4444; }
+      50% { opacity: 1; transform: scale(1.25); box-shadow: none; }
     }
 
     .broadcast-heading {
@@ -1131,7 +1137,7 @@
 
     .bcast-network-badge {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
+      font-size: 11.5px;
       font-weight: 900;
       letter-spacing: 0.6px;
       padding: 3px 8px;
@@ -1146,7 +1152,7 @@
     .net-bally { background: #d91c24; color: #fff; }
     .net-yes { background: #002b66; color: #fff; }
     .net-tnt { background: #111; color: #fff; border: 1px solid #555; }
-    .net-courtvision { background: #ea580c; color: #fff; box-shadow: 0 0 8px rgba(234, 88, 12, 0.5); }
+    .net-courtvision { background: #c2410c; color: #fff; box-shadow: none; border: 1px solid rgba(234, 88, 12, 0.4); }
     .net-sn { background: #002d62; color: #fdbb30; }
 
     .bcast-status-indicator {
@@ -1171,7 +1177,7 @@
     }
 
     html[data-theme="light"] .bcast-status-indicator.is-final {
-      color: #64748b;
+      color: var(--text-muted);
     }
 
     .bcast-status-indicator.is-upcoming {
@@ -1184,7 +1190,7 @@
 
     .bcast-sportsbook-tag {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10.5px;
+      font-size: 11.5px;
       font-weight: 700;
       color: var(--bcast-tag-text);
       background: var(--bcast-tag-bg);
@@ -1197,7 +1203,7 @@
     /* Header rule & confidence badges */
     .bcast-rule-pill {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
+      font-size: 11.5px;
       font-weight: 800;
       background: rgba(249, 115, 22, 0.14);
       color: var(--bball-orange);
@@ -1210,7 +1216,7 @@
     }
     .bcast-confidence-pill {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
+      font-size: 11.5px;
       color: var(--bcast-text-secondary);
       background: var(--bcast-tag-bg);
       border: 1px solid var(--bcast-tag-border);
@@ -1270,7 +1276,7 @@
     }
     .tri-subhead {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
+      font-size: 11.5px;
       font-weight: 800;
       letter-spacing: 0.5px;
       color: var(--bcast-text-secondary);
@@ -1278,7 +1284,7 @@
     }
     .tri-clock-badge {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
+      font-size: 11.5px;
       font-weight: 800;
       color: var(--sky);
       background: var(--sky-bg);
@@ -1288,7 +1294,7 @@
     }
     .tri-target-badge {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
+      font-size: 11.5px;
       font-weight: 900;
       color: var(--bball-orange);
       background: var(--bball-orange-light);
@@ -1298,7 +1304,7 @@
     }
     .tri-edge-grade {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
+      font-size: 11.5px;
       font-weight: 800;
       padding: 1px 6px;
       border-radius: 4px;
@@ -1372,7 +1378,7 @@
       border-radius: 4px;
     }
     .tri-team-full {
-      font-size: 10px;
+      font-size: 11.5px;
       font-weight: 700;
       color: var(--bcast-text-secondary);
       text-transform: uppercase;
@@ -1395,7 +1401,7 @@
     }
     .tri-hud-center-clock {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
+      font-size: 11.5px;
       font-weight: 800;
       color: var(--bcast-text-secondary);
       letter-spacing: 0.4px;
@@ -1409,7 +1415,7 @@
       justify-content: space-between;
       align-items: center;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
+      font-size: 11.5px;
       color: var(--bcast-text-secondary);
       margin-top: 6px;
       padding-top: 4px;
@@ -1438,7 +1444,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 10.5px;
+      font-size: 11.5px;
       font-weight: 900;
       color: var(--bball-orange);
       font-family: 'JetBrains Mono', monospace;
@@ -1473,7 +1479,7 @@
       justify-content: space-between;
       align-items: center;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10.5px;
+      font-size: 11.5px;
       font-weight: 800;
     }
     .cushion-label {
@@ -1482,7 +1488,7 @@
     .cushion-badge {
       padding: 2px 7px;
       border-radius: 4px;
-      font-size: 10px;
+      font-size: 11.5px;
       font-weight: 900;
     }
     .cushion-badge.covering {
@@ -1555,7 +1561,7 @@
     }
     .edge-data-label {
       color: var(--bcast-text-secondary);
-      font-size: 10.5px;
+      font-size: 11.5px;
     }
     .edge-data-val {
       font-family: 'JetBrains Mono', monospace;
@@ -1619,7 +1625,7 @@
       border: 1px solid var(--border-subtle);
       border-radius: 6px;
       padding: 6px 8px;
-      font-size: 10.5px;
+      font-size: 11.5px;
       line-height: 1.35;
       color: var(--text-secondary);
     }
@@ -1721,14 +1727,14 @@
 
     /* Bet Badge on Wing */
     .bcast-wing-bet-pill {
-      font-size: 10px;
+      font-size: 11.5px;
       font-weight: 900;
       font-family: 'JetBrains Mono', monospace;
       padding: 2px 6px;
       border-radius: 4px;
       background: var(--bball-orange);
       color: #fff;
-      box-shadow: 0 0 10px rgba(249, 115, 22, 0.4);
+      box-shadow: none;
       display: inline-flex;
       align-items: center;
       gap: 4px;
@@ -1763,7 +1769,7 @@
 
     .bcast-score-num.winner-score {
       color: var(--accent-win);
-      text-shadow: 0 0 14px rgba(52, 211, 153, 0.4);
+      text-shadow: none;
     }
 
     html[data-theme="light"] .bcast-score-num.winner-score {
@@ -1784,7 +1790,7 @@
       align-items: center;
       justify-content: space-between;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
+      font-size: 11.5px;
       color: var(--bcast-text-secondary);
       margin-top: 6px;
       padding-top: 5px;
@@ -1879,7 +1885,7 @@
       border: 1px solid var(--bcast-shotclock-border);
       padding: 1px 7px;
       border-radius: 4px;
-      text-shadow: 0 0 8px rgba(245, 158, 11, 0.65);
+      text-shadow: none;
       letter-spacing: 0.5px;
       transition: all 0.25s ease;
     }
@@ -1952,7 +1958,7 @@
       background: var(--pos-bg);
       color: var(--pos);
       border: 1px solid var(--pos-border);
-      box-shadow: 0 0 10px rgba(52, 211, 153, 0.2);
+      box-shadow: none;
     }
 
     html[data-theme="light"] .bcast-cover-badge.status-covering {
@@ -1969,7 +1975,7 @@
       background: var(--pos-bg);
       color: var(--pos);
       border: 1px solid var(--pos-border);
-      box-shadow: 0 0 12px rgba(52, 211, 153, 0.3);
+      box-shadow: none;
     }
 
     html[data-theme="light"] .bcast-cover-badge.status-won {
@@ -2011,12 +2017,12 @@
 
     .bcast-meter-fill.fill-green {
       background: linear-gradient(90deg, #10b981, #34d399);
-      box-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
+      box-shadow: none;
     }
 
     .bcast-meter-fill.fill-red {
       background: linear-gradient(90deg, #ef4444, #f87171);
-      box-shadow: 0 0 8px rgba(248, 113, 113, 0.5);
+      box-shadow: none;
     }
 
     .bcast-meter-fill.fill-blue {
