@@ -2,8 +2,8 @@
   "bankroll": {
     "starting_capital": 1000.0,
     "current_balance": 1052.7,
-    "available_cash": 1052.7,
-    "in_play_equity": 0.0,
+    "available_cash": 872.7,
+    "in_play_equity": 180.0,
     "total_profit_loss": 52.7,
     "roi_percent": 5.27,
     "currency": "USD"
@@ -21,7 +21,143 @@
     "average_edge_points": 2.9,
     "clv_beat_rate_percent": 66.7
   },
-  "active_bets": [],
+  "active_bets": [
+    {
+      "bet_id": "bet_20261117_214216_tor",
+      "game_id": "espn_nba_401910002",
+      "date_placed": "2026-11-17 21:42:16",
+      "matchup": "New York Knicks @ Toronto Raptors",
+      "selection": "Toronto Raptors",
+      "line": 4.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -1.8,
+      "edge_points": 6.3,
+      "cover_prob_pct": 72.5,
+      "ev_pct": 38.5,
+      "se_pred": 10.45,
+      "se_mean": 0.73,
+      "pi_80": [
+        -11.7,
+        15.2
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 72.5% (+38.5% EV, SE_pred=10.45) exceeds high-conviction threshold for Toronto Raptors. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261117_214600_min",
+      "game_id": "espn_nba_401910003",
+      "date_placed": "2026-11-17 21:46:00",
+      "matchup": "Portland Trail Blazers @ Minnesota Timberwolves",
+      "selection": "Minnesota Timberwolves",
+      "line": -2.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 20.0,
+      "units": 1,
+      "potential_profit": 18.18,
+      "model_projected_spread": -5.7,
+      "edge_points": 3.2,
+      "cover_prob_pct": 61.8,
+      "ev_pct": 17.92,
+      "se_pred": 10.51,
+      "se_mean": 1.35,
+      "pi_80": [
+        -7.9,
+        19.2
+      ],
+      "triggered_rule_id": "RULE-007",
+      "gemini_confidence": 73,
+      "gemini_reasoning": "Minnesota's EWMA Net Rating of +5.45 and steady Holt trend (+0.13) drive a robust 61.8% Student-t cover probability against Portland's neutral rating, yielding a +17.92% mathematical edge at -2.5. After accounting for RULE-007's variance adjustment from Portland's prior road residual volatility, the +3.2 point discrepancy maintains viable standard 1-unit value.",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261117_214606_det",
+      "game_id": "espn_nba_401910004",
+      "date_placed": "2026-11-17 21:46:06",
+      "matchup": "Detroit Pistons @ San Antonio Spurs",
+      "selection": "Detroit Pistons",
+      "line": 9.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -2.2,
+      "edge_points": 7.3,
+      "cover_prob_pct": 75.7,
+      "ev_pct": 44.6,
+      "se_pred": 10.44,
+      "se_mean": 0.7,
+      "pi_80": [
+        -11.2,
+        15.6
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 75.7% (+44.6% EV, SE_pred=10.44) exceeds high-conviction threshold for Detroit Pistons. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261117_214655_uta",
+      "game_id": "espn_nba_401910006",
+      "date_placed": "2026-11-17 21:46:55",
+      "matchup": "Utah Jazz @ LA Clippers",
+      "selection": "Utah Jazz",
+      "line": 6.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -2.2,
+      "edge_points": 4.3,
+      "cover_prob_pct": 66.0,
+      "ev_pct": 25.92,
+      "se_pred": 10.44,
+      "se_mean": 0.7,
+      "pi_80": [
+        -11.2,
+        15.6
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 66.0% (+25.92% EV, SE_pred=10.44) exceeds high-conviction threshold for Utah Jazz. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261117_214716_cha",
+      "game_id": "espn_nba_401910005",
+      "date_placed": "2026-11-17 21:47:16",
+      "matchup": "Charlotte Hornets @ Los Angeles Lakers",
+      "selection": "Charlotte Hornets",
+      "line": 7.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -2.3,
+      "edge_points": 5.2,
+      "cover_prob_pct": 69.1,
+      "ev_pct": 31.99,
+      "se_pred": 10.45,
+      "se_mean": 0.73,
+      "pi_80": [
+        -11.2,
+        15.7
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 69.1% (+31.99% EV, SE_pred=10.45) exceeds high-conviction threshold for Charlotte Hornets. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    }
+  ],
   "settled_bets": [
     {
       "bet_id": "bet_20261117_021037_pho",
@@ -701,5 +837,5 @@
       "note": "Day Settlement: 11 bets (6W-5L, +$18.16)"
     }
   ],
-  "last_updated": "2026-11-17T21:30:14.303421+00:00"
+  "last_updated": "2026-11-17T21:47:16.723495+00:00"
 }
