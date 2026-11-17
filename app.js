@@ -169,6 +169,14 @@ function formatGameTime(isoString) {
   return formatToEasternTime(isoString);
 }
 
+function formatNetPnl(pnl) {
+  if (pnl === undefined || pnl === null || isNaN(pnl)) return '$0.00';
+  const num = parseFloat(pnl);
+  if (num > 0) return `+$${num.toFixed(2)}`;
+  if (num < 0) return `-$${Math.abs(num).toFixed(2)}`;
+  return '$0.00';
+}
+
 function setBroadcastFilter(filter) {
   currentBroadcastFilter = filter;
   ['active', 'settled', 'all'].forEach(f => {
@@ -347,6 +355,15 @@ function buildScoreBugHtml(bet) {
   const unitsVal = bet.units || 2;
   const profitVal = bet.potential_profit ? parseFloat(bet.potential_profit).toFixed(2) : '36.36';
 
+  const netPnlVal = bet.net_pnl !== undefined 
+    ? parseFloat(bet.net_pnl) 
+    : (bet.result === 'WON' ? parseFloat(profitVal) : (bet.result === 'LOST' ? -parseFloat(stakeVal) : 0));
+  const netPnlFormatted = formatNetPnl(netPnlVal);
+  const isWon = bet.result === 'WON' || (isSettled && netPnlVal > 0);
+  const isPush = bet.result === 'PUSH' || (isSettled && netPnlVal === 0);
+  const netPnlClass = isWon ? 'profit' : (isPush ? '' : 'loss');
+  const netPnlColor = isWon ? 'var(--pos)' : (isPush ? 'var(--text-muted)' : 'var(--neg)');
+
   // Find real scheduled tip-off time in Eastern Time
   const slate = (window.COURTVISION_DATA && window.COURTVISION_DATA.todays_slate) || [];
   const slateGame = slate.find(g => 
@@ -448,22 +465,19 @@ function buildScoreBugHtml(bet) {
   let cardCoverClass = "";
 
   if (isSettled) {
-    const isWon = bet.result === 'WON';
     const margin = bet.cover_margin !== undefined ? bet.cover_margin : 0;
     const marginStr = margin > 0 ? `+${margin}` : `${margin}`;
-    cardCoverClass = isWon ? "bet-covering" : "bet-losing";
-    cushionCardClass = isWon ? "status-cushion-covering" : "status-cushion-losing";
-    cushionStatusClass = isWon ? "covering" : "losing";
+    cardCoverClass = isWon ? "bet-covering" : (isPush ? "" : "bet-losing");
+    cushionCardClass = isWon ? "status-cushion-covering" : (isPush ? "status-cushion-pregame" : "status-cushion-losing");
+    cushionStatusClass = isWon ? "covering" : (isPush ? "pregame" : "losing");
 
-    if (isWon) {
-      cushionBadgeText = `🏆 COVERED BY ${marginStr} PTS`;
-      cushionExplanationText = `<strong>${bet.selection}</strong> covered the spread (+$${bet.net_pnl.toFixed(2)} return).`;
-      meterFillHtml = `<div class="bcast-meter-fill fill-green" style="width: 100%;"></div>`;
-    } else {
-      cushionBadgeText = `❌ MISSED BY ${marginStr} PTS`;
-      cushionExplanationText = `<strong>${bet.selection}</strong> failed to cover the spread (-$${Math.abs(bet.net_pnl).toFixed(2)}).`;
-      meterFillHtml = `<div class="bcast-meter-fill fill-red" style="width: 100%;"></div>`;
-    }
+    cushionBadgeText = `${netPnlFormatted}`;
+    cushionExplanationText = `Net outcome: <strong style="color: ${netPnlColor}; font-size: 13.5px;">${netPnlFormatted}</strong> (${bet.selection} ${isWon ? 'covered spread' : (isPush ? 'pushed with line' : 'failed to cover')}).`;
+    meterFillHtml = isWon
+      ? `<div class="bcast-meter-fill fill-green" style="width: 100%;"></div>`
+      : (isPush
+          ? `<div class="bcast-meter-fill fill-blue" style="width: 50%;"></div>`
+          : `<div class="bcast-meter-fill fill-red" style="width: 100%;"></div>`);
   } else if (isLive) {
     let betScore = isBetOnHome ? homeScore : awayScore;
     let oppScore = isBetOnHome ? awayScore : homeScore;
@@ -527,8 +541,8 @@ function buildScoreBugHtml(bet) {
     topStatusClass = "is-live";
     topStatusLabel = `🔴 LIVE • ${periodText} ${clockText}`;
   } else if (isFinal) {
-    topStatusClass = "is-final";
-    topStatusLabel = "FINAL SCORE";
+    topStatusClass = isSettled ? `is-final ${isWon ? 'is-won' : (isPush ? '' : 'is-lost')}` : "is-final";
+    topStatusLabel = isSettled ? `FINAL • ${netPnlFormatted}` : "FINAL SCORE";
   }
 
   return `
@@ -608,35 +622,37 @@ function buildScoreBugHtml(bet) {
           </div>
         </div>
 
-        <!-- Column 2: The Bet Command Center (WHAT NEEDS TO HAPPEN TO WIN) -->
+        <!-- Column 2: The Bet Command Center (WHAT NEEDS TO HAPPEN TO WIN / SETTLED OUTCOME) -->
         <div class="tri-col tri-col-command">
           <div class="tri-col-header">
-            <span class="tri-subhead">🎯 WHAT NEEDS TO HAPPEN TO WIN</span>
-            <span class="tri-target-badge">SPREAD ${lineStr}</span>
+            <span class="tri-subhead">${isSettled ? '🏁 SETTLED BET OUTCOME' : '🎯 WHAT NEEDS TO HAPPEN TO WIN'}</span>
+            <span class="tri-target-badge ${isSettled ? (isWon ? 'badge-won' : (isPush ? '' : 'badge-lost')) : ''}">${isSettled ? netPnlFormatted : `SPREAD ${lineStr}`}</span>
           </div>
 
           <div class="tri-command-inner">
             <!-- Plain English Rule Callout -->
             <div class="tri-goal-box">
               <div class="goal-box-title">
-                <span>🎯</span>
-                <strong>CONDITION TO WIN:</strong>
+                <span>${isSettled ? (isWon ? '🏆' : (isPush ? '🟡' : '❌')) : '🎯'}</span>
+                <strong>${isSettled ? 'BET OUTCOME:' : 'CONDITION TO WIN:'}</strong>
               </div>
               <div class="goal-box-rule">
-                ${winRuleText}
+                ${isSettled 
+                  ? `<strong>${bet.selection}</strong>: <strong style="color: ${netPnlColor}; font-size: 13.5px;">${netPnlFormatted}</strong> (${isWon ? 'Covered spread' : (isPush ? 'Pushed with line' : 'Did not cover')}${bet.cover_margin !== undefined ? ` by ${bet.cover_margin > 0 ? '+' : ''}${bet.cover_margin} pts` : ''})` 
+                  : winRuleText}
               </div>
             </div>
 
             <!-- Live Cushion Barometer -->
             <div class="tri-cushion-card ${cushionCardClass}">
               <div class="cushion-header">
-                <span class="cushion-label">SPREAD CUSHION STATUS:</span>
+                <span class="cushion-label">${isSettled ? 'NET OUTCOME:' : 'SPREAD CUSHION STATUS:'}</span>
                 <span class="cushion-badge ${cushionStatusClass}">${cushionBadgeText}</span>
               </div>
               <div class="cushion-explanation">
                 ${cushionExplanationText}
               </div>
-              <div class="bcast-meter-track" title="Cover Cushion Meter">
+              <div class="bcast-meter-track" title="${isSettled ? 'Settled Bet Outcome' : 'Cover Cushion Meter'}">
                 ${meterFillHtml}
               </div>
             </div>
@@ -652,8 +668,8 @@ function buildScoreBugHtml(bet) {
                 <span class="wager-val">$${stakeVal} (${unitsVal}U)</span>
               </div>
               <div class="wager-col">
-                <span class="wager-label">TO WIN</span>
-                <span class="wager-val profit">+$${profitVal}</span>
+                <span class="wager-label">${isSettled ? 'NET P&L' : 'TO WIN'}</span>
+                <span class="wager-val ${isSettled ? netPnlClass : 'profit'}" style="${isSettled ? `color: ${netPnlColor} !important; font-weight: 800;` : ''}">${isSettled ? netPnlFormatted : `+$${profitVal}`}</span>
               </div>
             </div>
           </div>
@@ -1379,7 +1395,7 @@ function renderSettledTable(settledBets) {
       <td><span class="status-badge ${badgeClass}">${b.result}</span></td>
       <td style="font-weight: 600;">$${b.stake.toFixed(2)}</td>
       <td style="font-weight: 800; color: ${pnlColor}; font-family: 'JetBrains Mono', monospace;">
-        ${b.net_pnl >= 0 ? '+' : ''}$${b.net_pnl.toFixed(2)}
+        ${formatNetPnl(b.net_pnl)}
       </td>
       <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">${bankrollAfter}</td>
     `;
@@ -1559,8 +1575,7 @@ function renderEquityChart(history, currentBalance, bankrollState) {
                   const oddsStr = b.odds ? ` @ ${b.odds > 0 ? '+' : ''}${b.odds}` : '';
                   const stakeStr = b.stake ? `$${b.stake.toFixed(0)}` : '';
                   const res = b.result || 'SETTLED';
-                  const pnlSign = b.net_pnl >= 0 ? '+' : '';
-                  const pnlStr = b.net_pnl !== undefined ? ` (${pnlSign}$${b.net_pnl.toFixed(2)})` : '';
+                  const pnlStr = b.net_pnl !== undefined ? ` (${formatNetPnl(b.net_pnl)})` : '';
 
                   lines.push(` ${num}${b.selection} ${lineStr} [${stakeStr}${oddsStr}]`);
                   const scoreStr = b.final_score ? ` | Final: ${b.final_score}` : '';

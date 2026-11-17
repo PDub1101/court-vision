@@ -42,15 +42,15 @@
     ]
   },
   "diagnostics": {
-    "cfe": -7.1,
-    "mad": 15.13,
-    "tracking_signal": -0.47,
+    "cfe": 3.9,
+    "mad": 15.04,
+    "tracking_signal": 0.26,
     "tracking_signal_limit": 3.75,
     "status": "IN_CONTROL (Unbiased)",
-    "out_of_sample_rmse": 19.76,
-    "interval_coverage_50_pct": 30.0,
-    "interval_coverage_80_pct": 60.0,
-    "interval_coverage_95_pct": 70.0,
+    "out_of_sample_rmse": 19.27,
+    "interval_coverage_50_pct": 30.8,
+    "interval_coverage_80_pct": 53.8,
+    "interval_coverage_95_pct": 69.2,
     "residual_history": [
       {
         "date": "2026-11-10",
@@ -181,6 +181,45 @@
         "captured_50": false,
         "captured_80": false,
         "captured_95": false
+      },
+      {
+        "date": "2026-11-17",
+        "matchup": "Portland Trail Blazers @ Minnesota Timberwolves",
+        "predicted_home_margin": 5.7,
+        "observed_home_margin": 8,
+        "residual_e": 2.3,
+        "studentized_r": 0.22,
+        "se_pred": 10.51,
+        "se_mean": 1.35,
+        "captured_50": true,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-17",
+        "matchup": "Golden State Warriors @ New Orleans Pelicans",
+        "predicted_home_margin": -4.3,
+        "observed_home_margin": 21,
+        "residual_e": 25.3,
+        "studentized_r": 2.39,
+        "se_pred": 10.6,
+        "se_mean": 1.93,
+        "captured_50": false,
+        "captured_80": false,
+        "captured_95": false
+      },
+      {
+        "date": "2026-11-17",
+        "matchup": "Phoenix Suns @ Denver Nuggets",
+        "predicted_home_margin": 4.6,
+        "observed_home_margin": -12,
+        "residual_e": -16.6,
+        "studentized_r": -1.58,
+        "se_pred": 10.5,
+        "se_mean": 1.29,
+        "captured_50": false,
+        "captured_80": false,
+        "captured_95": true
       }
     ]
   },
@@ -264,7 +303,27 @@
       "rule_statement": "Post-mortem on Orlando Magic @ Boston Celtics: Observed residual of -21.4 pts (SE_pred = 10.78). Tightening variance filter on similar pace/shooting profiles.",
       "adjustment_type": "VARIANCE_GUARD",
       "parameter_delta": -3
+    },
+    {
+      "rule_id": "RULE-009",
+      "created_at": "2026-11-17 21:30:14",
+      "source_game": "Golden State Warriors 94 - New Orleans Pelicans 115",
+      "residual_trigger": "e_t = +25.3 pts (r = +2.39)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Golden State Warriors @ New Orleans Pelicans: Observed residual of +25.3 pts (SE_pred = 10.6). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": -3
+    },
+    {
+      "rule_id": "RULE-010",
+      "created_at": "2026-11-17 21:30:14",
+      "source_game": "Phoenix Suns 117 - Denver Nuggets 105",
+      "residual_trigger": "e_t = -16.6 pts (r = -1.58)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Phoenix Suns @ Denver Nuggets: Observed residual of -16.6 pts (SE_pred = 10.5). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": 2
     }
   ],
-  "last_updated": "2026-11-17T02:50:28Z"
+  "last_updated": "2026-11-17T21:30:14Z"
 }

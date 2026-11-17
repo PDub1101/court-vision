@@ -1180,6 +1180,14 @@
       color: var(--text-muted);
     }
 
+    .bcast-status-indicator.is-final.is-won {
+      color: var(--pos) !important;
+    }
+
+    .bcast-status-indicator.is-final.is-lost {
+      color: var(--neg) !important;
+    }
+
     .bcast-status-indicator.is-upcoming {
       color: #38bdf8;
     }
@@ -1301,6 +1309,16 @@
       border: 1px solid var(--bball-orange-border);
       padding: 1px 7px;
       border-radius: 4px;
+    }
+    .tri-target-badge.badge-won {
+      color: var(--pos) !important;
+      background: var(--pos-bg) !important;
+      border: 1px solid var(--pos-border) !important;
+    }
+    .tri-target-badge.badge-lost {
+      color: var(--neg) !important;
+      background: var(--neg-bg) !important;
+      border: 1px solid var(--neg-border) !important;
     }
     .tri-edge-grade {
       font-family: 'JetBrains Mono', monospace;
@@ -1542,6 +1560,9 @@
     }
     .wager-val.profit {
       color: var(--pos);
+    }
+    .wager-val.loss {
+      color: var(--neg);
     }
 
     /* Model Column 3 Elements (ISyE Quant Radar) */

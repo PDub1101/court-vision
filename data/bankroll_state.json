@@ -1,53 +1,60 @@
 {
   "bankroll": {
     "starting_capital": 1000.0,
-    "current_balance": 1019.98,
-    "available_cash": 899.98,
-    "in_play_equity": 120.0,
-    "total_profit_loss": 19.98,
-    "roi_percent": 2.0,
+    "current_balance": 1052.7,
+    "available_cash": 1052.7,
+    "in_play_equity": 0.0,
+    "total_profit_loss": 52.7,
+    "roi_percent": 5.27,
     "currency": "USD"
   },
   "metrics": {
-    "total_bets": 11,
-    "wins": 6,
-    "losses": 5,
+    "total_bets": 14,
+    "wins": 8,
+    "losses": 6,
     "pushes": 0,
-    "win_rate_percent": 54.5,
-    "current_streak": "L3",
+    "win_rate_percent": 57.1,
+    "current_streak": "W1",
     "longest_win_streak": 1,
     "longest_loss_streak": 1,
     "max_drawdown_percent": -2.0,
     "average_edge_points": 2.9,
     "clv_beat_rate_percent": 66.7
   },
-  "active_bets": [
+  "active_bets": [],
+  "settled_bets": [
     {
-      "bet_id": "bet_20261117_021037_min",
-      "game_id": "espn_nba_401909999",
+      "bet_id": "bet_20261117_021037_pho",
+      "game_id": "espn_nba_401910001",
       "date_placed": "2026-11-17 02:10:37",
-      "matchup": "Portland Trail Blazers @ Minnesota Timberwolves",
-      "selection": "Minnesota Timberwolves",
-      "line": -2.5,
+      "matchup": "Phoenix Suns @ Denver Nuggets",
+      "selection": "Phoenix Suns",
+      "line": 9.5,
       "odds": -110,
-      "sportsbook": "DraftKings / Consensus",
+      "sportsbook": "DraftKings",
       "stake": 40.0,
       "units": 2,
       "potential_profit": 36.36,
-      "model_projected_spread": -5.7,
-      "edge_points": 3.2,
-      "cover_prob_pct": 61.8,
-      "ev_pct": 17.92,
-      "se_pred": 10.51,
-      "se_mean": 1.35,
+      "model_projected_spread": -4.6,
+      "edge_points": 4.9,
+      "cover_prob_pct": 67.9,
+      "ev_pct": 29.64,
+      "se_pred": 10.5,
+      "se_mean": 1.29,
       "pi_80": [
-        -7.9,
-        19.2
+        -8.9,
+        18.1
       ],
       "triggered_rule_id": "RULE-003",
-      "gemini_confidence": 82,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 61.8% (+17.92% EV, SE_pred=10.51) exceeds high-conviction threshold for Minnesota Timberwolves. Applied RULE-003 (AR(1) blowout mean-reversion dampener of -0.56 pts).",
-      "status": "PENDING"
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 67.9% (+29.64% EV, SE_pred=10.5) exceeds high-conviction threshold for Phoenix Suns. Applied RULE-003 (AR(1) blowout mean-reversion dampener of +0.9 pts).",
+      "status": "SETTLED",
+      "result": "WON",
+      "final_score": "Phoenix Suns 117 - Denver Nuggets 105",
+      "cover_margin": 21.5,
+      "net_pnl": 36.36,
+      "bankroll_after": 1052.7,
+      "settled_at": "2026-11-17 21:30:14"
     },
     {
       "bet_id": "bet_20261117_021037_gol",
@@ -74,37 +81,47 @@
       "triggered_rule_id": "RULE-001",
       "gemini_confidence": 95,
       "gemini_reasoning": "ISyE 4031 Student-t cover probability of 73.9% (+41.04% EV, SE_pred=10.6) exceeds high-conviction threshold for Golden State Warriors. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
-      "status": "PENDING"
+      "status": "SETTLED",
+      "result": "LOST",
+      "final_score": "Golden State Warriors 94 - New Orleans Pelicans 115",
+      "cover_margin": -18.5,
+      "net_pnl": -40.0,
+      "bankroll_after": 1016.34,
+      "settled_at": "2026-11-17 21:30:14"
     },
     {
-      "bet_id": "bet_20261117_021037_pho",
-      "game_id": "espn_nba_401910001",
+      "bet_id": "bet_20261117_021037_min",
+      "game_id": "espn_nba_401909999",
       "date_placed": "2026-11-17 02:10:37",
-      "matchup": "Phoenix Suns @ Denver Nuggets",
-      "selection": "Phoenix Suns",
-      "line": 9.5,
+      "matchup": "Portland Trail Blazers @ Minnesota Timberwolves",
+      "selection": "Minnesota Timberwolves",
+      "line": -2.5,
       "odds": -110,
-      "sportsbook": "DraftKings",
+      "sportsbook": "DraftKings / Consensus",
       "stake": 40.0,
       "units": 2,
       "potential_profit": 36.36,
-      "model_projected_spread": -4.6,
-      "edge_points": 4.9,
-      "cover_prob_pct": 67.9,
-      "ev_pct": 29.64,
-      "se_pred": 10.5,
-      "se_mean": 1.29,
+      "model_projected_spread": -5.7,
+      "edge_points": 3.2,
+      "cover_prob_pct": 61.8,
+      "ev_pct": 17.92,
+      "se_pred": 10.51,
+      "se_mean": 1.35,
       "pi_80": [
-        -8.9,
-        18.1
+        -7.9,
+        19.2
       ],
       "triggered_rule_id": "RULE-003",
-      "gemini_confidence": 95,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 67.9% (+29.64% EV, SE_pred=10.5) exceeds high-conviction threshold for Phoenix Suns. Applied RULE-003 (AR(1) blowout mean-reversion dampener of +0.9 pts).",
-      "status": "PENDING"
-    }
-  ],
-  "settled_bets": [
+      "gemini_confidence": 82,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 61.8% (+17.92% EV, SE_pred=10.51) exceeds high-conviction threshold for Minnesota Timberwolves. Applied RULE-003 (AR(1) blowout mean-reversion dampener of -0.56 pts).",
+      "status": "SETTLED",
+      "result": "WON",
+      "final_score": "Portland Trail Blazers 98 - Minnesota Timberwolves 106",
+      "cover_margin": 5.5,
+      "net_pnl": 36.36,
+      "bankroll_after": 1056.34,
+      "settled_at": "2026-11-17 21:30:14"
+    },
     {
       "bet_id": "bet_20261117_021037_bos",
       "game_id": "espn_nba_401909994",
@@ -534,8 +551,8 @@
     },
     {
       "date": "2026-11-17",
-      "balance": 1019.98,
-      "pnl": -14.56,
+      "balance": 1052.7,
+      "pnl": 18.16,
       "bets": [
         {
           "bet_id": "bet_20261113_190540_ind",
@@ -640,10 +657,49 @@
           "net_pnl": -40.0,
           "final_score": "Orlando Magic 115 - Boston Celtics 105",
           "sportsbook": "DraftKings / Consensus"
+        },
+        {
+          "bet_id": "bet_20261117_021037_min",
+          "matchup": "Portland Trail Blazers @ Minnesota Timberwolves",
+          "selection": "Minnesota Timberwolves",
+          "line": -2.5,
+          "odds": -110,
+          "stake": 40.0,
+          "units": 2,
+          "result": "WON",
+          "net_pnl": 36.36,
+          "final_score": "Portland Trail Blazers 98 - Minnesota Timberwolves 106",
+          "sportsbook": "DraftKings / Consensus"
+        },
+        {
+          "bet_id": "bet_20261117_021037_gol",
+          "matchup": "Golden State Warriors @ New Orleans Pelicans",
+          "selection": "Golden State Warriors",
+          "line": 2.5,
+          "odds": -110,
+          "stake": 40.0,
+          "units": 2,
+          "result": "LOST",
+          "net_pnl": -40.0,
+          "final_score": "Golden State Warriors 94 - New Orleans Pelicans 115",
+          "sportsbook": "DraftKings / Consensus"
+        },
+        {
+          "bet_id": "bet_20261117_021037_pho",
+          "matchup": "Phoenix Suns @ Denver Nuggets",
+          "selection": "Phoenix Suns",
+          "line": 9.5,
+          "odds": -110,
+          "stake": 40.0,
+          "units": 2,
+          "result": "WON",
+          "net_pnl": 36.36,
+          "final_score": "Phoenix Suns 117 - Denver Nuggets 105",
+          "sportsbook": "DraftKings"
         }
       ],
-      "note": "Day Settlement: 8 bets (4W-4L, $-14.56)"
+      "note": "Day Settlement: 11 bets (6W-5L, +$18.16)"
     }
   ],
-  "last_updated": "2026-11-17T02:50:43.796786+00:00"
+  "last_updated": "2026-11-17T21:30:14.303421+00:00"
 }
