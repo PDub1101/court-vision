@@ -58,11 +58,10 @@ def fetch_recent_nba_scores():
     """
     scores = {}
 
-    # 1. Query ESPN Public Scoreboard for yesterday and today
+    # 1. Query ESPN Public Scoreboard for recent days (up to 5 days back for weekend coverage)
     now_utc = datetime.now(timezone.utc)
     dates_to_check = [
-        (now_utc - timedelta(days=1)).strftime("%Y%m%d"),
-        now_utc.strftime("%Y%m%d")
+        (now_utc - timedelta(days=i)).strftime("%Y%m%d") for i in range(5)
     ]
 
     for date_str in dates_to_check:
