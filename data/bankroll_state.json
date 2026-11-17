@@ -1,20 +1,20 @@
 {
   "bankroll": {
     "starting_capital": 1000.0,
-    "current_balance": 1059.98,
+    "current_balance": 1019.98,
     "available_cash": 899.98,
-    "in_play_equity": 160.0,
-    "total_profit_loss": 59.98,
-    "roi_percent": 6.0,
+    "in_play_equity": 120.0,
+    "total_profit_loss": 19.98,
+    "roi_percent": 2.0,
     "currency": "USD"
   },
   "metrics": {
-    "total_bets": 10,
+    "total_bets": 11,
     "wins": 6,
-    "losses": 4,
+    "losses": 5,
     "pushes": 0,
-    "win_rate_percent": 60.0,
-    "current_streak": "L2",
+    "win_rate_percent": 54.5,
+    "current_streak": "L3",
     "longest_win_streak": 1,
     "longest_loss_streak": 1,
     "max_drawdown_percent": -2.0,
@@ -22,33 +22,6 @@
     "clv_beat_rate_percent": 66.7
   },
   "active_bets": [
-    {
-      "bet_id": "bet_20261117_021037_bos",
-      "game_id": "espn_nba_401909994",
-      "date_placed": "2026-11-17 02:10:37",
-      "matchup": "Orlando Magic @ Boston Celtics",
-      "selection": "Boston Celtics",
-      "line": -2.5,
-      "odds": -110,
-      "sportsbook": "DraftKings / Consensus",
-      "stake": 40.0,
-      "units": 2,
-      "potential_profit": 36.36,
-      "model_projected_spread": -11.4,
-      "edge_points": 8.9,
-      "cover_prob_pct": 79.5,
-      "ev_pct": 51.69,
-      "se_pred": 10.78,
-      "se_mean": 2.76,
-      "pi_80": [
-        -2.5,
-        25.2
-      ],
-      "triggered_rule_id": "RULE-001",
-      "gemini_confidence": 95,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 79.5% (+51.69% EV, SE_pred=10.78) exceeds high-conviction threshold for Boston Celtics. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
-      "status": "PENDING"
-    },
     {
       "bet_id": "bet_20261117_021037_min",
       "game_id": "espn_nba_401909999",
@@ -132,6 +105,39 @@
     }
   ],
   "settled_bets": [
+    {
+      "bet_id": "bet_20261117_021037_bos",
+      "game_id": "espn_nba_401909994",
+      "date_placed": "2026-11-17 02:10:37",
+      "matchup": "Orlando Magic @ Boston Celtics",
+      "selection": "Boston Celtics",
+      "line": -2.5,
+      "odds": -110,
+      "sportsbook": "DraftKings / Consensus",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -11.4,
+      "edge_points": 8.9,
+      "cover_prob_pct": 79.5,
+      "ev_pct": 51.69,
+      "se_pred": 10.78,
+      "se_mean": 2.76,
+      "pi_80": [
+        -2.5,
+        25.2
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 79.5% (+51.69% EV, SE_pred=10.78) exceeds high-conviction threshold for Boston Celtics. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "SETTLED",
+      "result": "LOST",
+      "final_score": "Orlando Magic 115 - Boston Celtics 105",
+      "cover_margin": -12.5,
+      "net_pnl": -40.0,
+      "bankroll_after": 1019.98,
+      "settled_at": "2026-11-17 02:50:28"
+    },
     {
       "bet_id": "bet_20261113_190540_sac",
       "game_id": "espn_nba_401909303",
@@ -528,8 +534,8 @@
     },
     {
       "date": "2026-11-17",
-      "balance": 1059.98,
-      "pnl": 25.44,
+      "balance": 1019.98,
+      "pnl": -14.56,
       "bets": [
         {
           "bet_id": "bet_20261113_190540_ind",
@@ -621,10 +627,23 @@
           "net_pnl": -40.0,
           "final_score": "Portland Trail Blazers 120 - Sacramento Kings 107",
           "sportsbook": "DraftKings"
+        },
+        {
+          "bet_id": "bet_20261117_021037_bos",
+          "matchup": "Orlando Magic @ Boston Celtics",
+          "selection": "Boston Celtics",
+          "line": -2.5,
+          "odds": -110,
+          "stake": 40.0,
+          "units": 2,
+          "result": "LOST",
+          "net_pnl": -40.0,
+          "final_score": "Orlando Magic 115 - Boston Celtics 105",
+          "sportsbook": "DraftKings / Consensus"
         }
       ],
-      "note": "Day Settlement: 7 bets (4W-3L, +$25.44)"
+      "note": "Day Settlement: 8 bets (4W-4L, $-14.56)"
     }
   ],
-  "last_updated": "2026-11-17T02:10:37.621110+00:00"
+  "last_updated": "2026-11-17T02:50:43.796786+00:00"
 }

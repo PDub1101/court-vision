@@ -2,10 +2,10 @@ name: CourtVision Daily Pipeline & Auto-Grader
 
 on:
   schedule:
-    # 8:00 AM EST (13:00 UTC) - Morning Auto-Grader & Settlement
-    - cron: '0 13 * * *'
-    # 4:00 PM EST (21:00 UTC) - Afternoon Odds Ingestion, Quant Modeling, Gemini Veto & Staking
-    - cron: '0 21 * * *'
+    # 8:07 AM EST (13:07 UTC) - Morning Auto-Grader & Settlement (off-peak cron minute)
+    - cron: '7 13 * * *'
+    # 4:03 PM EST (21:03 UTC) - Afternoon Odds Ingestion, Quant Modeling, Gemini Veto & Staking
+    - cron: '3 21 * * *'
   workflow_dispatch: # Allows manual trigger from GitHub UI anytime
 
 permissions:
@@ -47,5 +47,6 @@ jobs:
             echo "No changes to commit."
           else
             git commit -m "Automated update: Bankroll ledger & daily predictions [skip ci]"
+            git pull --rebase origin main || true
             git push
           fi

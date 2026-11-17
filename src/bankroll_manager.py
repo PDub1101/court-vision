@@ -50,22 +50,42 @@ def place_simulated_wager(candidate, veto_verdict):
     state = load_bankroll_state()
     isye = candidate.get("isye_4031", {})
 
-    # Check if an active bet already exists for this game_id
+    # Check if game_id is already settled so we never re-bet a finished game
     game_id = candidate["game_id"]
+    for settled in state.get("settled_bets", []):
+        if settled.get("game_id") == game_id:
+            print(f"[Bankroll] Skipping {candidate['recommended_side']} ({game_id} already settled).")
+            return None
+
+    # Check if an active bet already exists for this game_id
     for idx, active in enumerate(state.get("active_bets", [])):
-        if active["game_id"] == game_id and active["selection"] == candidate["recommended_side"]:
-            # Enrich existing active bet with latest ISyE 4031 telemetry
-            active["cover_prob_pct"] = isye.get("cover_prob_pct", 60.5)
-            active["ev_pct"] = isye.get("ev_pct", 15.5)
-            active["se_pred"] = isye.get("se_pred", 10.46)
-            active["se_mean"] = isye.get("se_mean", 0.96)
-            active["pi_80"] = isye.get("pi_80", [-8.0, 18.0])
-            active["triggered_rule_id"] = veto_verdict.get("triggered_rule_id", "RULE-001")
-            active["gemini_confidence"] = veto_verdict.get("confidence", active.get("gemini_confidence", 78))
-            active["gemini_reasoning"] = veto_verdict.get("reasoning", active.get("gemini_reasoning", ""))
-            save_bankroll_state(state)
-            print(f"[Bankroll] Synced ISyE 4031 telemetry for active bet on {candidate['recommended_side']}.")
+        if active["game_id"] == game_id:
+            if active["selection"] == candidate["recommended_side"]:
+                # Enrich existing active bet with latest ISyE 4031 telemetry
+                active["cover_prob_pct"] = isye.get("cover_prob_pct", 60.5)
+                active["ev_pct"] = isye.get("ev_pct", 15.5)
+                active["se_pred"] = isye.get("se_pred", 10.46)
+                active["se_mean"] = isye.get("se_mean", 0.96)
+                active["pi_80"] = isye.get("pi_80", [-8.0, 18.0])
+                active["triggered_rule_id"] = veto_verdict.get("triggered_rule_id", "RULE-001")
+                active["gemini_confidence"] = veto_verdict.get("confidence", active.get("gemini_confidence", 78))
+                active["gemini_reasoning"] = veto_verdict.get("reasoning", active.get("gemini_reasoning", ""))
+                save_bankroll_state(state)
+                print(f"[Bankroll] Synced ISyE 4031 telemetry for active bet on {candidate['recommended_side']}.")
+            else:
+                print(f"[Bankroll] Active bet already exists for {game_id} on {active['selection']}; skipping opposite side.")
             return active
+
+    # Guard against past-posting games that have already tipped off
+    commence_str = candidate.get("commence_time", "")
+    if commence_str:
+        try:
+            tipoff_dt = datetime.fromisoformat(commence_str.replace("Z", "+00:00"))
+            if datetime.now(timezone.utc) > tipoff_dt:
+                print(f"[Bankroll] Skipping {candidate['recommended_side']} (tipoff {commence_str} already passed).")
+                return None
+        except Exception:
+            pass
 
     units = veto_verdict.get("recommended_units", 1)
     if units <= 0 or veto_verdict.get("verdict") != "BET":
