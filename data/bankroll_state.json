@@ -71,9 +71,9 @@
         -7.9,
         19.2
       ],
-      "triggered_rule_id": "RULE-007",
-      "gemini_confidence": 73,
-      "gemini_reasoning": "Minnesota's EWMA Net Rating of +5.45 and steady Holt trend (+0.13) drive a robust 61.8% Student-t cover probability against Portland's neutral rating, yielding a +17.92% mathematical edge at -2.5. After accounting for RULE-007's variance adjustment from Portland's prior road residual volatility, the +3.2 point discrepancy maintains viable standard 1-unit value.",
+      "triggered_rule_id": "RULE-003",
+      "gemini_confidence": 82,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 61.8% (+17.92% EV, SE_pred=10.51) exceeds high-conviction threshold for Minnesota Timberwolves. Applied RULE-003 (AR(1) blowout mean-reversion dampener of -0.56 pts).",
       "status": "PENDING"
     },
     {
@@ -117,17 +117,17 @@
       "potential_profit": 36.36,
       "model_projected_spread": -2.2,
       "edge_points": 4.3,
-      "cover_prob_pct": 66.0,
-      "ev_pct": 25.92,
+      "cover_prob_pct": 62.4,
+      "ev_pct": 19.11,
       "se_pred": 10.44,
       "se_mean": 0.7,
       "pi_80": [
         -11.2,
         15.6
       ],
-      "triggered_rule_id": "RULE-001",
-      "gemini_confidence": 95,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 66.0% (+25.92% EV, SE_pred=10.44) exceeds high-conviction threshold for Utah Jazz. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "triggered_rule_id": "NONE",
+      "gemini_confidence": 74,
+      "gemini_reasoning": "With neutral EWMA net ratings of 0.0 for both squads, the model identifies a solid +3.3 point edge backing Utah Jazz +5.5 with a robust 62.4% Student-t cover probability (+19.11% EV). No learned situational penalties apply to this matchup, validating a standard 1-unit allocation within acceptable prediction variance (SE_pred = 10.44).",
       "status": "PENDING"
     },
     {
@@ -837,5 +837,5 @@
       "note": "Day Settlement: 11 bets (6W-5L, +$18.16)"
     }
   ],
-  "last_updated": "2026-11-17T21:47:16.723495+00:00"
+  "last_updated": "2026-11-18T03:15:06.957111+00:00"
 }
