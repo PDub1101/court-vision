@@ -1,20 +1,20 @@
 {
   "bankroll": {
     "starting_capital": 1000.0,
-    "current_balance": 1143.6,
-    "available_cash": 1063.6,
-    "in_play_equity": 80.0,
-    "total_profit_loss": 143.6,
-    "roi_percent": 14.36,
+    "current_balance": 1216.32,
+    "available_cash": 1056.32,
+    "in_play_equity": 160.0,
+    "total_profit_loss": 216.32,
+    "roi_percent": 21.63,
     "currency": "USD"
   },
   "metrics": {
-    "total_bets": 17,
-    "wins": 11,
+    "total_bets": 19,
+    "wins": 13,
     "losses": 6,
     "pushes": 0,
-    "win_rate_percent": 64.7,
-    "current_streak": "W4",
+    "win_rate_percent": 68.4,
+    "current_streak": "W6",
     "longest_win_streak": 1,
     "longest_loss_streak": 1,
     "max_drawdown_percent": -2.0,
@@ -23,32 +23,115 @@
   },
   "active_bets": [
     {
-      "bet_id": "bet_20261117_214655_uta",
-      "game_id": "espn_nba_401910006",
-      "date_placed": "2026-11-17 21:46:55",
-      "matchup": "Utah Jazz @ LA Clippers",
-      "selection": "Utah Jazz",
-      "line": 6.5,
+      "bet_id": "bet_20261118_213032_ind",
+      "game_id": "espn_nba_401910008",
+      "date_placed": "2026-11-18 21:30:32",
+      "matchup": "Houston Rockets @ Indiana Pacers",
+      "selection": "Indiana Pacers",
+      "line": 7.5,
       "odds": -110,
       "sportsbook": "DraftKings",
       "stake": 40.0,
       "units": 2,
       "potential_profit": 36.36,
       "model_projected_spread": -2.2,
-      "edge_points": 4.3,
-      "cover_prob_pct": 62.4,
-      "ev_pct": 19.11,
+      "edge_points": 9.7,
+      "cover_prob_pct": 82.3,
+      "ev_pct": 57.14,
       "se_pred": 10.44,
       "se_mean": 0.7,
       "pi_80": [
         -11.2,
         15.6
       ],
-      "triggered_rule_id": "NONE",
-      "gemini_confidence": 74,
-      "gemini_reasoning": "With neutral EWMA net ratings of 0.0 for both squads, the model identifies a solid +3.3 point edge backing Utah Jazz +5.5 with a robust 62.4% Student-t cover probability (+19.11% EV). No learned situational penalties apply to this matchup, validating a standard 1-unit allocation within acceptable prediction variance (SE_pred = 10.44).",
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 82.3% (+57.14% EV, SE_pred=10.44) exceeds high-conviction threshold for Indiana Pacers. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
       "status": "PENDING"
     },
+    {
+      "bet_id": "bet_20261118_213037_mil",
+      "game_id": "espn_nba_401910009",
+      "date_placed": "2026-11-18 21:30:37",
+      "matchup": "Milwaukee Bucks @ Miami Heat",
+      "selection": "Milwaukee Bucks",
+      "line": 11.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": 1.1,
+      "edge_points": 12.6,
+      "cover_prob_pct": 88.4,
+      "ev_pct": 68.83,
+      "se_pred": 10.5,
+      "se_mean": 1.32,
+      "pi_80": [
+        -14.6,
+        12.4
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 88.4% (+68.83% EV, SE_pred=10.5) exceeds high-conviction threshold for Milwaukee Bucks. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261118_213121_orl",
+      "game_id": "espn_nba_401910010",
+      "date_placed": "2026-11-18 21:31:21",
+      "matchup": "Philadelphia 76ers @ Orlando Magic",
+      "selection": "Orlando Magic",
+      "line": 1.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -1.5,
+      "edge_points": 3.0,
+      "cover_prob_pct": 61.2,
+      "ev_pct": 16.86,
+      "se_pred": 10.45,
+      "se_mean": 0.74,
+      "pi_80": [
+        -12.0,
+        14.9
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 83,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 61.2% (+16.86% EV, SE_pred=10.45) exceeds high-conviction threshold for Orlando Magic. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261118_213126_new",
+      "game_id": "espn_nba_401910013",
+      "date_placed": "2026-11-18 21:31:26",
+      "matchup": "Detroit Pistons @ New Orleans Pelicans",
+      "selection": "New Orleans Pelicans",
+      "line": 4.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -2.2,
+      "edge_points": 6.7,
+      "cover_prob_pct": 73.9,
+      "ev_pct": 41.11,
+      "se_pred": 10.44,
+      "se_mean": 0.7,
+      "pi_80": [
+        -11.2,
+        15.6
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 73.9% (+41.11% EV, SE_pred=10.44) exceeds high-conviction threshold for New Orleans Pelicans. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    }
+  ],
+  "settled_bets": [
     {
       "bet_id": "bet_20261117_214716_cha",
       "game_id": "espn_nba_401910005",
@@ -74,10 +157,47 @@
       "triggered_rule_id": "RULE-001",
       "gemini_confidence": 95,
       "gemini_reasoning": "ISyE 4031 Student-t cover probability of 69.1% (+31.99% EV, SE_pred=10.45) exceeds high-conviction threshold for Charlotte Hornets. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
-      "status": "PENDING"
-    }
-  ],
-  "settled_bets": [
+      "status": "SETTLED",
+      "result": "WON",
+      "final_score": "Charlotte Hornets 114 - Los Angeles Lakers 118",
+      "cover_margin": 3.5,
+      "net_pnl": 36.36,
+      "bankroll_after": 1216.32,
+      "settled_at": "2026-11-18 21:30:05"
+    },
+    {
+      "bet_id": "bet_20261117_214655_uta",
+      "game_id": "espn_nba_401910006",
+      "date_placed": "2026-11-17 21:46:55",
+      "matchup": "Utah Jazz @ LA Clippers",
+      "selection": "Utah Jazz",
+      "line": 6.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -2.2,
+      "edge_points": 4.3,
+      "cover_prob_pct": 62.4,
+      "ev_pct": 19.11,
+      "se_pred": 10.44,
+      "se_mean": 0.7,
+      "pi_80": [
+        -11.2,
+        15.6
+      ],
+      "triggered_rule_id": "NONE",
+      "gemini_confidence": 74,
+      "gemini_reasoning": "With neutral EWMA net ratings of 0.0 for both squads, the model identifies a solid +3.3 point edge backing Utah Jazz +5.5 with a robust 62.4% Student-t cover probability (+19.11% EV). No learned situational penalties apply to this matchup, validating a standard 1-unit allocation within acceptable prediction variance (SE_pred = 10.44).",
+      "status": "SETTLED",
+      "result": "WON",
+      "final_score": "Utah Jazz 132 - LA Clippers 107",
+      "cover_margin": 31.5,
+      "net_pnl": 36.36,
+      "bankroll_after": 1179.96,
+      "settled_at": "2026-11-18 21:30:05"
+    },
     {
       "bet_id": "bet_20261117_214606_det",
       "game_id": "espn_nba_401910004",
@@ -856,8 +976,8 @@
     },
     {
       "date": "2026-11-18",
-      "balance": 1143.6,
-      "pnl": 90.9,
+      "balance": 1216.32,
+      "pnl": 163.62,
       "bets": [
         {
           "bet_id": "bet_20261117_214216_tor",
@@ -897,10 +1017,36 @@
           "net_pnl": 36.36,
           "final_score": "Detroit Pistons 105 - San Antonio Spurs 93",
           "sportsbook": "DraftKings"
+        },
+        {
+          "bet_id": "bet_20261117_214655_uta",
+          "matchup": "Utah Jazz @ LA Clippers",
+          "selection": "Utah Jazz",
+          "line": 6.5,
+          "odds": -110,
+          "stake": 40.0,
+          "units": 2,
+          "result": "WON",
+          "net_pnl": 36.36,
+          "final_score": "Utah Jazz 132 - LA Clippers 107",
+          "sportsbook": "DraftKings"
+        },
+        {
+          "bet_id": "bet_20261117_214716_cha",
+          "matchup": "Charlotte Hornets @ Los Angeles Lakers",
+          "selection": "Charlotte Hornets",
+          "line": 7.5,
+          "odds": -110,
+          "stake": 40.0,
+          "units": 2,
+          "result": "WON",
+          "net_pnl": 36.36,
+          "final_score": "Charlotte Hornets 114 - Los Angeles Lakers 118",
+          "sportsbook": "DraftKings"
         }
       ],
-      "note": "Day Settlement: 3 bets (3W-0L, +$90.90)"
+      "note": "Day Settlement: 5 bets (5W-0L, +$163.62)"
     }
   ],
-  "last_updated": "2026-11-18T04:45:05.503004+00:00"
+  "last_updated": "2026-11-18T21:31:26.980401+00:00"
 }
