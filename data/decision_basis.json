@@ -42,15 +42,15 @@
     ]
   },
   "diagnostics": {
-    "cfe": 3.9,
-    "mad": 15.04,
-    "tracking_signal": 0.26,
+    "cfe": -13.8,
+    "mad": 13.61,
+    "tracking_signal": -1.01,
     "tracking_signal_limit": 3.75,
     "status": "IN_CONTROL (Unbiased)",
-    "out_of_sample_rmse": 19.27,
-    "interval_coverage_50_pct": 30.8,
-    "interval_coverage_80_pct": 53.8,
-    "interval_coverage_95_pct": 69.2,
+    "out_of_sample_rmse": 17.8,
+    "interval_coverage_50_pct": 37.5,
+    "interval_coverage_80_pct": 56.2,
+    "interval_coverage_95_pct": 75.0,
     "residual_history": [
       {
         "date": "2026-11-10",
@@ -220,6 +220,45 @@
         "captured_50": false,
         "captured_80": false,
         "captured_95": true
+      },
+      {
+        "date": "2026-11-18",
+        "matchup": "New York Knicks @ Toronto Raptors",
+        "predicted_home_margin": 1.8,
+        "observed_home_margin": -4,
+        "residual_e": -5.8,
+        "studentized_r": -0.56,
+        "se_pred": 10.45,
+        "se_mean": 0.73,
+        "captured_50": true,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-18",
+        "matchup": "Portland Trail Blazers @ Minnesota Timberwolves",
+        "predicted_home_margin": 5.7,
+        "observed_home_margin": 8,
+        "residual_e": 2.3,
+        "studentized_r": 0.22,
+        "se_pred": 10.51,
+        "se_mean": 1.35,
+        "captured_50": true,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-18",
+        "matchup": "Detroit Pistons @ San Antonio Spurs",
+        "predicted_home_margin": 2.2,
+        "observed_home_margin": -12,
+        "residual_e": -14.2,
+        "studentized_r": -1.36,
+        "se_pred": 10.44,
+        "se_mean": 0.7,
+        "captured_50": false,
+        "captured_80": false,
+        "captured_95": true
       }
     ]
   },
@@ -323,7 +362,17 @@
       "rule_statement": "Post-mortem on Phoenix Suns @ Denver Nuggets: Observed residual of -16.6 pts (SE_pred = 10.5). Tightening variance filter on similar pace/shooting profiles.",
       "adjustment_type": "VARIANCE_GUARD",
       "parameter_delta": 2
+    },
+    {
+      "rule_id": "RULE-011",
+      "created_at": "2026-11-18 04:45:05",
+      "source_game": "Detroit Pistons 105 - San Antonio Spurs 93",
+      "residual_trigger": "e_t = -14.2 pts (r = -1.36)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Detroit Pistons @ San Antonio Spurs: Observed residual of -14.2 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": 2
     }
   ],
-  "last_updated": "2026-11-17T21:30:14Z"
+  "last_updated": "2026-11-18T04:45:05Z"
 }
