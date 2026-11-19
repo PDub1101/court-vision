@@ -20,7 +20,7 @@
   "ols_parameters": {
     "equation_latex": "\\hat{Y}_0 = 2.20 + 0.68(\\Delta \\text{EWMA}_{\\text{NRtg}}) + 0.85(\\Delta \\text{Holt}_{\\text{Trend}}) + 0.22(\\Delta \\text{FourFactors}) + 0.95(\\Delta \\text{Rest})",
     "beta": [
-      2.2,
+      0.88,
       0.68,
       0.85,
       0.22,
@@ -42,15 +42,15 @@
     ]
   },
   "diagnostics": {
-    "cfe": -39.3,
-    "mad": 13.71,
-    "tracking_signal": -2.87,
+    "cfe": -70.1,
+    "mad": 13.35,
+    "tracking_signal": -5.25,
     "tracking_signal_limit": 3.75,
-    "status": "IN_CONTROL (Unbiased)",
-    "out_of_sample_rmse": 17.97,
-    "interval_coverage_50_pct": 38.9,
-    "interval_coverage_80_pct": 55.6,
-    "interval_coverage_95_pct": 72.2,
+    "status": "RECALIBRATED (Bias Corrected)",
+    "out_of_sample_rmse": 17.12,
+    "interval_coverage_50_pct": 36.4,
+    "interval_coverage_80_pct": 54.5,
+    "interval_coverage_95_pct": 77.3,
     "residual_history": [
       {
         "date": "2026-11-10",
@@ -285,6 +285,58 @@
         "captured_50": true,
         "captured_80": true,
         "captured_95": true
+      },
+      {
+        "date": "2026-11-19",
+        "matchup": "Houston Rockets @ Indiana Pacers",
+        "predicted_home_margin": 2.2,
+        "observed_home_margin": -15,
+        "residual_e": -17.2,
+        "studentized_r": -1.65,
+        "se_pred": 10.44,
+        "se_mean": 0.7,
+        "captured_50": false,
+        "captured_80": false,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-19",
+        "matchup": "Milwaukee Bucks @ Miami Heat",
+        "predicted_home_margin": -1.1,
+        "observed_home_margin": 7,
+        "residual_e": 8.1,
+        "studentized_r": 0.77,
+        "se_pred": 10.5,
+        "se_mean": 1.32,
+        "captured_50": false,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-19",
+        "matchup": "Philadelphia 76ers @ Orlando Magic",
+        "predicted_home_margin": 1.5,
+        "observed_home_margin": -5,
+        "residual_e": -6.5,
+        "studentized_r": -0.62,
+        "se_pred": 10.45,
+        "se_mean": 0.74,
+        "captured_50": true,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-19",
+        "matchup": "Detroit Pistons @ New Orleans Pelicans",
+        "predicted_home_margin": 2.2,
+        "observed_home_margin": -13,
+        "residual_e": -15.2,
+        "studentized_r": -1.46,
+        "se_pred": 10.44,
+        "se_mean": 0.7,
+        "captured_50": false,
+        "captured_80": false,
+        "captured_95": true
       }
     ]
   },
@@ -408,7 +460,37 @@
       "rule_statement": "Post-mortem on Utah Jazz @ LA Clippers: Observed residual of -27.2 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
       "adjustment_type": "VARIANCE_GUARD",
       "parameter_delta": 2
+    },
+    {
+      "rule_id": "RULE-013",
+      "created_at": "2026-11-19 04:45:07",
+      "source_game": "Houston Rockets 119 - Indiana Pacers 104",
+      "residual_trigger": "e_t = -17.2 pts (r = -1.65)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Houston Rockets @ Indiana Pacers: Observed residual of -17.2 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": -3
+    },
+    {
+      "rule_id": "RULE-014",
+      "created_at": "2026-11-19 04:45:07",
+      "source_game": "Philadelphia 76ers 121 - Orlando Magic 116",
+      "residual_trigger": "e_t = -6.5 pts (r = -0.62)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Philadelphia 76ers @ Orlando Magic: Observed residual of -6.5 pts (SE_pred = 10.45). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": -3
+    },
+    {
+      "rule_id": "RULE-015",
+      "created_at": "2026-11-19 04:45:07",
+      "source_game": "Detroit Pistons 122 - New Orleans Pelicans 109",
+      "residual_trigger": "e_t = -15.2 pts (r = -1.46)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Detroit Pistons @ New Orleans Pelicans: Observed residual of -15.2 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": -3
     }
   ],
-  "last_updated": "2026-11-18T21:30:05Z"
+  "last_updated": "2026-11-19T04:45:07Z"
 }
