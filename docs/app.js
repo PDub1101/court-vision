@@ -149,11 +149,91 @@ let broadcastSimInterval = null;
 let simSecondsTicking = 17;
 let espnLiveStateCache = {};
 
-function formatToEasternTime(isoOrDate) {
-  if (!isoOrDate) return '7:00 PM ET';
+function parseDateInput(val) {
+  if (!val) return null;
+  if (val instanceof Date) return isNaN(val.getTime()) ? null : val;
+  if (typeof val === 'number') {
+    const d = new Date(val);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  if (typeof val !== 'string') return null;
+  val = val.trim();
+  if (!val) return null;
+
+  // If it has 'Z' or explicit offset [+-]\d\d, parse directly
+  if (val.includes('Z') || /[+-]\d{2}:?\d{2}$/.test(val)) {
+    const d = new Date(val);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  // Handle YYYY-MM-DD or YYYY-MM-DD HH:mm:ss as Eastern Time dates
+  const dateMatch = val.match(/^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2})(?::(\d{2}))?)?/);
+  if (dateMatch) {
+    const year = parseInt(dateMatch[1], 10);
+    const month = parseInt(dateMatch[2], 10) - 1;
+    const day = parseInt(dateMatch[3], 10);
+    const hours = dateMatch[4] !== undefined ? parseInt(dateMatch[4], 10) : 12;
+    const mins = dateMatch[5] !== undefined ? parseInt(dateMatch[5], 10) : 0;
+    const secs = dateMatch[6] !== undefined ? parseInt(dateMatch[6], 10) : 0;
+    return new Date(year, month, day, hours, mins, secs);
+  }
+
+  const d = new Date(val);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function formatGameDate(isoOrDate) {
+  const d = parseDateInput(isoOrDate);
+  if (!d) return 'Nov 17, 2026';
   try {
-    const d = new Date(isoOrDate);
-    if (isNaN(d.getTime())) return '7:00 PM ET';
+    return d.toLocaleDateString('en-US', {
+      timeZone: 'America/New_York',
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  } catch (e) {
+    return d.toDateString();
+  }
+}
+
+function formatGameDateLong(isoOrDate) {
+  const d = parseDateInput(isoOrDate);
+  if (!d) return 'Tuesday, November 17, 2026';
+  try {
+    return d.toLocaleDateString('en-US', {
+      timeZone: 'America/New_York',
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  } catch (e) {
+    return d.toDateString();
+  }
+}
+
+function formatGameDateShort(isoOrDate, includeYear = false) {
+  const d = parseDateInput(isoOrDate);
+  if (!d) return 'Nov 17';
+  try {
+    const opts = {
+      timeZone: 'America/New_York',
+      month: 'short',
+      day: 'numeric'
+    };
+    if (includeYear) opts.year = 'numeric';
+    return d.toLocaleDateString('en-US', opts);
+  } catch (e) {
+    return 'Nov 17';
+  }
+}
+
+function formatToEasternTime(isoOrDate) {
+  const d = parseDateInput(isoOrDate);
+  if (!d) return '7:00 PM ET';
+  try {
     return d.toLocaleTimeString('en-US', {
       timeZone: 'America/New_York',
       hour: 'numeric',
@@ -167,6 +247,57 @@ function formatToEasternTime(isoOrDate) {
 
 function formatGameTime(isoString) {
   return formatToEasternTime(isoString);
+}
+
+function formatGameDateTime(isoOrDate) {
+  return `${formatGameDate(isoOrDate)} • ${formatToEasternTime(isoOrDate)}`;
+}
+
+function getBetGameDate(bet) {
+  if (!bet) return null;
+  const slate = (window.COURTVISION_DATA && window.COURTVISION_DATA.todays_slate) || [];
+  if (bet.game_id) {
+    const sg = slate.find(g => g.game_id === bet.game_id);
+    if (sg && sg.commence_time) {
+      return sg.commence_time;
+    }
+  }
+  if (bet.date_placed) {
+    return bet.date_placed;
+  }
+  if (bet.settled_at) {
+    return bet.settled_at;
+  }
+  return null;
+}
+
+function getBetDateKey(bet) {
+  const gDate = getBetGameDate(bet);
+  if (!gDate) return 'unknown';
+  const d = parseDateInput(gDate);
+  if (!d) return typeof gDate === 'string' ? gDate.split(' ')[0].split('T')[0] : 'unknown';
+  try {
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/New_York',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).formatToParts(d);
+    const y = parts.find(p => p.type === 'year').value;
+    const m = parts.find(p => p.type === 'month').value;
+    const day = parts.find(p => p.type === 'day').value;
+    return `${y}-${m}-${day}`;
+  } catch (e) {
+    return typeof gDate === 'string' ? gDate.split(' ')[0].split('T')[0] : 'unknown';
+  }
+}
+
+function formatNetPnl(pnl) {
+  if (pnl === undefined || pnl === null || isNaN(pnl)) return '$0.00';
+  const num = parseFloat(pnl);
+  if (num > 0) return `+$${num.toFixed(2)}`;
+  if (num < 0) return `-$${Math.abs(num).toFixed(2)}`;
+  return '$0.00';
 }
 
 function setBroadcastFilter(filter) {
@@ -317,6 +448,12 @@ function buildScoreBugHtml(bet) {
   const isSettled = bet.status === 'SETTLED' || bet.result !== undefined;
   const matchupStr = bet.matchup || "";
   
+  // Game & Settlement Dates
+  const betGameDateVal = getBetGameDate(bet);
+  const betGameDateStr = formatGameDate(betGameDateVal);
+  const betGameDateShort = formatGameDateShort(betGameDateVal);
+  const settledDateStr = bet.settled_at ? formatGameDate(bet.settled_at) : 'N/A';
+  
   // Robust matchup splitting supporting "@", "at", "vs"
   let awayName = "Away Team", homeName = "Home Team";
   if (matchupStr.includes(" @ ")) {
@@ -346,6 +483,15 @@ function buildScoreBugHtml(bet) {
   const stakeVal = bet.stake ? parseFloat(bet.stake).toFixed(2) : '40.00';
   const unitsVal = bet.units || 2;
   const profitVal = bet.potential_profit ? parseFloat(bet.potential_profit).toFixed(2) : '36.36';
+
+  const netPnlVal = bet.net_pnl !== undefined 
+    ? parseFloat(bet.net_pnl) 
+    : (bet.result === 'WON' ? parseFloat(profitVal) : (bet.result === 'LOST' ? -parseFloat(stakeVal) : 0));
+  const netPnlFormatted = formatNetPnl(netPnlVal);
+  const isWon = bet.result === 'WON' || (isSettled && netPnlVal > 0);
+  const isPush = bet.result === 'PUSH' || (isSettled && netPnlVal === 0);
+  const netPnlClass = isWon ? 'profit' : (isPush ? '' : 'loss');
+  const netPnlColor = isWon ? 'var(--pos)' : (isPush ? 'var(--text-muted)' : 'var(--neg)');
 
   // Find real scheduled tip-off time in Eastern Time
   const slate = (window.COURTVISION_DATA && window.COURTVISION_DATA.todays_slate) || [];
@@ -448,22 +594,19 @@ function buildScoreBugHtml(bet) {
   let cardCoverClass = "";
 
   if (isSettled) {
-    const isWon = bet.result === 'WON';
     const margin = bet.cover_margin !== undefined ? bet.cover_margin : 0;
     const marginStr = margin > 0 ? `+${margin}` : `${margin}`;
-    cardCoverClass = isWon ? "bet-covering" : "bet-losing";
-    cushionCardClass = isWon ? "status-cushion-covering" : "status-cushion-losing";
-    cushionStatusClass = isWon ? "covering" : "losing";
+    cardCoverClass = isWon ? "bet-covering" : (isPush ? "" : "bet-losing");
+    cushionCardClass = isWon ? "status-cushion-covering" : (isPush ? "status-cushion-pregame" : "status-cushion-losing");
+    cushionStatusClass = isWon ? "covering" : (isPush ? "pregame" : "losing");
 
-    if (isWon) {
-      cushionBadgeText = `🏆 COVERED BY ${marginStr} PTS`;
-      cushionExplanationText = `<strong>${bet.selection}</strong> covered the spread (+$${bet.net_pnl.toFixed(2)} return).`;
-      meterFillHtml = `<div class="bcast-meter-fill fill-green" style="width: 100%;"></div>`;
-    } else {
-      cushionBadgeText = `❌ MISSED BY ${marginStr} PTS`;
-      cushionExplanationText = `<strong>${bet.selection}</strong> failed to cover the spread (-$${Math.abs(bet.net_pnl).toFixed(2)}).`;
-      meterFillHtml = `<div class="bcast-meter-fill fill-red" style="width: 100%;"></div>`;
-    }
+    cushionBadgeText = `${netPnlFormatted}`;
+    cushionExplanationText = `Net outcome: <strong style="color: ${netPnlColor}; font-size: 13.5px;">${netPnlFormatted}</strong> (${bet.selection} ${isWon ? 'covered spread' : (isPush ? 'pushed with line' : 'failed to cover')}).`;
+    meterFillHtml = isWon
+      ? `<div class="bcast-meter-fill fill-green" style="width: 100%;"></div>`
+      : (isPush
+          ? `<div class="bcast-meter-fill fill-blue" style="width: 50%;"></div>`
+          : `<div class="bcast-meter-fill fill-red" style="width: 100%;"></div>`);
   } else if (isLive) {
     let betScore = isBetOnHome ? homeScore : awayScore;
     let oppScore = isBetOnHome ? awayScore : homeScore;
@@ -527,8 +670,8 @@ function buildScoreBugHtml(bet) {
     topStatusClass = "is-live";
     topStatusLabel = `🔴 LIVE • ${periodText} ${clockText}`;
   } else if (isFinal) {
-    topStatusClass = "is-final";
-    topStatusLabel = "FINAL SCORE";
+    topStatusClass = isSettled ? `is-final ${isWon ? 'is-won' : (isPush ? '' : 'is-lost')}` : "is-final";
+    topStatusLabel = isSettled ? `FINAL • ${netPnlFormatted}` : "FINAL SCORE";
   }
 
   return `
@@ -542,6 +685,7 @@ function buildScoreBugHtml(bet) {
             ${isLive ? '<span class="live-pulse-dot"></span>' : ''}
             <span>${topStatusLabel}</span>
           </span>
+          <span class="bcast-date-badge">📅 ${isSettled ? `Game: ${betGameDateStr}` : `Date: ${betGameDateStr}`}</span>
           <span class="bcast-rule-pill"><span class="rule-icon">🧠</span> ${ruleId}</span>
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
@@ -557,7 +701,7 @@ function buildScoreBugHtml(bet) {
         <div class="tri-col tri-col-scoreboard">
           <div class="tri-col-header">
             <span class="tri-subhead">MATCHUP & SCOREBOARD</span>
-            <span class="tri-clock-badge">${isLive ? `${periodText} ${clockText}` : (isFinal ? 'FINAL' : 'TIP-OFF')}</span>
+            <span class="tri-clock-badge">${isLive ? `${periodText} ${clockText}` : (isFinal ? `FINAL • ${betGameDateShort}` : `${betGameDateShort} • ${clockText}`)}</span>
           </div>
 
           <div class="tri-scoreboard-rack">
@@ -608,35 +752,41 @@ function buildScoreBugHtml(bet) {
           </div>
         </div>
 
-        <!-- Column 2: The Bet Command Center (WHAT NEEDS TO HAPPEN TO WIN) -->
+        <!-- Column 2: The Bet Command Center (WHAT NEEDS TO HAPPEN TO WIN / SETTLED OUTCOME) -->
         <div class="tri-col tri-col-command">
           <div class="tri-col-header">
-            <span class="tri-subhead">🎯 WHAT NEEDS TO HAPPEN TO WIN</span>
-            <span class="tri-target-badge">SPREAD ${lineStr}</span>
+            <span class="tri-subhead">${isSettled ? '🏁 SETTLED BET OUTCOME' : '🎯 WHAT NEEDS TO HAPPEN TO WIN'}</span>
+            <span class="tri-target-badge ${isSettled ? (isWon ? 'badge-won' : (isPush ? '' : 'badge-lost')) : ''}">${isSettled ? netPnlFormatted : `SPREAD ${lineStr}`}</span>
           </div>
 
           <div class="tri-command-inner">
             <!-- Plain English Rule Callout -->
             <div class="tri-goal-box">
               <div class="goal-box-title">
-                <span>🎯</span>
-                <strong>CONDITION TO WIN:</strong>
+                <span>${isSettled ? (isWon ? '🏆' : (isPush ? '🟡' : '❌')) : '🎯'}</span>
+                <strong>${isSettled ? 'BET OUTCOME:' : 'CONDITION TO WIN:'}</strong>
               </div>
               <div class="goal-box-rule">
-                ${winRuleText}
+                ${isSettled 
+                  ? `<strong>${bet.selection}</strong>: <strong style="color: ${netPnlColor}; font-size: 13.5px;">${netPnlFormatted}</strong> (${isWon ? 'Covered spread' : (isPush ? 'Pushed with line' : 'Did not cover')}${bet.cover_margin !== undefined ? ` by ${bet.cover_margin > 0 ? '+' : ''}${bet.cover_margin} pts` : ''})` 
+                  : winRuleText}
+              </div>
+              <div style="margin-top: 6px; font-size: 11.5px; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); display: flex; gap: 10px; flex-wrap: wrap;">
+                <span>📅 Game Date: <strong style="color: var(--text-secondary);">${betGameDateStr}</strong></span>
+                ${isSettled ? `<span>🏁 Settled: <strong style="color: var(--text-secondary);">${settledDateStr}</strong></span>` : `<span>⏰ Tip-off: <strong style="color: var(--text-secondary);">${scheduledTipOffET}</strong></span>`}
               </div>
             </div>
 
             <!-- Live Cushion Barometer -->
             <div class="tri-cushion-card ${cushionCardClass}">
               <div class="cushion-header">
-                <span class="cushion-label">SPREAD CUSHION STATUS:</span>
+                <span class="cushion-label">${isSettled ? 'NET OUTCOME:' : 'SPREAD CUSHION STATUS:'}</span>
                 <span class="cushion-badge ${cushionStatusClass}">${cushionBadgeText}</span>
               </div>
               <div class="cushion-explanation">
                 ${cushionExplanationText}
               </div>
-              <div class="bcast-meter-track" title="Cover Cushion Meter">
+              <div class="bcast-meter-track" title="${isSettled ? 'Settled Bet Outcome' : 'Cover Cushion Meter'}">
                 ${meterFillHtml}
               </div>
             </div>
@@ -652,8 +802,8 @@ function buildScoreBugHtml(bet) {
                 <span class="wager-val">$${stakeVal} (${unitsVal}U)</span>
               </div>
               <div class="wager-col">
-                <span class="wager-label">TO WIN</span>
-                <span class="wager-val profit">+$${profitVal}</span>
+                <span class="wager-label">${isSettled ? 'NET P&L' : 'TO WIN'}</span>
+                <span class="wager-val ${isSettled ? netPnlClass : 'profit'}" style="${isSettled ? `color: ${netPnlColor} !important; font-weight: 800;` : ''}">${isSettled ? netPnlFormatted : `+$${profitVal}`}</span>
               </div>
             </div>
           </div>
@@ -799,6 +949,20 @@ function renderDashboard() {
   }).format(new Date()) + ' ET';
   document.getElementById('slate-updated-time').textContent = `Sync: ${nowET}`;
 
+  // Game slate date for Tab 1
+  const slateDateLong = (slate.length > 0 && slate[0].commence_time)
+    ? formatGameDateLong(slate[0].commence_time)
+    : formatGameDateLong(new Date());
+  const slateDateTextEl = document.getElementById('slate-date-text');
+  if (slateDateTextEl) slateDateTextEl.textContent = slateDateLong;
+
+  // Active Desk heading date for Tab 2
+  const deskHeadingEl = document.getElementById('desk-active-heading');
+  if (deskHeadingEl) {
+    const activeDateStr = activeBets.length > 0 ? formatGameDate(getBetGameDate(activeBets[0])) : formatGameDate(new Date());
+    deskHeadingEl.textContent = `Active In-Play Positions (Tonight • ${activeDateStr})`;
+  }
+
   // 6. Render Tab 1: Game Slate with ISyE 4031 Telemetry
   // Render Broadcast Score Bugs for games being bet on
   renderBroadcastScoreBugs();
@@ -857,6 +1021,7 @@ function renderSlateCards(slate, evaluatedPicks) {
     card.className = `game-card ${game.has_edge ? 'has-edge' : ''}`;
 
     const gameTime = formatGameTime(game.commence_time);
+    const gameDateStr = formatGameDate(game.commence_time);
     const evaluation = evalMap[game.game_id];
     const awayAbbr = getTeamAbbr(game.away_team);
     const homeAbbr = getTeamAbbr(game.home_team);
@@ -904,7 +1069,10 @@ function renderSlateCards(slate, evaluatedPicks) {
     card.id = `slate-card-${game.game_id}`;
     card.innerHTML = `
       <div class="game-header">
-        <span style="font-weight: 700;">🏀 ${gameTime} • <span id="game-live-status-${game.game_id}" style="color: var(--bball-orange);">Prospective Nowcast</span></span>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <span class="game-date-badge">📅 ${gameDateStr}</span>
+          <span style="font-weight: 700;">🏀 ${gameTime} • <span id="game-live-status-${game.game_id}" style="color: var(--bball-orange);">Prospective Nowcast</span></span>
+        </div>
         <span class="bookmaker-badge">${game.sportsbook}</span>
       </div>
 
@@ -1020,13 +1188,15 @@ function renderActiveBetsTable(activeBets) {
   if (!activeBets || activeBets.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="10" style="text-align: center; color: var(--text-muted); padding: 32px;">
+        <td colspan="11" style="text-align: center; color: var(--text-muted); padding: 32px;">
           No active wagers pending tonight. Next automated scan occurs at 4:00 PM EST.
         </td>
       </tr>
     `;
     return;
   }
+
+  const slate = (window.COURTVISION_DATA && window.COURTVISION_DATA.todays_slate) || [];
 
   activeBets.forEach(b => {
     const tr = document.createElement('tr');
@@ -1035,7 +1205,16 @@ function renderActiveBetsTable(activeBets) {
     const evPct = b.ev_pct !== undefined ? `+${b.ev_pct}%` : '+15.5%';
     const ruleId = b.triggered_rule_id || 'RULE-001';
 
+    const gameDateVal = getBetGameDate(b);
+    const gameDateStr = formatGameDate(gameDateVal);
+    const slateGame = slate.find(g => g.game_id === b.game_id);
+    const tipOffTime = slateGame && slateGame.commence_time ? formatToEasternTime(slateGame.commence_time) : '7:00 PM ET';
+
     tr.innerHTML = `
+      <td style="font-family: 'JetBrains Mono', monospace; font-size: 12px; white-space: nowrap;">
+        📅 <strong style="color: var(--text-primary);">${gameDateStr}</strong><br>
+        <span style="color: var(--text-muted); font-size: 11px;">⏰ ${tipOffTime}</span>
+      </td>
       <td style="font-weight: 700;">${b.matchup}</td>
       <td>
         <span style="font-weight: 800; color: var(--bball-orange);">${b.selection}</span>
@@ -1320,7 +1499,7 @@ function renderModelAndMemoryTab(decisionBasis) {
     resHistory.forEach(r => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--text-muted);">${r.date}</td>
+        <td style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 700; color: var(--text-primary); white-space: nowrap;">📅 ${formatGameDateShort(r.date, true)}</td>
         <td style="font-weight: 700;">${r.matchup}</td>
         <td style="font-family: 'JetBrains Mono', monospace;">${r.predicted_home_margin > 0 ? '+' : ''}${r.predicted_home_margin}</td>
         <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">${r.observed_home_margin > 0 ? '+' : ''}${r.observed_home_margin}</td>
@@ -1341,16 +1520,31 @@ function renderModelAndMemoryTab(decisionBasis) {
 }
 
 // ============================================================================
-// SETTLED LEDGER TABLE
+// SETTLED LEDGER TABLE & HISTORICAL PAST DAYS BETS
 // ============================================================================
+let currentLedgerDateFilter = 'all';
+
+function setLedgerDateFilter(dateVal) {
+  currentLedgerDateFilter = dateVal;
+  const data = window.COURTVISION_DATA;
+  const settledBets = (data && data.bankroll_state && data.bankroll_state.settled_bets) || [];
+  renderSettledTable(settledBets);
+}
+
 function renderSettledTable(settledBets) {
   const tbody = document.getElementById('settled-bets-tbody');
+  const filtersContainer = document.getElementById('ledger-date-filters');
+  const summaryContainer = document.getElementById('ledger-date-summary');
+  const badgeEl = document.getElementById('ledger-count-badge');
+  if (!tbody) return;
   tbody.innerHTML = '';
 
   if (!settledBets || settledBets.length === 0) {
+    if (filtersContainer) filtersContainer.innerHTML = '';
+    if (summaryContainer) summaryContainer.style.display = 'none';
     tbody.innerHTML = `
       <tr>
-        <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 32px;">
+        <td colspan="9" style="text-align: center; color: var(--text-muted); padding: 32px;">
           No bets settled yet. Morning auto-grader will settle tonight's picks after games complete.
         </td>
       </tr>
@@ -1358,7 +1552,115 @@ function renderSettledTable(settledBets) {
     return;
   }
 
+  // 1. Group bets by Game Date Key
+  const dateMap = {};
   settledBets.forEach(b => {
+    const key = getBetDateKey(b);
+    const gameDateVal = getBetGameDate(b);
+    if (!dateMap[key]) {
+      dateMap[key] = {
+        key: key,
+        display: formatGameDate(gameDateVal),
+        shortDisplay: formatGameDateShort(gameDateVal, false),
+        bets: [],
+        wins: 0,
+        losses: 0,
+        pushes: 0,
+        pnl: 0,
+        totalStake: 0
+      };
+    }
+    dateMap[key].bets.push(b);
+    if (b.result === 'WON') dateMap[key].wins++;
+    else if (b.result === 'LOST') dateMap[key].losses++;
+    else if (b.result === 'PUSH') dateMap[key].pushes++;
+    dateMap[key].pnl += (parseFloat(b.net_pnl) || 0);
+    dateMap[key].totalStake += (parseFloat(b.stake) || 0);
+  });
+
+  const sortedDateKeys = Object.keys(dateMap).sort().reverse();
+
+  // 2. Render Past Days Filter Buttons
+  if (filtersContainer) {
+    let filterButtonsHtml = `
+      <button class="ledger-date-btn ${currentLedgerDateFilter === 'all' ? 'active' : ''}" onclick="setLedgerDateFilter('all')">
+        📅 All Past Dates (${settledBets.length})
+      </button>
+    `;
+    sortedDateKeys.forEach(k => {
+      const dObj = dateMap[k];
+      filterButtonsHtml += `
+        <button class="ledger-date-btn ${currentLedgerDateFilter === k ? 'active' : ''}" onclick="setLedgerDateFilter('${k}')">
+          ${dObj.shortDisplay} (${dObj.bets.length})
+        </button>
+      `;
+    });
+    filtersContainer.innerHTML = filterButtonsHtml;
+  }
+
+  // 3. Filter bets to display
+  let betsToDisplay = settledBets;
+  let activeDateObj = null;
+  if (currentLedgerDateFilter !== 'all') {
+    if (dateMap[currentLedgerDateFilter]) {
+      activeDateObj = dateMap[currentLedgerDateFilter];
+      betsToDisplay = activeDateObj.bets;
+    } else {
+      currentLedgerDateFilter = 'all';
+    }
+  }
+
+  // 4. Update Summary Card
+  if (summaryContainer) {
+    summaryContainer.style.display = 'flex';
+    if (activeDateObj) {
+      const pnlColor = activeDateObj.pnl > 0 ? 'var(--pos)' : (activeDateObj.pnl < 0 ? 'var(--neg)' : 'var(--text-muted)');
+      const winRate = (activeDateObj.wins + activeDateObj.losses) > 0 
+        ? ((activeDateObj.wins / (activeDateObj.wins + activeDateObj.losses)) * 100).toFixed(1) + '%' 
+        : '--';
+      summaryContainer.innerHTML = `
+        <div>
+          <strong>📅 Showing Past Game Date: <span style="color: var(--bball-orange);">${activeDateObj.display}</span></strong>
+          <span style="color: var(--text-muted); margin-left: 8px;">(${betsToDisplay.length} Wager${betsToDisplay.length === 1 ? '' : 's'})</span>
+        </div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap;">
+          <span>Record: <strong>${activeDateObj.wins}W - ${activeDateObj.losses}L ${activeDateObj.pushes > 0 ? `- ${activeDateObj.pushes}P` : ''}</strong> (${winRate})</span>
+          <span>Day Staked: <strong>$${activeDateObj.totalStake.toFixed(2)}</strong></span>
+          <span>Day Net P&L: <strong style="color: ${pnlColor};">${formatNetPnl(activeDateObj.pnl)}</strong></span>
+        </div>
+      `;
+    } else {
+      const totalWins = settledBets.filter(b => b.result === 'WON').length;
+      const totalLosses = settledBets.filter(b => b.result === 'LOST').length;
+      const totalPushes = settledBets.filter(b => b.result === 'PUSH').length;
+      const totalPnl = settledBets.reduce((acc, b) => acc + (parseFloat(b.net_pnl) || 0), 0);
+      const totalStake = settledBets.reduce((acc, b) => acc + (parseFloat(b.stake) || 0), 0);
+      const pnlColor = totalPnl > 0 ? 'var(--pos)' : (totalPnl < 0 ? 'var(--neg)' : 'var(--text-muted)');
+      const winRate = (totalWins + totalLosses) > 0 
+        ? ((totalWins / (totalWins + totalLosses)) * 100).toFixed(1) + '%' 
+        : '--';
+      summaryContainer.innerHTML = `
+        <div>
+          <strong>📜 Showing: All Past Days Bets</strong>
+          <span style="color: var(--text-muted); margin-left: 8px;">(${sortedDateKeys.length} Historical Dates • ${settledBets.length} Total Bets)</span>
+        </div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap;">
+          <span>Cumulative: <strong>${totalWins}W - ${totalLosses}L ${totalPushes > 0 ? `- ${totalPushes}P` : ''}</strong> (${winRate})</span>
+          <span>Total Staked: <strong>$${totalStake.toFixed(2)}</strong></span>
+          <span>Total Net Profit: <strong style="color: ${pnlColor};">${formatNetPnl(totalPnl)}</strong></span>
+        </div>
+      `;
+    }
+  }
+
+  if (badgeEl) {
+    badgeEl.textContent = currentLedgerDateFilter === 'all' 
+      ? `📜 All Past Days (${settledBets.length} Bets)` 
+      : `📅 ${dateMap[currentLedgerDateFilter] ? dateMap[currentLedgerDateFilter].display : 'Past Date'} (${betsToDisplay.length} Bets)`;
+  }
+
+  // 5. Render Table Rows
+  betsToDisplay.forEach(b => {
     const tr = document.createElement('tr');
     let badgeClass = 'status-pending';
     if (b.result === 'WON') badgeClass = 'status-won';
@@ -1368,8 +1670,17 @@ function renderSettledTable(settledBets) {
     const pnlColor = b.net_pnl > 0 ? 'var(--pos)' : (b.net_pnl < 0 ? 'var(--neg)' : 'var(--text-muted)');
     const bankrollAfter = b.bankroll_after ? `$${b.bankroll_after.toFixed(2)}` : '--';
 
+    const gameDateVal = getBetGameDate(b);
+    const gameDateStr = formatGameDate(gameDateVal);
+    const settledDateStr = b.settled_at ? formatGameDate(b.settled_at) : 'N/A';
+
     tr.innerHTML = `
-      <td style="color: var(--text-muted); font-size: 12.5px; font-family: 'JetBrains Mono', monospace;">${b.settled_at ? b.settled_at.split(' ')[0] : 'N/A'}</td>
+      <td style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 700; white-space: nowrap; color: var(--text-primary);">
+        📅 ${gameDateStr}
+      </td>
+      <td style="color: var(--text-muted); font-size: 12px; font-family: 'JetBrains Mono', monospace; white-space: nowrap;">
+        ${settledDateStr}
+      </td>
       <td style="font-weight: 700;">${b.matchup}</td>
       <td>
         <span style="font-weight: 800;">${b.selection}</span>
@@ -1379,7 +1690,7 @@ function renderSettledTable(settledBets) {
       <td><span class="status-badge ${badgeClass}">${b.result}</span></td>
       <td style="font-weight: 600;">$${b.stake.toFixed(2)}</td>
       <td style="font-weight: 800; color: ${pnlColor}; font-family: 'JetBrains Mono', monospace;">
-        ${b.net_pnl >= 0 ? '+' : ''}$${b.net_pnl.toFixed(2)}
+        ${formatNetPnl(b.net_pnl)}
       </td>
       <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">${bankrollAfter}</td>
     `;
@@ -1559,8 +1870,7 @@ function renderEquityChart(history, currentBalance, bankrollState) {
                   const oddsStr = b.odds ? ` @ ${b.odds > 0 ? '+' : ''}${b.odds}` : '';
                   const stakeStr = b.stake ? `$${b.stake.toFixed(0)}` : '';
                   const res = b.result || 'SETTLED';
-                  const pnlSign = b.net_pnl >= 0 ? '+' : '';
-                  const pnlStr = b.net_pnl !== undefined ? ` (${pnlSign}$${b.net_pnl.toFixed(2)})` : '';
+                  const pnlStr = b.net_pnl !== undefined ? ` (${formatNetPnl(b.net_pnl)})` : '';
 
                   lines.push(` ${num}${b.selection} ${lineStr} [${stakeStr}${oddsStr}]`);
                   const scoreStr = b.final_score ? ` | Final: ${b.final_score}` : '';
@@ -1631,26 +1941,6 @@ function updateChartTheme(chart, theme) {
   }
 
   chart.update();
-}
-
-function formatToEasternTime(isoOrDate) {
-  if (!isoOrDate) return '7:00 PM ET';
-  try {
-    const d = new Date(isoOrDate);
-    if (isNaN(d.getTime())) return '7:00 PM ET';
-    return d.toLocaleTimeString('en-US', {
-      timeZone: 'America/New_York',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    }) + ' ET';
-  } catch (e) {
-    return '7:00 PM ET';
-  }
-}
-
-function formatGameTime(isoString) {
-  return formatToEasternTime(isoString);
 }
 
 // ============================================================================

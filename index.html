@@ -1235,6 +1235,80 @@
       color: var(--pos);
     }
 
+    .game-date-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--bg-card-alt);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 5px;
+      padding: 2px 7px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      vertical-align: middle;
+    }
+    .bcast-date-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--bcast-tag-text);
+      background: var(--bcast-tag-bg);
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid var(--bcast-tag-border);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .ledger-date-filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .ledger-date-btn {
+      background: var(--bg-card-alt);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 11.5px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .ledger-date-btn:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+    }
+    .ledger-date-btn.active {
+      background: var(--bball-orange-glow);
+      color: var(--bball-orange);
+      border-color: var(--bball-border);
+      font-weight: 800;
+    }
+    .ledger-date-summary {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 10px 16px;
+      margin-bottom: 14px;
+      font-size: 12.5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
     /* Tri-Column Body Architecture */
     .bcast-tri-body {
       display: grid;
@@ -2199,8 +2273,11 @@
     <div id="pane-today" class="tab-pane active">
       <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
         <div>
-          <h2 style="font-size: 19px;">Tonight's ISyE 4031 Prospective Nowcasts & Spread Radar</h2>
-          <p style="font-size: 13.5px; color: var(--text-muted);">Holt's Exponential Smoothing ($\alpha=0.25, \beta=0.10$) + Multivariate OLS ($SE_{\text{pred}}$ Nested 50%/80%/95% Intervals) + Student-$t$ Cover Probability.</p>
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px;">
+            <h2 style="font-size: 19px; margin-bottom: 0;">Tonight's ISyE 4031 Prospective Nowcasts & Spread Radar</h2>
+            <span class="game-date-badge" id="slate-game-date-badge" style="background: var(--bball-orange-glow); color: var(--bball-orange); border-color: var(--bball-border); font-size: 12px; padding: 3px 9px;">📅 Game Slate: <strong id="slate-date-text">Loading...</strong></span>
+          </div>
+          <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 0;">Holt's Exponential Smoothing ($\alpha=0.25, \beta=0.10$) + Multivariate OLS ($SE_{\text{pred}}$ Nested 50%/80%/95% Intervals) + Student-$t$ Cover Probability.</p>
         </div>
         <div style="font-size: 12px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;" id="slate-updated-time">
           Updated: Just now
@@ -2233,7 +2310,7 @@
       </div>
 
       <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-        <h3 style="font-size: 17px;">Active In-Play Positions (Tonight)</h3>
+        <h3 style="font-size: 17px;" id="desk-active-heading">Active In-Play Positions (Tonight)</h3>
         <div style="display: flex; gap: 8px;">
           <button class="bcast-filter-btn active" id="desk-view-bugs-btn" onclick="toggleDeskView('bugs')">📺 Broadcast Score Bugs</button>
           <button class="bcast-filter-btn" id="desk-view-table-btn" onclick="toggleDeskView('table')">📋 Table View</button>
@@ -2249,6 +2326,7 @@
         <table>
           <thead>
             <tr>
+              <th>Game Date & Tip-Off</th>
               <th>Matchup</th>
               <th>Selection & Line</th>
               <th>Live Score / Status</th>
@@ -2348,14 +2426,27 @@
     <!-- TAB 4: 30-Day Settlement Ledger -->
     <div id="pane-ledger" class="tab-pane">
       <div style="margin-bottom: 20px;">
-        <h2 style="font-size: 19px;">30-Day Auditable Settlement Ledger</h2>
-        <p style="font-size: 13.5px; color: var(--text-muted);">Every graded game, final score, cover margin, and closing balance.</p>
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px;">
+          <h2 style="font-size: 19px; margin-bottom: 0;">30-Day Auditable Settlement Ledger</h2>
+          <span class="game-date-badge" id="ledger-count-badge" style="background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border); font-size: 12px; padding: 3px 9px;">📜 All Past Days Bets</span>
+        </div>
+        <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 0;">Every graded game, final score, cover margin, and closing balance across all past betting days.</p>
+      </div>
+
+      <!-- Past Days Filter Buttons -->
+      <div class="ledger-date-filters" id="ledger-date-filters">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+
+      <div class="ledger-date-summary" id="ledger-date-summary" style="display: none;">
+        <!-- Rendered dynamically by app.js -->
       </div>
 
       <div class="table-container">
         <table>
           <thead>
             <tr>
+              <th>Game Date</th>
               <th>Settled Date</th>
               <th>Matchup</th>
               <th>Pick & Line</th>
