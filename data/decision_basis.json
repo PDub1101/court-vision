@@ -20,7 +20,7 @@
   "ols_parameters": {
     "equation_latex": "\\hat{Y}_0 = 2.20 + 0.68(\\Delta \\text{EWMA}_{\\text{NRtg}}) + 0.85(\\Delta \\text{Holt}_{\\text{Trend}}) + 0.22(\\Delta \\text{FourFactors}) + 0.95(\\Delta \\text{Rest})",
     "beta": [
-      0.88,
+      0.53,
       0.68,
       0.85,
       0.22,
@@ -42,15 +42,15 @@
     ]
   },
   "diagnostics": {
-    "cfe": -70.1,
-    "mad": 13.35,
-    "tracking_signal": -5.25,
+    "cfe": -46.6,
+    "mad": 13.83,
+    "tracking_signal": -3.37,
     "tracking_signal_limit": 3.75,
-    "status": "RECALIBRATED (Bias Corrected)",
-    "out_of_sample_rmse": 17.12,
-    "interval_coverage_50_pct": 36.4,
-    "interval_coverage_80_pct": 54.5,
-    "interval_coverage_95_pct": 77.3,
+    "status": "IN_CONTROL (Unbiased)",
+    "out_of_sample_rmse": 17.49,
+    "interval_coverage_50_pct": 34.6,
+    "interval_coverage_80_pct": 53.8,
+    "interval_coverage_95_pct": 76.9,
     "residual_history": [
       {
         "date": "2026-11-10",
@@ -337,6 +337,58 @@
         "captured_50": false,
         "captured_80": false,
         "captured_95": true
+      },
+      {
+        "date": "2026-11-20",
+        "matchup": "Golden State Warriors @ Memphis Grizzlies",
+        "predicted_home_margin": -5.6,
+        "observed_home_margin": 28,
+        "residual_e": 33.6,
+        "studentized_r": 3.17,
+        "se_pred": 10.6,
+        "se_mean": 1.93,
+        "captured_50": false,
+        "captured_80": false,
+        "captured_95": false
+      },
+      {
+        "date": "2026-11-20",
+        "matchup": "Portland Trail Blazers @ Milwaukee Bucks",
+        "predicted_home_margin": 4.3,
+        "observed_home_margin": -10,
+        "residual_e": -14.3,
+        "studentized_r": -1.36,
+        "se_pred": 10.5,
+        "se_mean": 1.29,
+        "captured_50": false,
+        "captured_80": false,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-20",
+        "matchup": "New York Knicks @ Minnesota Timberwolves",
+        "predicted_home_margin": 3.9,
+        "observed_home_margin": -3,
+        "residual_e": -6.9,
+        "studentized_r": -0.66,
+        "se_pred": 10.49,
+        "se_mean": 1.24,
+        "captured_50": true,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-20",
+        "matchup": "LA Clippers @ San Antonio Spurs",
+        "predicted_home_margin": 0.9,
+        "observed_home_margin": 12,
+        "residual_e": 11.1,
+        "studentized_r": 1.06,
+        "se_pred": 10.44,
+        "se_mean": 0.7,
+        "captured_50": false,
+        "captured_80": true,
+        "captured_95": true
       }
     ]
   },
@@ -490,7 +542,47 @@
       "rule_statement": "Post-mortem on Detroit Pistons @ New Orleans Pelicans: Observed residual of -15.2 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
       "adjustment_type": "VARIANCE_GUARD",
       "parameter_delta": -3
+    },
+    {
+      "rule_id": "RULE-016",
+      "created_at": "2026-11-20 05:10:40",
+      "source_game": "Golden State Warriors 98 - Memphis Grizzlies 126",
+      "residual_trigger": "e_t = +33.6 pts (r = +3.17)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Golden State Warriors @ Memphis Grizzlies: Observed residual of +33.6 pts (SE_pred = 10.6). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": -3
+    },
+    {
+      "rule_id": "RULE-017",
+      "created_at": "2026-11-20 05:10:40",
+      "source_game": "Portland Trail Blazers 124 - Milwaukee Bucks 114",
+      "residual_trigger": "e_t = -14.3 pts (r = -1.36)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Portland Trail Blazers @ Milwaukee Bucks: Observed residual of -14.3 pts (SE_pred = 10.5). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": 2
+    },
+    {
+      "rule_id": "RULE-018",
+      "created_at": "2026-11-20 05:10:40",
+      "source_game": "New York Knicks 102 - Minnesota Timberwolves 99",
+      "residual_trigger": "e_t = -6.9 pts (r = -0.66)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on New York Knicks @ Minnesota Timberwolves: Observed residual of -6.9 pts (SE_pred = 10.49). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": -3
+    },
+    {
+      "rule_id": "RULE-019",
+      "created_at": "2026-11-20 05:10:40",
+      "source_game": "LA Clippers 112 - San Antonio Spurs 124",
+      "residual_trigger": "e_t = +11.1 pts (r = +1.06)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on LA Clippers @ San Antonio Spurs: Observed residual of +11.1 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": 2
     }
   ],
-  "last_updated": "2026-11-19T04:45:07Z"
+  "last_updated": "2026-11-20T05:10:40Z"
 }
