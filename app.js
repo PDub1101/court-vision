@@ -183,8 +183,7 @@ function parseDateInput(val) {
 }
 
 function formatGameDate(isoOrDate) {
-  const d = parseDateInput(isoOrDate);
-  if (!d) return 'Nov 17, 2026';
+  const d = parseDateInput(isoOrDate) || new Date();
   try {
     return d.toLocaleDateString('en-US', {
       timeZone: 'America/New_York',
@@ -199,8 +198,7 @@ function formatGameDate(isoOrDate) {
 }
 
 function formatGameDateLong(isoOrDate) {
-  const d = parseDateInput(isoOrDate);
-  if (!d) return 'Tuesday, November 17, 2026';
+  const d = parseDateInput(isoOrDate) || new Date();
   try {
     return d.toLocaleDateString('en-US', {
       timeZone: 'America/New_York',
@@ -215,8 +213,7 @@ function formatGameDateLong(isoOrDate) {
 }
 
 function formatGameDateShort(isoOrDate, includeYear = false) {
-  const d = parseDateInput(isoOrDate);
-  if (!d) return 'Nov 17';
+  const d = parseDateInput(isoOrDate) || new Date();
   try {
     const opts = {
       timeZone: 'America/New_York',
@@ -226,7 +223,7 @@ function formatGameDateShort(isoOrDate, includeYear = false) {
     if (includeYear) opts.year = 'numeric';
     return d.toLocaleDateString('en-US', opts);
   } catch (e) {
-    return 'Nov 17';
+    return d.toLocaleDateString('en-US');
   }
 }
 
