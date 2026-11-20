@@ -47,7 +47,11 @@ def audit_with_gemini(candidate, injury_context=""):
         from google import genai
         from google.genai import types
 
-        client = genai.Client(api_key=GEMINI_API_KEY)
+        http_options = types.HttpOptions(
+            timeout=12000,
+            retry_options=types.HttpRetryOptions(attempts=1)
+        )
+        client = genai.Client(api_key=GEMINI_API_KEY, http_options=http_options)
 
         rules_text = "\n".join(
             [f"- [{r['rule_id']} | {r['category']}]: {r['rule_statement']} (Delta: {r['parameter_delta']})" for r in learned_rules]
