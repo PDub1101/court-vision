@@ -94,7 +94,7 @@ def fetch_recent_nba_scores():
     # 2. Supplement with nba_api live scoreboard if available
     try:
         from nba_api.live.nba.endpoints import scoreboard
-        board = scoreboard.ScoreBoard()
+        board = scoreboard.ScoreBoard(timeout=4)
         games = board.get_dict().get("scoreboard", {}).get("games", [])
         for g in games:
             away_team_name = g["awayTeam"]["teamCity"] + " " + g["awayTeam"]["teamName"]
