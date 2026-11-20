@@ -2,8 +2,8 @@
   "bankroll": {
     "starting_capital": 1000.0,
     "current_balance": 1125.4,
-    "available_cash": 865.4,
-    "in_play_equity": 260.0,
+    "available_cash": 845.4,
+    "in_play_equity": 280.0,
     "total_profit_loss": 125.4,
     "roi_percent": 12.54,
     "currency": "USD"
@@ -44,9 +44,9 @@
         -12.9,
         13.9
       ],
-      "triggered_rule_id": "RULE-001",
-      "gemini_confidence": 95,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 74.7% (+42.7% EV, SE_pred=10.44) exceeds high-conviction threshold for Charlotte Hornets. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "triggered_rule_id": "NONE",
+      "gemini_confidence": 76,
+      "gemini_reasoning": "With both teams baseline-rated at neutral 0.0 EWMA net efficiency, the model projects a tight contest (+0.5 margin) creating a substantial 7.0-point discrepancy and 74.7% cover probability for Charlotte (+7.5). While standard error remains wide at 10.44 points without a triggered rule penalty, the massive +42.7% EV justifies a confident 1-unit allocation.",
       "status": "PENDING"
     },
     {
@@ -71,9 +71,9 @@
         -12.9,
         13.9
       ],
-      "triggered_rule_id": "RULE-001",
-      "gemini_confidence": 95,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 74.9% (+43.05% EV, SE_pred=10.44) exceeds high-conviction threshold for Brooklyn Nets. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "triggered_rule_id": "NONE",
+      "gemini_confidence": 78,
+      "gemini_reasoning": "The +7.0 point discrepancy provides a robust 74.9% cover probability and +43.05% EV against the market line with symmetrical baseline EWMA ratings. No active rotation traps or learned fatigue penalties are triggered, confirming a standard high-edge allocation on Brooklyn +6.5.",
       "status": "PENDING"
     },
     {
@@ -209,6 +209,33 @@
       "triggered_rule_id": "RULE-001",
       "gemini_confidence": 95,
       "gemini_reasoning": "ISyE 4031 Student-t cover probability of 90.8% (+73.27% EV, SE_pred=10.45) exceeds high-conviction threshold for Sacramento Kings. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261120_235326_new",
+      "game_id": "espn_nba_401909310",
+      "date_placed": "2026-11-20 23:53:26",
+      "matchup": "New Orleans Pelicans @ Oklahoma City Thunder",
+      "selection": "New Orleans Pelicans",
+      "line": 11.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 20.0,
+      "units": 1,
+      "potential_profit": 18.18,
+      "model_projected_spread": -8.9,
+      "edge_points": 2.6,
+      "cover_prob_pct": 59.3,
+      "ev_pct": 13.3,
+      "se_pred": 10.77,
+      "se_mean": 2.73,
+      "pi_80": [
+        -4.9,
+        22.8
+      ],
+      "triggered_rule_id": "NONE",
+      "gemini_confidence": 74,
+      "gemini_reasoning": "Model establishes a +2.6 point edge on New Orleans (+11.5) with a 59.3% Student-t cover probability and +13.3% EV against Oklahoma City's projected +8.9 net margin. With no turnover compounding or schedule fatigue conditions triggered, the play sustains sufficient variance buffer for a standard 1-unit position.",
       "status": "PENDING"
     }
   ],
@@ -1513,5 +1540,5 @@
       "note": "Day Settlement: 4 bets (2W-2L, $-7.28)"
     }
   ],
-  "last_updated": "2026-11-20T21:01:40.070644+00:00"
+  "last_updated": "2026-11-20T23:53:35.502036+00:00"
 }
