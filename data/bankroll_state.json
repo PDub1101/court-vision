@@ -36,8 +36,8 @@
       "potential_profit": 36.36,
       "model_projected_spread": 5.6,
       "edge_points": 11.1,
-      "cover_prob_pct": 85.2,
-      "ev_pct": 62.69,
+      "cover_prob_pct": 77.8,
+      "ev_pct": 48.43,
       "se_pred": 10.6,
       "se_mean": 1.93,
       "pi_80": [
@@ -46,7 +46,7 @@
       ],
       "triggered_rule_id": "RULE-001",
       "gemini_confidence": 95,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 85.2% (+62.69% EV, SE_pred=10.6) exceeds high-conviction threshold for Golden State Warriors. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 77.8% (+48.43% EV, SE_pred=10.6) exceeds high-conviction threshold for Golden State Warriors. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
       "status": "PENDING"
     },
     {
@@ -1240,5 +1240,5 @@
       "note": "Day Settlement: 4 bets (1W-3L, $-83.64)"
     }
   ],
-  "last_updated": "2026-11-20T00:15:56.693905+00:00"
+  "last_updated": "2026-11-20T02:08:44.798862+00:00"
 }
