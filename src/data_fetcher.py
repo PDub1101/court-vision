@@ -230,7 +230,7 @@ def get_team_advanced_metrics():
                 'Accept': 'application/json, text/plain, */*',
                 'Referer': 'https://www.nba.com/'
             },
-            timeout=10
+            timeout=4
         )
         data = stats.get_normalized_dict()
         teams_data = data.get('LeagueDashTeamStats', [])
