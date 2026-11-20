@@ -2,8 +2,8 @@
   "bankroll": {
     "starting_capital": 1000.0,
     "current_balance": 1125.4,
-    "available_cash": 1125.4,
-    "in_play_equity": 0.0,
+    "available_cash": 865.4,
+    "in_play_equity": 260.0,
     "total_profit_loss": 125.4,
     "roi_percent": 12.54,
     "currency": "USD"
@@ -21,7 +21,197 @@
     "average_edge_points": 2.9,
     "clv_beat_rate_percent": 66.7
   },
-  "active_bets": [],
+  "active_bets": [
+    {
+      "bet_id": "bet_20261120_210054_cha",
+      "game_id": "espn_nba_401909305",
+      "date_placed": "2026-11-20 21:00:54",
+      "matchup": "Charlotte Hornets @ Atlanta Hawks",
+      "selection": "Charlotte Hornets",
+      "line": 7.5,
+      "odds": -110,
+      "sportsbook": "Draft Kings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -0.5,
+      "edge_points": 7.0,
+      "cover_prob_pct": 74.7,
+      "ev_pct": 42.7,
+      "se_pred": 10.44,
+      "se_mean": 0.7,
+      "pi_80": [
+        -12.9,
+        13.9
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 74.7% (+42.7% EV, SE_pred=10.44) exceeds high-conviction threshold for Charlotte Hornets. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261120_210059_bro",
+      "game_id": "espn_nba_401909306",
+      "date_placed": "2026-11-20 21:00:59",
+      "matchup": "Orlando Magic @ Brooklyn Nets",
+      "selection": "Brooklyn Nets",
+      "line": 6.5,
+      "odds": -110,
+      "sportsbook": "Draft Kings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -0.5,
+      "edge_points": 7.0,
+      "cover_prob_pct": 74.9,
+      "ev_pct": 43.05,
+      "se_pred": 10.44,
+      "se_mean": 0.7,
+      "pi_80": [
+        -12.9,
+        13.9
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 74.9% (+43.05% EV, SE_pred=10.44) exceeds high-conviction threshold for Brooklyn Nets. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261120_210107_ind",
+      "game_id": "espn_nba_401909307",
+      "date_placed": "2026-11-20 21:01:07",
+      "matchup": "Indiana Pacers @ Cleveland Cavaliers",
+      "selection": "Indiana Pacers",
+      "line": 5.5,
+      "odds": -110,
+      "sportsbook": "Draft Kings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -0.5,
+      "edge_points": 5.0,
+      "cover_prob_pct": 68.3,
+      "ev_pct": 30.35,
+      "se_pred": 10.44,
+      "se_mean": 0.7,
+      "pi_80": [
+        -12.9,
+        13.9
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 68.3% (+30.35% EV, SE_pred=10.44) exceeds high-conviction threshold for Indiana Pacers. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261120_210117_tor",
+      "game_id": "espn_nba_401909308",
+      "date_placed": "2026-11-20 21:01:17",
+      "matchup": "Toronto Raptors @ Detroit Pistons",
+      "selection": "Toronto Raptors",
+      "line": 6.5,
+      "odds": -110,
+      "sportsbook": "Draft Kings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -0.5,
+      "edge_points": 6.0,
+      "cover_prob_pct": 71.6,
+      "ev_pct": 36.69,
+      "se_pred": 10.44,
+      "se_mean": 0.7,
+      "pi_80": [
+        -12.9,
+        13.9
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 71.6% (+36.69% EV, SE_pred=10.44) exceeds high-conviction threshold for Toronto Raptors. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261120_210138_uta",
+      "game_id": "espn_nba_401909311",
+      "date_placed": "2026-11-20 21:01:38",
+      "matchup": "Phoenix Suns @ Utah Jazz",
+      "selection": "Utah Jazz",
+      "line": 4.5,
+      "odds": -110,
+      "sportsbook": "Draft Kings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": 0.8,
+      "edge_points": 3.7,
+      "cover_prob_pct": 63.9,
+      "ev_pct": 21.97,
+      "se_pred": 10.45,
+      "se_mean": 0.8,
+      "pi_80": [
+        -14.2,
+        12.7
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 90,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 63.9% (+21.97% EV, SE_pred=10.45) exceeds high-conviction threshold for Utah Jazz. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261120_210139_den",
+      "game_id": "espn_nba_401909312",
+      "date_placed": "2026-11-20 21:01:39",
+      "matchup": "Houston Rockets @ Denver Nuggets",
+      "selection": "Denver Nuggets",
+      "line": -1.5,
+      "odds": -110,
+      "sportsbook": "Draft Kings",
+      "stake": 20.0,
+      "units": 1,
+      "potential_profit": 18.18,
+      "model_projected_spread": -4.2,
+      "edge_points": 2.7,
+      "cover_prob_pct": 60.3,
+      "ev_pct": 15.03,
+      "se_pred": 10.53,
+      "se_mean": 1.51,
+      "pi_80": [
+        -9.3,
+        17.8
+      ],
+      "triggered_rule_id": "RULE-003",
+      "gemini_confidence": 78,
+      "gemini_reasoning": "Student-t cover probability of 60.3% (+15.03% EV vs 52.4% breakeven) confirms positive expectation on Denver Nuggets. Applied RULE-003 (AR(1) blowout mean-reversion dampener of +0.78 pts).",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261120_210140_sac",
+      "game_id": "espn_nba_401909313",
+      "date_placed": "2026-11-20 21:01:40",
+      "matchup": "Sacramento Kings @ Los Angeles Lakers",
+      "selection": "Sacramento Kings",
+      "line": 14.5,
+      "odds": -110,
+      "sportsbook": "Draft Kings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -0.6,
+      "edge_points": 13.9,
+      "cover_prob_pct": 90.8,
+      "ev_pct": 73.27,
+      "se_pred": 10.45,
+      "se_mean": 0.73,
+      "pi_80": [
+        -12.8,
+        14.0
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 90.8% (+73.27% EV, SE_pred=10.45) exceeds high-conviction threshold for Sacramento Kings. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    }
+  ],
   "settled_bets": [
     {
       "bet_id": "bet_20261119_212951_la ",
@@ -1323,5 +1513,5 @@
       "note": "Day Settlement: 4 bets (2W-2L, $-7.28)"
     }
   ],
-  "last_updated": "2026-11-20T05:10:40.727419+00:00"
+  "last_updated": "2026-11-20T21:01:40.070644+00:00"
 }
