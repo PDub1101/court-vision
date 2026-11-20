@@ -44,9 +44,9 @@
         -19.2,
         8.0
       ],
-      "triggered_rule_id": "RULE-006",
-      "gemini_confidence": 85,
-      "gemini_reasoning": "Golden State holds an elite EWMA Net Rating of +7.35 against Memphis's 0.0 baseline, yielding an overwhelming 85.2% Student-t cover probability and an 11.1-point projected edge. Despite prior high-residual variance adjustments under RULE-006 on similar Warriors road profiles, the +62.69% EV substantially clears all safety thresholds for a 2-unit allocation.",
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 85.2% (+62.69% EV, SE_pred=10.6) exceeds high-conviction threshold for Golden State Warriors. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
       "status": "PENDING"
     },
     {
@@ -63,17 +63,17 @@
       "potential_profit": 36.36,
       "model_projected_spread": -4.3,
       "edge_points": 14.8,
-      "cover_prob_pct": 91.9,
-      "ev_pct": 75.53,
+      "cover_prob_pct": 93.3,
+      "ev_pct": 78.05,
       "se_pred": 10.5,
       "se_mean": 1.29,
       "pi_80": [
         -9.2,
         17.8
       ],
-      "triggered_rule_id": "NONE",
-      "gemini_confidence": 88,
-      "gemini_reasoning": "With Milwaukee holding an EWMA Net Rating of +4.34 against Portland's neutral 0.0 baseline, the model projects a +4.3 home margin, generating an immense +14.8 point discrepancy against the +10.5 line. Supported by a 91.9% Student-t cover probability under standard rotation parameters, this represents a top-tier +75.53% EV opportunity warranting a maximum 2-unit play.",
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 93.3% (+78.05% EV, SE_pred=10.5) exceeds high-conviction threshold for Milwaukee Bucks. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
       "status": "PENDING"
     },
     {
@@ -1240,5 +1240,5 @@
       "note": "Day Settlement: 4 bets (1W-3L, $-83.64)"
     }
   ],
-  "last_updated": "2026-11-19T21:29:51.289297+00:00"
+  "last_updated": "2026-11-20T00:15:56.693905+00:00"
 }
