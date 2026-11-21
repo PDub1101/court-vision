@@ -171,8 +171,8 @@
       "potential_profit": 18.18,
       "model_projected_spread": -4.2,
       "edge_points": 2.7,
-      "cover_prob_pct": 60.3,
-      "ev_pct": 15.03,
+      "cover_prob_pct": 70.7,
+      "ev_pct": 34.95,
       "se_pred": 10.53,
       "se_mean": 1.51,
       "pi_80": [
@@ -180,8 +180,8 @@
         17.8
       ],
       "triggered_rule_id": "RULE-003",
-      "gemini_confidence": 78,
-      "gemini_reasoning": "Student-t cover probability of 60.3% (+15.03% EV vs 52.4% breakeven) confirms positive expectation on Denver Nuggets. Applied RULE-003 (AR(1) blowout mean-reversion dampener of +0.78 pts).",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 70.7% (+34.95% EV, SE_pred=10.53) exceeds high-conviction threshold for Denver Nuggets. Applied RULE-003 (AR(1) blowout mean-reversion dampener of +0.78 pts).",
       "status": "PENDING"
     },
     {
@@ -1540,5 +1540,5 @@
       "note": "Day Settlement: 4 bets (2W-2L, $-7.28)"
     }
   ],
-  "last_updated": "2026-11-20T23:53:35.502036+00:00"
+  "last_updated": "2026-11-21T02:02:54.529661+00:00"
 }
