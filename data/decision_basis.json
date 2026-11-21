@@ -42,15 +42,15 @@
     ]
   },
   "diagnostics": {
-    "cfe": -46.6,
-    "mad": 13.83,
-    "tracking_signal": -3.37,
+    "cfe": -33.5,
+    "mad": 12.6,
+    "tracking_signal": -2.66,
     "tracking_signal_limit": 3.75,
     "status": "IN_CONTROL (Unbiased)",
-    "out_of_sample_rmse": 17.49,
-    "interval_coverage_50_pct": 34.6,
-    "interval_coverage_80_pct": 53.8,
-    "interval_coverage_95_pct": 76.9,
+    "out_of_sample_rmse": 16.29,
+    "interval_coverage_50_pct": 38.7,
+    "interval_coverage_80_pct": 58.1,
+    "interval_coverage_95_pct": 80.6,
     "residual_history": [
       {
         "date": "2026-11-10",
@@ -389,6 +389,71 @@
         "captured_50": false,
         "captured_80": true,
         "captured_95": true
+      },
+      {
+        "date": "2026-11-21",
+        "matchup": "Charlotte Hornets @ Atlanta Hawks",
+        "predicted_home_margin": 0.5,
+        "observed_home_margin": 14,
+        "residual_e": 13.5,
+        "studentized_r": 1.29,
+        "se_pred": 10.44,
+        "se_mean": 0.7,
+        "captured_50": false,
+        "captured_80": false,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-21",
+        "matchup": "Orlando Magic @ Brooklyn Nets",
+        "predicted_home_margin": 0.5,
+        "observed_home_margin": -2,
+        "residual_e": -2.5,
+        "studentized_r": -0.24,
+        "se_pred": 10.44,
+        "se_mean": 0.7,
+        "captured_50": true,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-21",
+        "matchup": "Indiana Pacers @ Cleveland Cavaliers",
+        "predicted_home_margin": 0.5,
+        "observed_home_margin": 9,
+        "residual_e": 8.5,
+        "studentized_r": 0.81,
+        "se_pred": 10.44,
+        "se_mean": 0.7,
+        "captured_50": false,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-21",
+        "matchup": "Toronto Raptors @ Detroit Pistons",
+        "predicted_home_margin": 0.5,
+        "observed_home_margin": -3,
+        "residual_e": -3.5,
+        "studentized_r": -0.34,
+        "se_pred": 10.44,
+        "se_mean": 0.7,
+        "captured_50": true,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-21",
+        "matchup": "New Orleans Pelicans @ Oklahoma City Thunder",
+        "predicted_home_margin": 8.9,
+        "observed_home_margin": 6,
+        "residual_e": -2.9,
+        "studentized_r": -0.27,
+        "se_pred": 10.77,
+        "se_mean": 2.73,
+        "captured_50": true,
+        "captured_80": true,
+        "captured_95": true
       }
     ]
   },
@@ -582,7 +647,27 @@
       "rule_statement": "Post-mortem on LA Clippers @ San Antonio Spurs: Observed residual of +11.1 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
       "adjustment_type": "VARIANCE_GUARD",
       "parameter_delta": 2
+    },
+    {
+      "rule_id": "RULE-020",
+      "created_at": "2026-11-21 04:45:05",
+      "source_game": "Charlotte Hornets 97 - Atlanta Hawks 111",
+      "residual_trigger": "e_t = +13.5 pts (r = +1.29)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Charlotte Hornets @ Atlanta Hawks: Observed residual of +13.5 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": -3
+    },
+    {
+      "rule_id": "RULE-021",
+      "created_at": "2026-11-21 04:45:05",
+      "source_game": "Indiana Pacers 119 - Cleveland Cavaliers 128",
+      "residual_trigger": "e_t = +8.5 pts (r = +0.81)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Indiana Pacers @ Cleveland Cavaliers: Observed residual of +8.5 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": -3
     }
   ],
-  "last_updated": "2026-11-20T05:10:40Z"
+  "last_updated": "2026-11-21T04:45:05Z"
 }
