@@ -42,15 +42,15 @@
     ]
   },
   "diagnostics": {
-    "cfe": -33.5,
-    "mad": 12.6,
-    "tracking_signal": -2.66,
+    "cfe": -36.5,
+    "mad": 11.94,
+    "tracking_signal": -3.06,
     "tracking_signal_limit": 3.75,
     "status": "IN_CONTROL (Unbiased)",
-    "out_of_sample_rmse": 16.29,
-    "interval_coverage_50_pct": 38.7,
-    "interval_coverage_80_pct": 58.1,
-    "interval_coverage_95_pct": 80.6,
+    "out_of_sample_rmse": 15.66,
+    "interval_coverage_50_pct": 41.2,
+    "interval_coverage_80_pct": 61.8,
+    "interval_coverage_95_pct": 82.4,
     "residual_history": [
       {
         "date": "2026-11-10",
@@ -454,6 +454,45 @@
         "captured_50": true,
         "captured_80": true,
         "captured_95": true
+      },
+      {
+        "date": "2026-11-21",
+        "matchup": "Phoenix Suns @ Utah Jazz",
+        "predicted_home_margin": -0.8,
+        "observed_home_margin": -10,
+        "residual_e": -9.2,
+        "studentized_r": -0.88,
+        "se_pred": 10.45,
+        "se_mean": 0.8,
+        "captured_50": false,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-21",
+        "matchup": "Houston Rockets @ Denver Nuggets",
+        "predicted_home_margin": 4.2,
+        "observed_home_margin": 9,
+        "residual_e": 4.8,
+        "studentized_r": 0.46,
+        "se_pred": 10.53,
+        "se_mean": 1.51,
+        "captured_50": true,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-21",
+        "matchup": "Sacramento Kings @ Los Angeles Lakers",
+        "predicted_home_margin": 0.6,
+        "observed_home_margin": 2,
+        "residual_e": 1.4,
+        "studentized_r": 0.13,
+        "se_pred": 10.45,
+        "se_mean": 0.73,
+        "captured_50": true,
+        "captured_80": true,
+        "captured_95": true
       }
     ]
   },
@@ -667,7 +706,17 @@
       "rule_statement": "Post-mortem on Indiana Pacers @ Cleveland Cavaliers: Observed residual of +8.5 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
       "adjustment_type": "VARIANCE_GUARD",
       "parameter_delta": -3
+    },
+    {
+      "rule_id": "RULE-022",
+      "created_at": "2026-11-21 20:02:09",
+      "source_game": "Phoenix Suns 111 - Utah Jazz 101",
+      "residual_trigger": "e_t = -9.2 pts (r = -0.88)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Phoenix Suns @ Utah Jazz: Observed residual of -9.2 pts (SE_pred = 10.45). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": -3
     }
   ],
-  "last_updated": "2026-11-21T04:45:05Z"
+  "last_updated": "2026-11-21T20:02:09Z"
 }
