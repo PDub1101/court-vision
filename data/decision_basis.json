@@ -42,15 +42,15 @@
     ]
   },
   "diagnostics": {
-    "cfe": -36.5,
-    "mad": 11.94,
-    "tracking_signal": -3.06,
+    "cfe": 0.7,
+    "mad": 11.66,
+    "tracking_signal": 0.06,
     "tracking_signal_limit": 3.75,
     "status": "IN_CONTROL (Unbiased)",
-    "out_of_sample_rmse": 15.66,
-    "interval_coverage_50_pct": 41.2,
-    "interval_coverage_80_pct": 61.8,
-    "interval_coverage_95_pct": 82.4,
+    "out_of_sample_rmse": 15.36,
+    "interval_coverage_50_pct": 42.1,
+    "interval_coverage_80_pct": 63.2,
+    "interval_coverage_95_pct": 81.6,
     "residual_history": [
       {
         "date": "2026-11-10",
@@ -493,6 +493,58 @@
         "captured_50": true,
         "captured_80": true,
         "captured_95": true
+      },
+      {
+        "date": "2026-11-22",
+        "matchup": "Portland Trail Blazers @ New York Knicks",
+        "predicted_home_margin": 1.0,
+        "observed_home_margin": 1,
+        "residual_e": 0.0,
+        "studentized_r": 0.0,
+        "se_pred": 10.45,
+        "se_mean": 0.73,
+        "captured_50": true,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-22",
+        "matchup": "Memphis Grizzlies @ Minnesota Timberwolves",
+        "predicted_home_margin": 4.0,
+        "observed_home_margin": 9,
+        "residual_e": 5.0,
+        "studentized_r": 0.48,
+        "se_pred": 10.51,
+        "se_mean": 1.35,
+        "captured_50": true,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-22",
+        "matchup": "New Orleans Pelicans @ San Antonio Spurs",
+        "predicted_home_margin": 0.5,
+        "observed_home_margin": 23,
+        "residual_e": 22.5,
+        "studentized_r": 2.16,
+        "se_pred": 10.44,
+        "se_mean": 0.7,
+        "captured_50": false,
+        "captured_80": false,
+        "captured_95": false
+      },
+      {
+        "date": "2026-11-22",
+        "matchup": "Boston Celtics @ Sacramento Kings",
+        "predicted_home_margin": -8.7,
+        "observed_home_margin": 1,
+        "residual_e": 9.7,
+        "studentized_r": 0.9,
+        "se_pred": 10.78,
+        "se_mean": 2.76,
+        "captured_50": false,
+        "captured_80": true,
+        "captured_95": true
       }
     ]
   },
@@ -716,7 +768,37 @@
       "rule_statement": "Post-mortem on Phoenix Suns @ Utah Jazz: Observed residual of -9.2 pts (SE_pred = 10.45). Tightening variance filter on similar pace/shooting profiles.",
       "adjustment_type": "VARIANCE_GUARD",
       "parameter_delta": -3
+    },
+    {
+      "rule_id": "RULE-023",
+      "created_at": "2026-11-22 20:17:34",
+      "source_game": "Memphis Grizzlies 95 - Minnesota Timberwolves 104",
+      "residual_trigger": "e_t = +5 pts (r = +0.48)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Memphis Grizzlies @ Minnesota Timberwolves: Observed residual of +5 pts (SE_pred = 10.51). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": -3
+    },
+    {
+      "rule_id": "RULE-024",
+      "created_at": "2026-11-22 20:17:34",
+      "source_game": "New Orleans Pelicans 91 - San Antonio Spurs 114",
+      "residual_trigger": "e_t = +22.5 pts (r = +2.16)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on New Orleans Pelicans @ San Antonio Spurs: Observed residual of +22.5 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": -3
+    },
+    {
+      "rule_id": "RULE-025",
+      "created_at": "2026-11-22 20:17:34",
+      "source_game": "Boston Celtics 96 - Sacramento Kings 97",
+      "residual_trigger": "e_t = +9.7 pts (r = +0.9)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Boston Celtics @ Sacramento Kings: Observed residual of +9.7 pts (SE_pred = 10.78). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": 2
     }
   ],
-  "last_updated": "2026-11-21T20:02:09Z"
+  "last_updated": "2026-11-22T20:17:34Z"
 }
