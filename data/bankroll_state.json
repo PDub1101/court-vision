@@ -117,8 +117,8 @@
       "potential_profit": 36.36,
       "model_projected_spread": 8.7,
       "edge_points": 4.8,
-      "cover_prob_pct": 67.3,
-      "ev_pct": 28.56,
+      "cover_prob_pct": 60.4,
+      "ev_pct": 15.34,
       "se_pred": 10.78,
       "se_mean": 2.76,
       "pi_80": [
@@ -126,8 +126,8 @@
         5.2
       ],
       "triggered_rule_id": "RULE-001",
-      "gemini_confidence": 95,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 67.3% (+28.56% EV, SE_pred=10.78) exceeds high-conviction threshold for Sacramento Kings. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "gemini_confidence": 81,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 60.4% (+15.34% EV, SE_pred=10.78) exceeds high-conviction threshold for Sacramento Kings. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
       "status": "PENDING"
     }
   ],
@@ -1808,5 +1808,5 @@
       "note": "Day Settlement: 8 bets (5W-3L, +$25.44)"
     }
   ],
-  "last_updated": "2026-11-21T20:02:40.902303+00:00"
+  "last_updated": "2026-11-22T01:04:36.550798+00:00"
 }
