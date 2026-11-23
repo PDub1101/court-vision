@@ -20,7 +20,7 @@
   "ols_parameters": {
     "equation_latex": "\\hat{Y}_0 = 2.20 + 0.68(\\Delta \\text{EWMA}_{\\text{NRtg}}) + 0.85(\\Delta \\text{Holt}_{\\text{Trend}}) + 0.22(\\Delta \\text{FourFactors}) + 0.95(\\Delta \\text{Rest})",
     "beta": [
-      0.53,
+      0.69,
       0.68,
       0.85,
       0.22,
@@ -42,15 +42,15 @@
     ]
   },
   "diagnostics": {
-    "cfe": 0.7,
-    "mad": 11.66,
-    "tracking_signal": 0.06,
+    "cfe": 44.5,
+    "mad": 11.45,
+    "tracking_signal": 3.89,
     "tracking_signal_limit": 3.75,
-    "status": "IN_CONTROL (Unbiased)",
-    "out_of_sample_rmse": 15.36,
-    "interval_coverage_50_pct": 42.1,
-    "interval_coverage_80_pct": 63.2,
-    "interval_coverage_95_pct": 81.6,
+    "status": "RECALIBRATED (Bias Corrected)",
+    "out_of_sample_rmse": 15.03,
+    "interval_coverage_50_pct": 44.2,
+    "interval_coverage_80_pct": 62.8,
+    "interval_coverage_95_pct": 83.7,
     "residual_history": [
       {
         "date": "2026-11-10",
@@ -545,6 +545,71 @@
         "captured_50": false,
         "captured_80": true,
         "captured_95": true
+      },
+      {
+        "date": "2026-11-23",
+        "matchup": "Oklahoma City Thunder @ Miami Heat",
+        "predicted_home_margin": -7.8,
+        "observed_home_margin": 10,
+        "residual_e": 17.8,
+        "studentized_r": 1.65,
+        "se_pred": 10.78,
+        "se_mean": 2.75,
+        "captured_50": false,
+        "captured_80": false,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-23",
+        "matchup": "Orlando Magic @ Washington Wizards",
+        "predicted_home_margin": 0.5,
+        "observed_home_margin": 20,
+        "residual_e": 19.5,
+        "studentized_r": 1.87,
+        "se_pred": 10.44,
+        "se_mean": 0.7,
+        "captured_50": false,
+        "captured_80": false,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-23",
+        "matchup": "Denver Nuggets @ Chicago Bulls",
+        "predicted_home_margin": -3.2,
+        "observed_home_margin": -6,
+        "residual_e": -2.8,
+        "studentized_r": -0.27,
+        "se_pred": 10.53,
+        "se_mean": 1.51,
+        "captured_50": true,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-23",
+        "matchup": "Indiana Pacers @ New York Knicks",
+        "predicted_home_margin": 1.0,
+        "observed_home_margin": 7,
+        "residual_e": 6.0,
+        "studentized_r": 0.57,
+        "se_pred": 10.45,
+        "se_mean": 0.73,
+        "captured_50": true,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-23",
+        "matchup": "Boston Celtics @ Golden State Warriors",
+        "predicted_home_margin": -2.3,
+        "observed_home_margin": 1,
+        "residual_e": 3.3,
+        "studentized_r": 0.31,
+        "se_pred": 10.49,
+        "se_mean": 1.19,
+        "captured_50": true,
+        "captured_80": true,
+        "captured_95": true
       }
     ]
   },
@@ -798,7 +863,27 @@
       "rule_statement": "Post-mortem on Boston Celtics @ Sacramento Kings: Observed residual of +9.7 pts (SE_pred = 10.78). Tightening variance filter on similar pace/shooting profiles.",
       "adjustment_type": "VARIANCE_GUARD",
       "parameter_delta": 2
+    },
+    {
+      "rule_id": "RULE-026",
+      "created_at": "2026-11-23 13:30:07",
+      "source_game": "Oklahoma City Thunder 113 - Miami Heat 123",
+      "residual_trigger": "e_t = +17.8 pts (r = +1.65)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Oklahoma City Thunder @ Miami Heat: Observed residual of +17.8 pts (SE_pred = 10.78). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": -3
+    },
+    {
+      "rule_id": "RULE-027",
+      "created_at": "2026-11-23 13:30:07",
+      "source_game": "Orlando Magic 96 - Washington Wizards 116",
+      "residual_trigger": "e_t = +19.5 pts (r = +1.87)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Orlando Magic @ Washington Wizards: Observed residual of +19.5 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": 2
     }
   ],
-  "last_updated": "2026-11-22T20:17:34Z"
+  "last_updated": "2026-11-23T13:30:07Z"
 }
