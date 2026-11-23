@@ -36,8 +36,8 @@
       "potential_profit": 36.36,
       "model_projected_spread": 7.8,
       "edge_points": 11.3,
-      "cover_prob_pct": 85.1,
-      "ev_pct": 62.53,
+      "cover_prob_pct": 82.9,
+      "ev_pct": 58.24,
       "se_pred": 10.78,
       "se_mean": 2.75,
       "pi_80": [
@@ -46,7 +46,7 @@
       ],
       "triggered_rule_id": "RULE-003",
       "gemini_confidence": 95,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 85.1% (+62.53% EV, SE_pred=10.78) exceeds high-conviction threshold for Oklahoma City Thunder. Applied RULE-003 (AR(1) blowout mean-reversion dampener of +0.85 pts).",
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 82.9% (+58.24% EV, SE_pred=10.78) exceeds high-conviction threshold for Oklahoma City Thunder. Applied RULE-003 (AR(1) blowout mean-reversion dampener of +0.85 pts).",
       "status": "PENDING"
     },
     {
@@ -2027,5 +2027,5 @@
       "note": "Day Settlement: 4 bets (2W-2L, $-5.46)"
     }
   ],
-  "last_updated": "2026-11-22T20:18:22.199838+00:00"
+  "last_updated": "2026-11-23T01:28:54.938127+00:00"
 }
