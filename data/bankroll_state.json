@@ -1,54 +1,28 @@
 {
   "bankroll": {
     "starting_capital": 1000.0,
-    "current_balance": 1303.54,
+    "current_balance": 1223.54,
     "available_cash": 1223.54,
-    "in_play_equity": 80.0,
-    "total_profit_loss": 303.54,
-    "roi_percent": 30.35,
+    "in_play_equity": 0.0,
+    "total_profit_loss": 223.54,
+    "roi_percent": 22.35,
     "currency": "USD"
   },
   "metrics": {
-    "total_bets": 47,
+    "total_bets": 49,
     "wins": 29,
-    "losses": 18,
+    "losses": 20,
     "pushes": 0,
-    "win_rate_percent": 61.7,
-    "current_streak": "W1",
+    "win_rate_percent": 59.2,
+    "current_streak": "L2",
     "longest_win_streak": 1,
     "longest_loss_streak": 1,
     "max_drawdown_percent": -2.0,
     "average_edge_points": 2.9,
     "clv_beat_rate_percent": 66.7
   },
-  "active_bets": [
-    {
-      "bet_id": "bet_20261124_004541_uta",
-      "game_id": "espn_nba_401910044",
-      "date_placed": "2026-11-24 00:45:41",
-      "matchup": "Utah Jazz @ Los Angeles Lakers",
-      "selection": "Utah Jazz",
-      "line": 13.5,
-      "odds": -110,
-      "sportsbook": "DraftKings",
-      "stake": 40.0,
-      "units": 2,
-      "potential_profit": 36.36,
-      "model_projected_spread": -0.8,
-      "edge_points": 12.7,
-      "cover_prob_pct": 88.8,
-      "ev_pct": 69.53,
-      "se_pred": 10.45,
-      "se_mean": 0.73,
-      "pi_80": [
-        -12.7,
-        14.2
-      ],
-      "triggered_rule_id": "RULE-001",
-      "gemini_confidence": 95,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 88.8% (+69.53% EV, SE_pred=10.45) exceeds high-conviction threshold for Utah Jazz. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
-      "status": "PENDING"
-    },
+  "active_bets": [],
+  "settled_bets": [
     {
       "bet_id": "bet_20261124_004546_sac",
       "game_id": "espn_nba_401910045",
@@ -74,10 +48,47 @@
       "triggered_rule_id": "RULE-001",
       "gemini_confidence": 95,
       "gemini_reasoning": "ISyE 4031 Student-t cover probability of 89.6% (+71.08% EV, SE_pred=10.44) exceeds high-conviction threshold for Sacramento Kings. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
-      "status": "PENDING"
-    }
-  ],
-  "settled_bets": [
+      "status": "SETTLED",
+      "result": "LOST",
+      "final_score": "San Antonio Spurs 123 - Sacramento Kings 107",
+      "cover_margin": -3.5,
+      "net_pnl": -40.0,
+      "bankroll_after": 1223.54,
+      "settled_at": "2026-11-24 13:30:04"
+    },
+    {
+      "bet_id": "bet_20261124_004541_uta",
+      "game_id": "espn_nba_401910044",
+      "date_placed": "2026-11-24 00:45:41",
+      "matchup": "Utah Jazz @ Los Angeles Lakers",
+      "selection": "Utah Jazz",
+      "line": 13.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -0.8,
+      "edge_points": 12.7,
+      "cover_prob_pct": 88.8,
+      "ev_pct": 69.53,
+      "se_pred": 10.45,
+      "se_mean": 0.73,
+      "pi_80": [
+        -12.7,
+        14.2
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 88.8% (+69.53% EV, SE_pred=10.45) exceeds high-conviction threshold for Utah Jazz. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "SETTLED",
+      "result": "LOST",
+      "final_score": "Utah Jazz 94 - Los Angeles Lakers 109",
+      "cover_margin": -1.5,
+      "net_pnl": -40.0,
+      "bankroll_after": 1263.54,
+      "settled_at": "2026-11-24 13:30:04"
+    },
     {
       "bet_id": "bet_20261124_004532_la ",
       "game_id": "espn_nba_401910043",
@@ -2284,8 +2295,8 @@
     },
     {
       "date": "2026-11-24",
-      "balance": 1303.54,
-      "pnl": 52.72,
+      "balance": 1223.54,
+      "pnl": -27.28,
       "bets": [
         {
           "bet_id": "bet_20261124_004522_chi",
@@ -2325,10 +2336,36 @@
           "net_pnl": 36.36,
           "final_score": "LA Clippers 104 - Houston Rockets 116",
           "sportsbook": "DraftKings"
+        },
+        {
+          "bet_id": "bet_20261124_004541_uta",
+          "matchup": "Utah Jazz @ Los Angeles Lakers",
+          "selection": "Utah Jazz",
+          "line": 13.5,
+          "odds": -110,
+          "stake": 40.0,
+          "units": 2,
+          "result": "LOST",
+          "net_pnl": -40.0,
+          "final_score": "Utah Jazz 94 - Los Angeles Lakers 109",
+          "sportsbook": "DraftKings"
+        },
+        {
+          "bet_id": "bet_20261124_004546_sac",
+          "matchup": "San Antonio Spurs @ Sacramento Kings",
+          "selection": "Sacramento Kings",
+          "line": 12.5,
+          "odds": -110,
+          "stake": 40.0,
+          "units": 2,
+          "result": "LOST",
+          "net_pnl": -40.0,
+          "final_score": "San Antonio Spurs 123 - Sacramento Kings 107",
+          "sportsbook": "DraftKings"
         }
       ],
-      "note": "Day Settlement: 3 bets (2W-1L, +$52.72)"
+      "note": "Day Settlement: 5 bets (2W-3L, $-27.28)"
     }
   ],
-  "last_updated": "2026-11-24T04:45:05.069426+00:00"
+  "last_updated": "2026-11-24T13:30:04.800170+00:00"
 }
