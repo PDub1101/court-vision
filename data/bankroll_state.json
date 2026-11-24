@@ -36,8 +36,8 @@
       "potential_profit": 36.36,
       "model_projected_spread": -1.7,
       "edge_points": 3.2,
-      "cover_prob_pct": 62.2,
-      "ev_pct": 18.69,
+      "cover_prob_pct": 65.7,
+      "ev_pct": 25.52,
       "se_pred": 10.44,
       "se_mean": 0.7,
       "pi_80": [
@@ -45,8 +45,8 @@
         15.2
       ],
       "triggered_rule_id": "RULE-001",
-      "gemini_confidence": 85,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 62.2% (+18.69% EV, SE_pred=10.44) exceeds high-conviction threshold for Orlando Magic. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "gemini_confidence": 94,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 65.7% (+25.52% EV, SE_pred=10.44) exceeds high-conviction threshold for Orlando Magic. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
       "status": "PENDING"
     },
     {
@@ -2449,5 +2449,5 @@
       "note": "Day Settlement: 5 bets (2W-3L, $-27.28)"
     }
   ],
-  "last_updated": "2026-11-24T21:30:46.416554+00:00"
+  "last_updated": "2026-11-24T23:00:01.700203+00:00"
 }
