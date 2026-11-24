@@ -2,8 +2,8 @@
   "bankroll": {
     "starting_capital": 1000.0,
     "current_balance": 1223.54,
-    "available_cash": 1223.54,
-    "in_play_equity": 0.0,
+    "available_cash": 1103.54,
+    "in_play_equity": 120.0,
     "total_profit_loss": 223.54,
     "roi_percent": 22.35,
     "currency": "USD"
@@ -21,7 +21,89 @@
     "average_edge_points": 2.9,
     "clv_beat_rate_percent": 66.7
   },
-  "active_bets": [],
+  "active_bets": [
+    {
+      "bet_id": "bet_20261124_213028_orl",
+      "game_id": "espn_nba_401909314",
+      "date_placed": "2026-11-24 21:30:28",
+      "matchup": "Detroit Pistons @ Orlando Magic",
+      "selection": "Orlando Magic",
+      "line": 1.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -1.7,
+      "edge_points": 3.2,
+      "cover_prob_pct": 62.2,
+      "ev_pct": 18.69,
+      "se_pred": 10.44,
+      "se_mean": 0.7,
+      "pi_80": [
+        -11.7,
+        15.2
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 85,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 62.2% (+18.69% EV, SE_pred=10.44) exceeds high-conviction threshold for Orlando Magic. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261124_213033_was",
+      "game_id": "espn_nba_401909315",
+      "date_placed": "2026-11-24 21:30:33",
+      "matchup": "Boston Celtics @ Washington Wizards",
+      "selection": "Washington Wizards",
+      "line": 10.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": 7.4,
+      "edge_points": 3.1,
+      "cover_prob_pct": 61.2,
+      "ev_pct": 16.76,
+      "se_pred": 10.78,
+      "se_mean": 2.76,
+      "pi_80": [
+        -21.3,
+        6.4
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 83,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 61.2% (+16.76% EV, SE_pred=10.78) exceeds high-conviction threshold for Washington Wizards. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261124_213046_dal",
+      "game_id": "espn_nba_401909316",
+      "date_placed": "2026-11-24 21:30:46",
+      "matchup": "Dallas Mavericks @ Denver Nuggets",
+      "selection": "Dallas Mavericks",
+      "line": 8.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -2.2,
+      "edge_points": 6.3,
+      "cover_prob_pct": 72.7,
+      "ev_pct": 38.7,
+      "se_pred": 10.46,
+      "se_mean": 0.94,
+      "pi_80": [
+        -11.3,
+        15.6
+      ],
+      "triggered_rule_id": "RULE-003",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 72.7% (+38.7% EV, SE_pred=10.46) exceeds high-conviction threshold for Dallas Mavericks. Applied RULE-003 (AR(1) blowout mean-reversion dampener of +0.82 pts).",
+      "status": "PENDING"
+    }
+  ],
   "settled_bets": [
     {
       "bet_id": "bet_20261124_004546_sac",
@@ -2367,5 +2449,5 @@
       "note": "Day Settlement: 5 bets (2W-3L, $-27.28)"
     }
   ],
-  "last_updated": "2026-11-24T13:30:04.800170+00:00"
+  "last_updated": "2026-11-24T21:30:46.416554+00:00"
 }
