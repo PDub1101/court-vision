@@ -2,8 +2,8 @@
   "bankroll": {
     "starting_capital": 1000.0,
     "current_balance": 1250.82,
-    "available_cash": 1250.82,
-    "in_play_equity": 0.0,
+    "available_cash": 1070.82,
+    "in_play_equity": 180.0,
     "total_profit_loss": 250.82,
     "roi_percent": 25.08,
     "currency": "USD"
@@ -21,7 +21,143 @@
     "average_edge_points": 2.9,
     "clv_beat_rate_percent": 66.7
   },
-  "active_bets": [],
+  "active_bets": [
+    {
+      "bet_id": "bet_20261124_004522_chi",
+      "game_id": "espn_nba_401910041",
+      "date_placed": "2026-11-24 00:45:22",
+      "matchup": "Cleveland Cavaliers @ Chicago Bulls",
+      "selection": "Chicago Bulls",
+      "line": 8.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -0.7,
+      "edge_points": 9.2,
+      "cover_prob_pct": 81.0,
+      "ev_pct": 54.67,
+      "se_pred": 10.44,
+      "se_mean": 0.7,
+      "pi_80": [
+        -12.7,
+        14.1
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 81.0% (+54.67% EV, SE_pred=10.44) exceeds high-conviction threshold for Chicago Bulls. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261124_004528_new",
+      "game_id": "espn_nba_401910042",
+      "date_placed": "2026-11-24 00:45:28",
+      "matchup": "Phoenix Suns @ New Orleans Pelicans",
+      "selection": "New Orleans Pelicans",
+      "line": 3.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 20.0,
+      "units": 1,
+      "potential_profit": 18.18,
+      "model_projected_spread": 0.6,
+      "edge_points": 2.9,
+      "cover_prob_pct": 60.8,
+      "ev_pct": 16.16,
+      "se_pred": 10.45,
+      "se_mean": 0.8,
+      "pi_80": [
+        -14.1,
+        12.8
+      ],
+      "triggered_rule_id": "RULE-022",
+      "gemini_confidence": 72,
+      "gemini_reasoning": "New Orleans covers at a 60.8% Student-t probability with +16.16% EV against Phoenix's modest +1.93 EWMA net rating. Calibrated down by RULE-022's variance penalty on comparable Suns road forecasting profiles (SE_pred 10.45), the edge firmly supports a standard 1-unit position.",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261124_004532_la ",
+      "game_id": "espn_nba_401910043",
+      "date_placed": "2026-11-24 00:45:32",
+      "matchup": "LA Clippers @ Houston Rockets",
+      "selection": "LA Clippers",
+      "line": 13.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -0.7,
+      "edge_points": 12.8,
+      "cover_prob_pct": 88.9,
+      "ev_pct": 69.81,
+      "se_pred": 10.44,
+      "se_mean": 0.7,
+      "pi_80": [
+        -12.7,
+        14.1
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 88.9% (+69.81% EV, SE_pred=10.44) exceeds high-conviction threshold for LA Clippers. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261124_004541_uta",
+      "game_id": "espn_nba_401910044",
+      "date_placed": "2026-11-24 00:45:41",
+      "matchup": "Utah Jazz @ Los Angeles Lakers",
+      "selection": "Utah Jazz",
+      "line": 13.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -0.8,
+      "edge_points": 12.7,
+      "cover_prob_pct": 88.8,
+      "ev_pct": 69.53,
+      "se_pred": 10.45,
+      "se_mean": 0.73,
+      "pi_80": [
+        -12.7,
+        14.2
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 88.8% (+69.53% EV, SE_pred=10.45) exceeds high-conviction threshold for Utah Jazz. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261124_004546_sac",
+      "game_id": "espn_nba_401910045",
+      "date_placed": "2026-11-24 00:45:46",
+      "matchup": "San Antonio Spurs @ Sacramento Kings",
+      "selection": "Sacramento Kings",
+      "line": 12.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -0.7,
+      "edge_points": 13.2,
+      "cover_prob_pct": 89.6,
+      "ev_pct": 71.08,
+      "se_pred": 10.44,
+      "se_mean": 0.7,
+      "pi_80": [
+        -12.7,
+        14.1
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 89.6% (+71.08% EV, SE_pred=10.44) exceeds high-conviction threshold for Sacramento Kings. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    }
+  ],
   "settled_bets": [
     {
       "bet_id": "bet_20261122_201822_gol",
@@ -2129,5 +2265,5 @@
       "note": "Day Settlement: 5 bets (4W-1L, +$105.44)"
     }
   ],
-  "last_updated": "2026-11-23T13:30:07.503023+00:00"
+  "last_updated": "2026-11-24T00:45:46.557616+00:00"
 }
