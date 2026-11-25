@@ -10,51 +10,6 @@
 let equityChartInstance = null;
 
 // ============================================================================
-// THEME MANAGEMENT (Light Base & Soft Slate Dark Mode)
-// ============================================================================
-function initTheme() {
-  const currentTheme = document.documentElement.getAttribute('data-theme') || 'slate';
-  updateThemeButton(currentTheme);
-}
-
-// Support seamless theme synchronization from parent site (pdub1101.github.io)
-window.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SET_THEME') {
-    const newTheme = event.data.theme;
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    updateThemeButton(newTheme);
-    if (equityChartInstance) {
-      updateChartTheme(equityChartInstance, newTheme);
-    }
-  }
-});
-
-function toggleTheme() {
-  const currentTheme = document.documentElement.getAttribute('data-theme') || 'slate';
-  const newTheme = currentTheme === 'slate' ? 'light' : 'slate';
-  document.documentElement.setAttribute('data-theme', newTheme);
-  localStorage.setItem('theme', newTheme);
-  updateThemeButton(newTheme);
-
-  if (equityChartInstance) {
-    updateChartTheme(equityChartInstance, newTheme);
-  }
-}
-
-function updateThemeButton(theme) {
-  const iconEl = document.getElementById('theme-icon');
-  const textEl = document.getElementById('theme-text');
-  if (theme === 'slate') {
-    iconEl.textContent = '☀️';
-    textEl.textContent = 'Light Mode';
-  } else {
-    iconEl.textContent = '🌙';
-    textEl.textContent = 'Dark Mode';
-  }
-}
-
-// ============================================================================
 // TAB NAVIGATION
 // ============================================================================
 function switchTab(tabKey) {
@@ -317,7 +272,6 @@ function toggleBroadcastSimulation() {
 
   if (isBroadcastSimulating) {
     if (toggleBtn) toggleBtn.classList.add('simulating');
-    if (iconEl) iconEl.textContent = '⏹️';
     if (textEl) textEl.textContent = 'Exit Simulation';
 
     if (broadcastSimInterval) clearInterval(broadcastSimInterval);
@@ -332,7 +286,6 @@ function toggleBroadcastSimulation() {
     }, 1000);
   } else {
     if (toggleBtn) toggleBtn.classList.remove('simulating');
-    if (iconEl) iconEl.textContent = '🔴';
     if (textEl) textEl.textContent = 'Simulate Live Game';
     if (broadcastSimInterval) clearInterval(broadcastSimInterval);
   }
@@ -617,24 +570,24 @@ function buildScoreBugHtml(bet) {
     const progressPct = Math.min(100, Math.max(10, 50 + (liveMarginAgainstLine * 4)));
 
     if (liveMarginAgainstLine > 0) {
-      cushionBadgeText = `🟢 COVERING (${marginStr} PTS)`;
+      cushionBadgeText = `COVERING (${marginStr} PTS)`;
       const leadOrTrail = rawMargin >= 0 ? `leads by ${rawMargin} pts` : `trails by ${Math.abs(rawMargin)} pts`;
       cushionExplanationText = `<strong>${bet.selection}</strong> ${leadOrTrail}, within the <strong>${lineStr}</strong> spread cushion.`;
       meterFillHtml = `<div class="bcast-meter-fill fill-green" style="width: ${progressPct}%;"></div>`;
     } else if (liveMarginAgainstLine < 0) {
-      cushionBadgeText = `🔴 DEFICIT (${marginStr} PTS)`;
+      cushionBadgeText = `DEFICIT (${marginStr} PTS)`;
       const needPts = Math.abs(liveMarginAgainstLine).toFixed(1);
       cushionExplanationText = `<strong>${bet.selection}</strong> trails by ${Math.abs(rawMargin)} pts (needs <strong>+${needPts} more pts</strong> to cover).`;
       meterFillHtml = `<div class="bcast-meter-fill fill-red" style="width: ${progressPct}%;"></div>`;
     } else {
-      cushionBadgeText = `🟡 AT SPREAD (PUSH)`;
+      cushionBadgeText = `AT SPREAD (PUSH)`;
       cushionExplanationText = `Exact tie with line. Stake refunded if final.`;
       meterFillHtml = `<div class="bcast-meter-fill fill-blue" style="width: 50%;"></div>`;
     }
   } else {
     // Upcoming / Pre-game
     const prob = bet.cover_prob_pct || 60.5;
-    cushionBadgeText = `⏳ PRE-GAME CUSHION`;
+    cushionBadgeText = `PRE-GAME CUSHION`;
     if (lineVal > 0) {
       cushionExplanationText = `<strong>${bet.selection}</strong> starts with a <strong>+${lineVal} pt head start</strong> against the spread.`;
     } else {
@@ -650,8 +603,8 @@ function buildScoreBugHtml(bet) {
   const prob = bet.cover_prob_pct ? Number(bet.cover_prob_pct).toFixed(1) : "60.5";
   const ev = bet.ev_pct ? Number(bet.ev_pct).toFixed(1) : "15.5";
   const ruleId = bet.triggered_rule_id || "ISyE 4031";
-  const confidence = bet.gemini_confidence || 92;
-  const edgeGrade = parseFloat(edgePts) >= 5.0 ? "5★ High Value" : (parseFloat(edgePts) >= 2.5 ? "Solid +EV" : "Marginal Edge");
+  const sePredStr = bet.se_pred ? Number(bet.se_pred).toFixed(2) : "10.50";
+  const edgeGrade = parseFloat(edgePts) >= 5.0 ? "Large Divergence" : (parseFloat(edgePts) >= 2.5 ? "Moderate Divergence" : "Small Divergence");
   const edgeGradeClass = parseFloat(edgePts) >= 5.0 ? "grade-5star" : "grade-solid";
   let shortReason = bet.gemini_reasoning || "ISyE 4031 Student-t cover probability exceeds edge threshold.";
   if (shortReason.length > 115) {
@@ -662,13 +615,13 @@ function buildScoreBugHtml(bet) {
   const homeTicks = Array.from({length: 5}, (_, i) => `<span class="timeout-dash ${i < homeTimeouts ? 'active' : ''}"></span>`).join('');
 
   let topStatusClass = "is-upcoming";
-  let topStatusLabel = `TONIGHT • ${clockText}`;
+  let topStatusLabel = `TONIGHT &bull; ${clockText}`;
   if (isLive) {
     topStatusClass = "is-live";
-    topStatusLabel = `🔴 LIVE • ${periodText} ${clockText}`;
+    topStatusLabel = `LIVE &bull; ${periodText} ${clockText}`;
   } else if (isFinal) {
     topStatusClass = isSettled ? `is-final ${isWon ? 'is-won' : (isPush ? '' : 'is-lost')}` : "is-final";
-    topStatusLabel = isSettled ? `FINAL • ${netPnlFormatted}` : "FINAL SCORE";
+    topStatusLabel = isSettled ? `FINAL &bull; ${netPnlFormatted}` : "FINAL SCORE";
   }
 
   return `
@@ -682,12 +635,12 @@ function buildScoreBugHtml(bet) {
             ${isLive ? '<span class="live-pulse-dot"></span>' : ''}
             <span>${topStatusLabel}</span>
           </span>
-          <span class="bcast-date-badge">📅 ${isSettled ? `Game: ${betGameDateStr}` : `Date: ${betGameDateStr}`}</span>
-          <span class="bcast-rule-pill"><span class="rule-icon">🧠</span> ${ruleId}</span>
+          <span class="bcast-date-badge">${isSettled ? `Game: ${betGameDateStr}` : `Date: ${betGameDateStr}`}</span>
+          <span class="bcast-rule-pill">${ruleId}</span>
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
           <span class="bcast-sportsbook-tag">${bet.sportsbook || 'DraftKings'} ${oddsStr}</span>
-          <span class="bcast-confidence-pill">Conviction: <strong>${confidence}%</strong></span>
+          <span class="bcast-confidence-pill">SE<sub>pred</sub>: <strong>${sePredStr} pts</strong></span>
         </div>
       </div>
 
@@ -697,8 +650,8 @@ function buildScoreBugHtml(bet) {
         <!-- Column 1: Matchup & Live Scoreboard -->
         <div class="tri-col tri-col-scoreboard">
           <div class="tri-col-header">
-            <span class="tri-subhead">MATCHUP & SCOREBOARD</span>
-            <span class="tri-clock-badge">${isLive ? `${periodText} ${clockText}` : (isFinal ? `FINAL • ${betGameDateShort}` : `${betGameDateShort} • ${clockText}`)}</span>
+            <span class="tri-subhead">MATCHUP &amp; SCOREBOARD</span>
+            <span class="tri-clock-badge">${isLive ? `${periodText} ${clockText}` : (isFinal ? `FINAL &bull; ${betGameDateShort}` : `${betGameDateShort} &bull; ${clockText}`)}</span>
           </div>
 
           <div class="tri-scoreboard-rack">
@@ -707,7 +660,7 @@ function buildScoreBugHtml(bet) {
               <div class="tri-team-left">
                 <img src="${awayTeam.logo}" alt="${awayTeam.abbr}" class="tri-team-logo" loading="lazy" onerror="this.style.opacity='0.4'">
                 <div class="tri-team-names">
-                  <span class="tri-team-abbr">${awayTeam.abbr} ${isBetOnAway ? '<span class="our-pick-pill">★ OUR BET</span>' : ''}</span>
+                  <span class="tri-team-abbr">${awayTeam.abbr} ${isBetOnAway ? '<span class="our-pick-pill">MODEL PICK</span>' : ''}</span>
                   <span class="tri-team-full">${awayTeam.short}</span>
                 </div>
               </div>
@@ -726,7 +679,7 @@ function buildScoreBugHtml(bet) {
               <div class="tri-team-left">
                 <img src="${homeTeam.logo}" alt="${homeTeam.abbr}" class="tri-team-logo" loading="lazy" onerror="this.style.opacity='0.4'">
                 <div class="tri-team-names">
-                  <span class="tri-team-abbr">${homeTeam.abbr} ${isBetOnHome ? '<span class="our-pick-pill">★ OUR BET</span>' : ''}</span>
+                  <span class="tri-team-abbr">${homeTeam.abbr} ${isBetOnHome ? '<span class="our-pick-pill">MODEL PICK</span>' : ''}</span>
                   <span class="tri-team-full">${homeTeam.short}</span>
                 </div>
               </div>
@@ -749,10 +702,10 @@ function buildScoreBugHtml(bet) {
           </div>
         </div>
 
-        <!-- Column 2: The Bet Command Center (WHAT NEEDS TO HAPPEN TO WIN / SETTLED OUTCOME) -->
+        <!-- Column 2: The Bet Command Center -->
         <div class="tri-col tri-col-command">
           <div class="tri-col-header">
-            <span class="tri-subhead">${isSettled ? '🏁 SETTLED BET OUTCOME' : '🎯 WHAT NEEDS TO HAPPEN TO WIN'}</span>
+            <span class="tri-subhead">${isSettled ? 'SETTLED BET OUTCOME' : 'CONDITION TO COVER'}</span>
             <span class="tri-target-badge ${isSettled ? (isWon ? 'badge-won' : (isPush ? '' : 'badge-lost')) : ''}">${isSettled ? netPnlFormatted : `SPREAD ${lineStr}`}</span>
           </div>
 
@@ -760,7 +713,6 @@ function buildScoreBugHtml(bet) {
             <!-- Plain English Rule Callout -->
             <div class="tri-goal-box">
               <div class="goal-box-title">
-                <span>${isSettled ? (isWon ? '🏆' : (isPush ? '🟡' : '❌')) : '🎯'}</span>
                 <strong>${isSettled ? 'BET OUTCOME:' : 'CONDITION TO WIN:'}</strong>
               </div>
               <div class="goal-box-rule">
@@ -769,8 +721,8 @@ function buildScoreBugHtml(bet) {
                   : winRuleText}
               </div>
               <div style="margin-top: 6px; font-size: 11.5px; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); display: flex; gap: 10px; flex-wrap: wrap;">
-                <span>📅 Game Date: <strong style="color: var(--text-secondary);">${betGameDateStr}</strong></span>
-                ${isSettled ? `<span>🏁 Settled: <strong style="color: var(--text-secondary);">${settledDateStr}</strong></span>` : `<span>⏰ Tip-off: <strong style="color: var(--text-secondary);">${scheduledTipOffET}</strong></span>`}
+                <span>Game Date: <strong style="color: var(--text-secondary);">${betGameDateStr}</strong></span>
+                ${isSettled ? `<span>Settled: <strong style="color: var(--text-secondary);">${settledDateStr}</strong></span>` : `<span>Tip-off: <strong style="color: var(--text-secondary);">${scheduledTipOffET}</strong></span>`}
               </div>
             </div>
 
@@ -809,7 +761,7 @@ function buildScoreBugHtml(bet) {
         <!-- Column 3: ISyE Quant Model & Edge Intelligence -->
         <div class="tri-col tri-col-model">
           <div class="tri-col-header">
-            <span class="tri-subhead">🔬 ISyE 4031 QUANT RADAR</span>
+            <span class="tri-subhead">ISyE 4031 QUANT RADAR</span>
             <span class="tri-edge-grade ${edgeGradeClass}">${edgeGrade}</span>
           </div>
 
@@ -844,7 +796,6 @@ function buildScoreBugHtml(bet) {
 
             <!-- Gemini AI Reasoning -->
             <div class="tri-ai-reasoning" title="${bet.gemini_reasoning || ''}">
-              <span class="ai-brain-icon">🧠</span>
               <span class="ai-reason-text">${shortReason}</span>
             </div>
           </div>
@@ -1052,7 +1003,7 @@ function renderSlateCards(slate, evaluatedPicks) {
       vetoHtml = `
         <div class="veto-box ${badgeClass}">
           <div style="font-weight: 800; margin-bottom: 5px; display: flex; align-items: center; gap: 6px;">
-            <span>${isApproved ? '✅' : '⚠️'} Gemini 2.5 Flash: ${badgeTitle}</span>
+            <span>Gemini 2.5 Flash: ${badgeTitle}</span>
             ${ruleTag}
           </div>
           <div>${evaluation.gemini_reasoning}</div>
@@ -1067,8 +1018,8 @@ function renderSlateCards(slate, evaluatedPicks) {
     card.innerHTML = `
       <div class="game-header">
         <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-          <span class="game-date-badge">📅 ${gameDateStr}</span>
-          <span style="font-weight: 700;">🏀 ${gameTime} • <span id="game-live-status-${game.game_id}" style="color: var(--bball-orange);">Prospective Nowcast</span></span>
+          <span class="game-date-badge">${gameDateStr}</span>
+          <span style="font-weight: 700;">${gameTime} &bull; <span id="game-live-status-${game.game_id}" style="color: var(--bball-orange);">Prospective Nowcast</span></span>
         </div>
         <span class="bookmaker-badge">${game.sportsbook}</span>
       </div>
@@ -1209,8 +1160,8 @@ function renderActiveBetsTable(activeBets) {
 
     tr.innerHTML = `
       <td style="font-family: 'JetBrains Mono', monospace; font-size: 12px; white-space: nowrap;">
-        📅 <strong style="color: var(--text-primary);">${gameDateStr}</strong><br>
-        <span style="color: var(--text-muted); font-size: 11px;">⏰ ${tipOffTime}</span>
+        <strong style="color: var(--text-primary);">${gameDateStr}</strong><br>
+        <span style="color: var(--text-muted); font-size: 11px;">${tipOffTime}</span>
       </td>
       <td style="font-weight: 700;">${b.matchup}</td>
       <td>
@@ -1288,7 +1239,7 @@ async function fetchLiveScoresAndUpdateDesk() {
         if (!scoreCell || !coverCell) return;
 
         if (state === 'pre') {
-          scoreCell.innerHTML = `<span style="color: var(--text-muted); font-size: 12px;">⏳ ${detail}</span>`;
+          scoreCell.innerHTML = `<span style="color: var(--text-muted); font-size: 12px;">${detail}</span>`;
           coverCell.innerHTML = `<span class="status-badge status-pending">PRE-GAME</span>`;
           return;
         }
@@ -1299,7 +1250,7 @@ async function fetchLiveScoresAndUpdateDesk() {
             ${getTeamAbbr(awayName)} ${awayScore} - ${homeScore} ${getTeamAbbr(homeName)}
           </div>
           <div style="font-size: 11px; color: ${isFinal ? 'var(--text-muted)' : 'var(--bball-orange)'}; font-weight: 700;">
-            ${isFinal ? 'FINAL' : `🔴 ${detail}`}
+            ${isFinal ? 'FINAL' : `LIVE: ${detail}`}
           </div>
         `;
 
@@ -1309,10 +1260,8 @@ async function fetchLiveScoresAndUpdateDesk() {
 
         let liveMarginAgainstLine = 0;
         if (isBetOnHome) {
-          // Home margin + line: e.g. Home 100, Away 95 (+5 margin). If line -1.5 -> +5 + (-1.5) = +3.5
           liveMarginAgainstLine = (homeScore - awayScore) + line;
         } else {
-          // Away margin + line: e.g. Away 95, Home 100 (-5 margin). If line +1.5 -> -5 + 1.5 = -3.5
           liveMarginAgainstLine = (awayScore - homeScore) + line;
         }
 
@@ -1321,19 +1270,19 @@ async function fetchLiveScoresAndUpdateDesk() {
         if (liveMarginAgainstLine > 0) {
           coverCell.innerHTML = `
             <span class="status-badge status-won" style="font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">
-              🟢 COVERING (${marginStr})
+              COVERING (${marginStr})
             </span>
           `;
         } else if (liveMarginAgainstLine < 0) {
           coverCell.innerHTML = `
             <span class="status-badge status-lost" style="font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">
-              🔴 NOT COVERING (${marginStr})
+              NOT COVERING (${marginStr})
             </span>
           `;
         } else {
           coverCell.innerHTML = `
             <span class="status-badge status-push" style="font-size: 11px; font-weight: 800;">
-              🟡 PUSH (${marginStr})
+              PUSH (${marginStr})
             </span>
           `;
         }
@@ -1386,7 +1335,7 @@ async function fetchLiveScoresAndUpdateDesk() {
         }
         if (statusEl) {
           if (state === 'in') {
-            statusEl.innerHTML = `<span style="color: var(--neg); font-weight: 800;">🔴 LIVE: ${detail}</span>`;
+            statusEl.innerHTML = `<span style="color: var(--neg); font-weight: 800;">LIVE: ${detail}</span>`;
           } else if (state === 'post' || isFinal) {
             statusEl.innerHTML = `<span style="color: var(--text-muted); font-weight: 800;">FINAL</span>`;
           }
@@ -1441,24 +1390,24 @@ function renderModelAndMemoryTab(decisionBasis) {
 
   telemetryGrid.innerHTML = `
     <div class="kpi-card accent-bankroll">
-      <div class="kpi-label">📐 OLS Fit & Degrees of Freedom</div>
+      <div class="kpi-label">OLS Fit &amp; Degrees of Freedom</div>
       <div class="kpi-val">R² = ${meta.r_squared}</div>
-      <div class="kpi-sub">s = ${meta.residual_se_s} pts • n = ${meta.n_obs} (df = ${meta.df})</div>
+      <div class="kpi-sub">s = ${meta.residual_se_s} pts &bull; n = ${meta.n_obs} (df = ${meta.df})</div>
     </div>
     <div class="kpi-card accent-trial">
-      <div class="kpi-label">📉 Holt EWMA & AR(1) Parameters</div>
+      <div class="kpi-label">Holt EWMA &amp; AR(1) Parameters</div>
       <div class="kpi-val">α=${smooth.alpha_level}, β=${smooth.beta_trend}</div>
       <div class="kpi-sub">AR(1) Blowout Reversion φ₁ = ${smooth.phi1_ar1_reversion}</div>
     </div>
     <div class="kpi-card accent-pnl">
-      <div class="kpi-label">📡 Tracking Signal (CFE / MAD)</div>
+      <div class="kpi-label">Tracking Signal (CFE / MAD)</div>
       <div class="kpi-val" style="color: var(--pos);">${diag.tracking_signal > 0 ? '+' : ''}${diag.tracking_signal}</div>
       <div class="kpi-sub">${diag.status} (Limit: ±3.75)</div>
     </div>
     <div class="kpi-card accent-ats">
-      <div class="kpi-label">🎯 SE_pred Interval Coverage</div>
+      <div class="kpi-label">SE<sub>pred</sub> Interval Coverage</div>
       <div class="kpi-val">${diag.interval_coverage_80_pct}% <span style="font-size: 14px; color: var(--text-muted); font-weight: 600;">(80% PI)</span></div>
-      <div class="kpi-sub">95% PI: ${diag.interval_coverage_95_pct}% • RMSE: ${diag.out_of_sample_rmse} pts</div>
+      <div class="kpi-sub">95% PI: ${diag.interval_coverage_95_pct}% &bull; RMSE: ${diag.out_of_sample_rmse} pts</div>
     </div>
   `;
 
@@ -1496,7 +1445,7 @@ function renderModelAndMemoryTab(decisionBasis) {
     resHistory.forEach(r => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 700; color: var(--text-primary); white-space: nowrap;">📅 ${formatGameDateShort(r.date, true)}</td>
+        <td style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 700; color: var(--text-primary); white-space: nowrap;">${formatGameDateShort(r.date, true)}</td>
         <td style="font-weight: 700;">${r.matchup}</td>
         <td style="font-family: 'JetBrains Mono', monospace;">${r.predicted_home_margin > 0 ? '+' : ''}${r.predicted_home_margin}</td>
         <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">${r.observed_home_margin > 0 ? '+' : ''}${r.observed_home_margin}</td>
@@ -1581,7 +1530,7 @@ function renderSettledTable(settledBets) {
   if (filtersContainer) {
     let filterButtonsHtml = `
       <button class="ledger-date-btn ${currentLedgerDateFilter === 'all' ? 'active' : ''}" onclick="setLedgerDateFilter('all')">
-        📅 All Past Dates (${settledBets.length})
+        All Past Dates (${settledBets.length})
       </button>
     `;
     sortedDateKeys.forEach(k => {
@@ -1617,7 +1566,7 @@ function renderSettledTable(settledBets) {
         : '--';
       summaryContainer.innerHTML = `
         <div>
-          <strong>📅 Showing Past Game Date: <span style="color: var(--bball-orange);">${activeDateObj.display}</span></strong>
+          <strong>Showing Past Game Date: <span style="color: var(--bball-orange);">${activeDateObj.display}</span></strong>
           <span style="color: var(--text-muted); margin-left: 8px;">(${betsToDisplay.length} Wager${betsToDisplay.length === 1 ? '' : 's'})</span>
         </div>
         <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap;">
@@ -1638,8 +1587,8 @@ function renderSettledTable(settledBets) {
         : '--';
       summaryContainer.innerHTML = `
         <div>
-          <strong>📜 Showing: All Past Days Bets</strong>
-          <span style="color: var(--text-muted); margin-left: 8px;">(${sortedDateKeys.length} Historical Dates • ${settledBets.length} Total Bets)</span>
+          <strong>Showing: All Past Days Bets</strong>
+          <span style="color: var(--text-muted); margin-left: 8px;">(${sortedDateKeys.length} Historical Dates &bull; ${settledBets.length} Total Bets)</span>
         </div>
         <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; display: flex; gap: 14px; align-items: center; flex-wrap: wrap;">
           <span>Cumulative: <strong>${totalWins}W - ${totalLosses}L ${totalPushes > 0 ? `- ${totalPushes}P` : ''}</strong> (${winRate})</span>
@@ -1652,8 +1601,8 @@ function renderSettledTable(settledBets) {
 
   if (badgeEl) {
     badgeEl.textContent = currentLedgerDateFilter === 'all' 
-      ? `📜 All Past Days (${settledBets.length} Bets)` 
-      : `📅 ${dateMap[currentLedgerDateFilter] ? dateMap[currentLedgerDateFilter].display : 'Past Date'} (${betsToDisplay.length} Bets)`;
+      ? `All Past Days (${settledBets.length} Bets)` 
+      : `${dateMap[currentLedgerDateFilter] ? dateMap[currentLedgerDateFilter].display : 'Past Date'} (${betsToDisplay.length} Bets)`;
   }
 
   // 5. Render Table Rows
@@ -1673,7 +1622,7 @@ function renderSettledTable(settledBets) {
 
     tr.innerHTML = `
       <td style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 700; white-space: nowrap; color: var(--text-primary);">
-        📅 ${gameDateStr}
+        ${gameDateStr}
       </td>
       <td style="color: var(--text-muted); font-size: 12px; font-family: 'JetBrains Mono', monospace; white-space: nowrap;">
         ${settledDateStr}
@@ -1741,16 +1690,13 @@ function renderEquityChart(history, currentBalance, bankrollState) {
   const ctx = document.getElementById('equityChart');
   if (!ctx) return;
 
-  const currentTheme = document.documentElement.getAttribute('data-theme') || 'slate';
-  const isDark = currentTheme === 'slate';
-
   document.getElementById('chart-latest-balance').textContent = `Balance: $${currentBalance.toFixed(2)}`;
 
   let labels = history.map(h => h.date);
   let dataPoints = history.map(h => h.balance);
 
-  const textColor = isDark ? '#94a3b8' : '#64748b';
-  const gridColor = isDark ? 'rgba(55, 68, 101, 0.4)' : 'rgba(226, 232, 240, 0.7)';
+  const textColor = '#68707d';
+  const gridColor = '#e5e2da';
 
   if (equityChartInstance) {
     equityChartInstance.destroy();
@@ -1764,24 +1710,24 @@ function renderEquityChart(history, currentBalance, bankrollState) {
         {
           label: 'CourtVision Bankroll ($)',
           data: dataPoints,
-          borderColor: '#f97316',
-          backgroundColor: isDark ? 'rgba(249, 115, 22, 0.16)' : 'rgba(234, 88, 12, 0.08)',
+          borderColor: '#003057',
+          backgroundColor: 'rgba(0, 48, 87, 0.08)',
           fill: true,
           tension: 0.25,
-          borderWidth: 3,
-          pointBackgroundColor: '#f97316',
+          borderWidth: 2.5,
+          pointBackgroundColor: '#003057',
           pointBorderColor: '#ffffff',
           pointBorderWidth: 1.5,
-          pointRadius: 6,
-          pointHoverRadius: 9,
-          pointHoverBackgroundColor: '#ea580c',
+          pointRadius: 5,
+          pointHoverRadius: 8,
+          pointHoverBackgroundColor: '#00213d',
           pointHoverBorderColor: '#ffffff',
           pointHoverBorderWidth: 2
         },
         {
           label: 'Starting Capital ($1,000 Breakeven)',
           data: labels.map(() => 1000.0),
-          borderColor: isDark ? 'rgba(148, 163, 184, 0.5)' : 'rgba(100, 116, 139, 0.4)',
+          borderColor: 'rgba(104, 112, 125, 0.55)',
           borderDash: [6, 6],
           borderWidth: 1.5,
           pointRadius: 0,
@@ -1808,13 +1754,13 @@ function renderEquityChart(history, currentBalance, bankrollState) {
         },
         tooltip: {
           enabled: true,
-          backgroundColor: isDark ? 'rgba(15, 23, 42, 0.96)' : 'rgba(255, 255, 255, 0.98)',
-          titleColor: isDark ? '#f8fafc' : '#0f172a',
-          bodyColor: isDark ? '#cbd5e1' : '#334155',
-          borderColor: isDark ? 'rgba(249, 115, 22, 0.5)' : 'rgba(234, 88, 12, 0.4)',
-          borderWidth: 1.5,
+          backgroundColor: '#ffffff',
+          titleColor: '#14171f',
+          bodyColor: '#4a505c',
+          borderColor: '#cfc9bc',
+          borderWidth: 1,
           padding: 14,
-          cornerRadius: 10,
+          cornerRadius: 4,
           displayColors: false,
           titleFont: { family: 'Plus Jakarta Sans', size: 13, weight: 800 },
           bodyFont: { family: 'JetBrains Mono, monospace', size: 11.5 },
@@ -1828,11 +1774,11 @@ function renderEquityChart(history, currentBalance, bankrollState) {
               const pnl = h.pnl !== undefined ? h.pnl : 0;
               const pnlSign = pnl > 0 ? '+' : (pnl < 0 ? '-' : '');
               const pnlStr = pnl !== 0 ? ` (${pnlSign}$${Math.abs(pnl).toFixed(2)})` : '';
-              return `📅 ${date} • Bankroll: $${bal.toFixed(2)}${pnlStr}`;
+              return `${date} • Bankroll: $${bal.toFixed(2)}${pnlStr}`;
             },
             label: function(context) {
               if (context.datasetIndex === 0) {
-                return `💰 Portfolio Equity: $${context.parsed.y.toFixed(2)}`;
+                return `Portfolio Equity: $${context.parsed.y.toFixed(2)}`;
               }
               return null;
             },
@@ -1846,23 +1792,23 @@ function renderEquityChart(history, currentBalance, bankrollState) {
               const activeForDate = getActiveBetsForDate(targetDate, idx === labels.length - 1, bankrollState);
 
               const lines = [];
-              lines.push('────────────────────────────────────────');
+              lines.push('----------------------------------------');
 
               if (bets.length === 0 && activeForDate.length === 0) {
                 if (idx === 0) {
-                  lines.push('🏁 Starting Capital: $1,000.00 (Breakeven Baseline)');
+                  lines.push('Starting Capital: $1,000.00 (Breakeven Baseline)');
                   lines.push('   No bets placed prior to Day 1');
                 } else {
-                  lines.push('⚪ No bets placed on this date');
-                  lines.push('   (No games met the +EV edge & Student-t threshold)');
+                  lines.push('No bets placed on this date');
+                  lines.push('   (No games met the divergence & Student-t threshold)');
                 }
                 return lines;
               }
 
               if (bets.length > 0) {
-                lines.push(`🎯 Settled Wagers (${bets.length} Bet${bets.length === 1 ? '' : 's'}):`);
+                lines.push(`Settled Wagers (${bets.length} Bet${bets.length === 1 ? '' : 's'}):`);
                 bets.forEach((b, i) => {
-                  const num = bets.length > 1 ? `${i + 1}. ` : '• ';
+                  const num = bets.length > 1 ? `${i + 1}. ` : '- ';
                   const lineStr = b.line !== undefined ? (b.line > 0 ? `+${b.line}` : `${b.line}`) : '';
                   const oddsStr = b.odds ? ` @ ${b.odds > 0 ? '+' : ''}${b.odds}` : '';
                   const stakeStr = b.stake ? `$${b.stake.toFixed(0)}` : '';
@@ -1877,9 +1823,9 @@ function renderEquityChart(history, currentBalance, bankrollState) {
 
               if (activeForDate.length > 0) {
                 if (bets.length > 0) lines.push('');
-                lines.push(`⚡ Active In-Play (${activeForDate.length} Bet${activeForDate.length === 1 ? '' : 's'} Placed Tonight):`);
+                lines.push(`Active In-Play (${activeForDate.length} Bet${activeForDate.length === 1 ? '' : 's'} Placed Tonight):`);
                 activeForDate.forEach((b, i) => {
-                  const num = activeForDate.length > 1 ? `${i + 1}. ` : '• ';
+                  const num = activeForDate.length > 1 ? `${i + 1}. ` : '- ';
                   const lineStr = b.line !== undefined ? (b.line > 0 ? `+${b.line}` : `${b.line}`) : '';
                   const oddsStr = b.odds ? ` @ ${b.odds > 0 ? '+' : ''}${b.odds}` : '';
                   const stakeStr = b.stake ? `$${b.stake.toFixed(0)}` : '';
@@ -1919,32 +1865,10 @@ function renderEquityChart(history, currentBalance, bankrollState) {
   });
 }
 
-function updateChartTheme(chart, theme) {
-  const isDark = theme === 'slate';
-  const textColor = isDark ? '#94a3b8' : '#64748b';
-  const gridColor = isDark ? 'rgba(55, 68, 101, 0.4)' : 'rgba(226, 232, 240, 0.7)';
-
-  chart.options.plugins.legend.labels.color = textColor;
-  chart.options.scales.x.grid.color = gridColor;
-  chart.options.scales.x.ticks.color = textColor;
-  chart.options.scales.y.grid.color = gridColor;
-  chart.options.scales.y.ticks.color = textColor;
-
-  if (chart.options.plugins.tooltip) {
-    chart.options.plugins.tooltip.backgroundColor = isDark ? 'rgba(15, 23, 42, 0.96)' : 'rgba(255, 255, 255, 0.98)';
-    chart.options.plugins.tooltip.titleColor = isDark ? '#f8fafc' : '#0f172a';
-    chart.options.plugins.tooltip.bodyColor = isDark ? '#cbd5e1' : '#334155';
-    chart.options.plugins.tooltip.borderColor = isDark ? 'rgba(249, 115, 22, 0.5)' : 'rgba(234, 88, 12, 0.4)';
-  }
-
-  chart.update();
-}
-
 // ============================================================================
 // INITIALIZATION
 // ============================================================================
 document.addEventListener('DOMContentLoaded', () => {
-  initTheme();
   renderDashboard();
   startLiveScoreboardPolling();
 });
