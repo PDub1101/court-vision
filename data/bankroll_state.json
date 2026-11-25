@@ -63,8 +63,8 @@
       "potential_profit": 36.36,
       "model_projected_spread": -6.7,
       "edge_points": 5.2,
-      "cover_prob_pct": 68.7,
-      "ev_pct": 31.13,
+      "cover_prob_pct": 65.3,
+      "ev_pct": 24.6,
       "se_pred": 10.56,
       "se_mean": 1.74,
       "pi_80": [
@@ -72,8 +72,8 @@
         20.2
       ],
       "triggered_rule_id": "RULE-001",
-      "gemini_confidence": 95,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 68.7% (+31.13% EV, SE_pred=10.56) exceeds high-conviction threshold for Oklahoma City Thunder. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "gemini_confidence": 93,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 65.3% (+24.6% EV, SE_pred=10.56) exceeds high-conviction threshold for Oklahoma City Thunder. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
       "status": "PENDING"
     },
     {
@@ -2676,5 +2676,5 @@
       "note": "Day Settlement: 3 bets (1W-2L, $-43.64)"
     }
   ],
-  "last_updated": "2026-11-25T21:31:26.700735+00:00"
+  "last_updated": "2026-11-25T22:26:29.027485+00:00"
 }
