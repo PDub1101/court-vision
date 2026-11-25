@@ -1,20 +1,20 @@
 {
   "bankroll": {
     "starting_capital": 1000.0,
-    "current_balance": 1223.54,
+    "current_balance": 1143.54,
     "available_cash": 1103.54,
-    "in_play_equity": 120.0,
-    "total_profit_loss": 223.54,
-    "roi_percent": 22.35,
+    "in_play_equity": 40.0,
+    "total_profit_loss": 143.54,
+    "roi_percent": 14.35,
     "currency": "USD"
   },
   "metrics": {
-    "total_bets": 49,
+    "total_bets": 51,
     "wins": 29,
-    "losses": 20,
+    "losses": 22,
     "pushes": 0,
-    "win_rate_percent": 59.2,
-    "current_streak": "L2",
+    "win_rate_percent": 56.9,
+    "current_streak": "L4",
     "longest_win_streak": 1,
     "longest_loss_streak": 1,
     "max_drawdown_percent": -2.0,
@@ -22,60 +22,6 @@
     "clv_beat_rate_percent": 66.7
   },
   "active_bets": [
-    {
-      "bet_id": "bet_20261124_213028_orl",
-      "game_id": "espn_nba_401909314",
-      "date_placed": "2026-11-24 21:30:28",
-      "matchup": "Detroit Pistons @ Orlando Magic",
-      "selection": "Orlando Magic",
-      "line": 1.5,
-      "odds": -110,
-      "sportsbook": "DraftKings",
-      "stake": 40.0,
-      "units": 2,
-      "potential_profit": 36.36,
-      "model_projected_spread": -1.7,
-      "edge_points": 3.2,
-      "cover_prob_pct": 65.7,
-      "ev_pct": 25.52,
-      "se_pred": 10.44,
-      "se_mean": 0.7,
-      "pi_80": [
-        -11.7,
-        15.2
-      ],
-      "triggered_rule_id": "RULE-001",
-      "gemini_confidence": 94,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 65.7% (+25.52% EV, SE_pred=10.44) exceeds high-conviction threshold for Orlando Magic. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
-      "status": "PENDING"
-    },
-    {
-      "bet_id": "bet_20261124_213033_was",
-      "game_id": "espn_nba_401909315",
-      "date_placed": "2026-11-24 21:30:33",
-      "matchup": "Boston Celtics @ Washington Wizards",
-      "selection": "Washington Wizards",
-      "line": 10.5,
-      "odds": -110,
-      "sportsbook": "DraftKings",
-      "stake": 40.0,
-      "units": 2,
-      "potential_profit": 36.36,
-      "model_projected_spread": 7.4,
-      "edge_points": 3.1,
-      "cover_prob_pct": 61.2,
-      "ev_pct": 16.76,
-      "se_pred": 10.78,
-      "se_mean": 2.76,
-      "pi_80": [
-        -21.3,
-        6.4
-      ],
-      "triggered_rule_id": "RULE-001",
-      "gemini_confidence": 83,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 61.2% (+16.76% EV, SE_pred=10.78) exceeds high-conviction threshold for Washington Wizards. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
-      "status": "PENDING"
-    },
     {
       "bet_id": "bet_20261124_213046_dal",
       "game_id": "espn_nba_401909316",
@@ -105,6 +51,72 @@
     }
   ],
   "settled_bets": [
+    {
+      "bet_id": "bet_20261124_213033_was",
+      "game_id": "espn_nba_401909315",
+      "date_placed": "2026-11-24 21:30:33",
+      "matchup": "Boston Celtics @ Washington Wizards",
+      "selection": "Washington Wizards",
+      "line": 10.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": 7.4,
+      "edge_points": 3.1,
+      "cover_prob_pct": 61.2,
+      "ev_pct": 16.76,
+      "se_pred": 10.78,
+      "se_mean": 2.76,
+      "pi_80": [
+        -21.3,
+        6.4
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 83,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 61.2% (+16.76% EV, SE_pred=10.78) exceeds high-conviction threshold for Washington Wizards. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "SETTLED",
+      "result": "LOST",
+      "final_score": "Boston Celtics 131 - Washington Wizards 116",
+      "cover_margin": -4.5,
+      "net_pnl": -40.0,
+      "bankroll_after": 1143.54,
+      "settled_at": "2026-11-25 04:00:28"
+    },
+    {
+      "bet_id": "bet_20261124_213028_orl",
+      "game_id": "espn_nba_401909314",
+      "date_placed": "2026-11-24 21:30:28",
+      "matchup": "Detroit Pistons @ Orlando Magic",
+      "selection": "Orlando Magic",
+      "line": 1.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -1.7,
+      "edge_points": 3.2,
+      "cover_prob_pct": 65.7,
+      "ev_pct": 25.52,
+      "se_pred": 10.44,
+      "se_mean": 0.7,
+      "pi_80": [
+        -11.7,
+        15.2
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 94,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 65.7% (+25.52% EV, SE_pred=10.44) exceeds high-conviction threshold for Orlando Magic. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "SETTLED",
+      "result": "LOST",
+      "final_score": "Detroit Pistons 104 - Orlando Magic 86",
+      "cover_margin": -16.5,
+      "net_pnl": -40.0,
+      "bankroll_after": 1183.54,
+      "settled_at": "2026-11-25 04:00:28"
+    },
     {
       "bet_id": "bet_20261124_004546_sac",
       "game_id": "espn_nba_401910045",
@@ -2447,7 +2459,41 @@
         }
       ],
       "note": "Day Settlement: 5 bets (2W-3L, $-27.28)"
+    },
+    {
+      "date": "2026-11-25",
+      "balance": 1143.54,
+      "pnl": -80.0,
+      "bets": [
+        {
+          "bet_id": "bet_20261124_213028_orl",
+          "matchup": "Detroit Pistons @ Orlando Magic",
+          "selection": "Orlando Magic",
+          "line": 1.5,
+          "odds": -110,
+          "stake": 40.0,
+          "units": 2,
+          "result": "LOST",
+          "net_pnl": -40.0,
+          "final_score": "Detroit Pistons 104 - Orlando Magic 86",
+          "sportsbook": "DraftKings"
+        },
+        {
+          "bet_id": "bet_20261124_213033_was",
+          "matchup": "Boston Celtics @ Washington Wizards",
+          "selection": "Washington Wizards",
+          "line": 10.5,
+          "odds": -110,
+          "stake": 40.0,
+          "units": 2,
+          "result": "LOST",
+          "net_pnl": -40.0,
+          "final_score": "Boston Celtics 131 - Washington Wizards 116",
+          "sportsbook": "DraftKings"
+        }
+      ],
+      "note": "Day Settlement: 2 bets (0W-2L, $-80.00)"
     }
   ],
-  "last_updated": "2026-11-24T23:00:01.700203+00:00"
+  "last_updated": "2026-11-25T04:00:28.841237+00:00"
 }
