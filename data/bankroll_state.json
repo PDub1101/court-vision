@@ -1,27 +1,28 @@
 {
   "bankroll": {
     "starting_capital": 1000.0,
-    "current_balance": 1143.54,
-    "available_cash": 1103.54,
-    "in_play_equity": 40.0,
-    "total_profit_loss": 143.54,
-    "roi_percent": 14.35,
+    "current_balance": 1179.9,
+    "available_cash": 1179.9,
+    "in_play_equity": 0.0,
+    "total_profit_loss": 179.9,
+    "roi_percent": 17.99,
     "currency": "USD"
   },
   "metrics": {
-    "total_bets": 51,
-    "wins": 29,
+    "total_bets": 52,
+    "wins": 30,
     "losses": 22,
     "pushes": 0,
-    "win_rate_percent": 56.9,
-    "current_streak": "L4",
+    "win_rate_percent": 57.7,
+    "current_streak": "W1",
     "longest_win_streak": 1,
     "longest_loss_streak": 1,
     "max_drawdown_percent": -2.0,
     "average_edge_points": 2.9,
     "clv_beat_rate_percent": 66.7
   },
-  "active_bets": [
+  "active_bets": [],
+  "settled_bets": [
     {
       "bet_id": "bet_20261124_213046_dal",
       "game_id": "espn_nba_401909316",
@@ -47,10 +48,14 @@
       "triggered_rule_id": "RULE-003",
       "gemini_confidence": 95,
       "gemini_reasoning": "ISyE 4031 Student-t cover probability of 72.7% (+38.7% EV, SE_pred=10.46) exceeds high-conviction threshold for Dallas Mavericks. Applied RULE-003 (AR(1) blowout mean-reversion dampener of +0.82 pts).",
-      "status": "PENDING"
-    }
-  ],
-  "settled_bets": [
+      "status": "SETTLED",
+      "result": "WON",
+      "final_score": "Dallas Mavericks 120 - Denver Nuggets 101",
+      "cover_margin": 27.5,
+      "net_pnl": 36.36,
+      "bankroll_after": 1179.9,
+      "settled_at": "2026-11-25 14:15:23"
+    },
     {
       "bet_id": "bet_20261124_213033_was",
       "game_id": "espn_nba_401909315",
@@ -2462,8 +2467,8 @@
     },
     {
       "date": "2026-11-25",
-      "balance": 1143.54,
-      "pnl": -80.0,
+      "balance": 1179.9,
+      "pnl": -43.64,
       "bets": [
         {
           "bet_id": "bet_20261124_213028_orl",
@@ -2490,10 +2495,23 @@
           "net_pnl": -40.0,
           "final_score": "Boston Celtics 131 - Washington Wizards 116",
           "sportsbook": "DraftKings"
+        },
+        {
+          "bet_id": "bet_20261124_213046_dal",
+          "matchup": "Dallas Mavericks @ Denver Nuggets",
+          "selection": "Dallas Mavericks",
+          "line": 8.5,
+          "odds": -110,
+          "stake": 40.0,
+          "units": 2,
+          "result": "WON",
+          "net_pnl": 36.36,
+          "final_score": "Dallas Mavericks 120 - Denver Nuggets 101",
+          "sportsbook": "DraftKings"
         }
       ],
-      "note": "Day Settlement: 2 bets (0W-2L, $-80.00)"
+      "note": "Day Settlement: 3 bets (1W-2L, $-43.64)"
     }
   ],
-  "last_updated": "2026-11-25T04:00:28.841237+00:00"
+  "last_updated": "2026-11-25T14:15:23.484657+00:00"
 }

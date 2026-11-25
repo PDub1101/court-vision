@@ -42,15 +42,15 @@
     ]
   },
   "diagnostics": {
-    "cfe": 35.9,
-    "mad": 11.57,
-    "tracking_signal": 3.1,
+    "cfe": 14.7,
+    "mad": 11.76,
+    "tracking_signal": 1.25,
     "tracking_signal_limit": 3.75,
     "status": "IN_CONTROL (Unbiased)",
-    "out_of_sample_rmse": 14.81,
-    "interval_coverage_50_pct": 40.0,
-    "interval_coverage_80_pct": 62.0,
-    "interval_coverage_95_pct": 86.0,
+    "out_of_sample_rmse": 14.96,
+    "interval_coverage_50_pct": 39.2,
+    "interval_coverage_80_pct": 60.8,
+    "interval_coverage_95_pct": 84.3,
     "residual_history": [
       {
         "date": "2026-11-10",
@@ -701,6 +701,19 @@
         "captured_50": false,
         "captured_80": true,
         "captured_95": true
+      },
+      {
+        "date": "2026-11-25",
+        "matchup": "Dallas Mavericks @ Denver Nuggets",
+        "predicted_home_margin": 2.2,
+        "observed_home_margin": -19,
+        "residual_e": -21.2,
+        "studentized_r": -2.03,
+        "se_pred": 10.46,
+        "se_mean": 0.94,
+        "captured_50": false,
+        "captured_80": false,
+        "captured_95": false
       }
     ]
   },
@@ -1044,7 +1057,17 @@
       "rule_statement": "Post-mortem on Boston Celtics @ Washington Wizards: Observed residual of -7.6 pts (SE_pred = 10.78). Tightening variance filter on similar pace/shooting profiles.",
       "adjustment_type": "VARIANCE_GUARD",
       "parameter_delta": -3
+    },
+    {
+      "rule_id": "RULE-035",
+      "created_at": "2026-11-25 14:15:23",
+      "source_game": "Dallas Mavericks 120 - Denver Nuggets 101",
+      "residual_trigger": "e_t = -21.2 pts (r = -2.03)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Dallas Mavericks @ Denver Nuggets: Observed residual of -21.2 pts (SE_pred = 10.46). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": 2
     }
   ],
-  "last_updated": "2026-11-25T04:00:28Z"
+  "last_updated": "2026-11-25T14:15:23Z"
 }
