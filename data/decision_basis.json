@@ -42,15 +42,15 @@
     ]
   },
   "diagnostics": {
-    "cfe": 14.7,
-    "mad": 11.76,
-    "tracking_signal": 1.25,
+    "cfe": 21.9,
+    "mad": 11.75,
+    "tracking_signal": 1.86,
     "tracking_signal_limit": 3.75,
     "status": "IN_CONTROL (Unbiased)",
-    "out_of_sample_rmse": 14.96,
-    "interval_coverage_50_pct": 39.2,
-    "interval_coverage_80_pct": 60.8,
-    "interval_coverage_95_pct": 84.3,
+    "out_of_sample_rmse": 14.84,
+    "interval_coverage_50_pct": 38.9,
+    "interval_coverage_80_pct": 59.3,
+    "interval_coverage_95_pct": 85.2,
     "residual_history": [
       {
         "date": "2026-11-10",
@@ -714,6 +714,45 @@
         "captured_50": false,
         "captured_80": false,
         "captured_95": false
+      },
+      {
+        "date": "2026-11-26",
+        "matchup": "Miami Heat @ Philadelphia 76ers",
+        "predicted_home_margin": 2.4,
+        "observed_home_margin": 7,
+        "residual_e": 4.6,
+        "studentized_r": 0.44,
+        "se_pred": 10.45,
+        "se_mean": 0.73,
+        "captured_50": true,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-26",
+        "matchup": "Minnesota Timberwolves @ Oklahoma City Thunder",
+        "predicted_home_margin": 6.7,
+        "observed_home_margin": -7,
+        "residual_e": -13.7,
+        "studentized_r": -1.3,
+        "se_pred": 10.56,
+        "se_mean": 1.74,
+        "captured_50": false,
+        "captured_80": false,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-26",
+        "matchup": "LA Clippers @ Memphis Grizzlies",
+        "predicted_home_margin": 1.7,
+        "observed_home_margin": 18,
+        "residual_e": 16.3,
+        "studentized_r": 1.56,
+        "se_pred": 10.44,
+        "se_mean": 0.7,
+        "captured_50": false,
+        "captured_80": false,
+        "captured_95": true
       }
     ]
   },
@@ -1067,7 +1106,27 @@
       "rule_statement": "Post-mortem on Dallas Mavericks @ Denver Nuggets: Observed residual of -21.2 pts (SE_pred = 10.46). Tightening variance filter on similar pace/shooting profiles.",
       "adjustment_type": "VARIANCE_GUARD",
       "parameter_delta": 2
+    },
+    {
+      "rule_id": "RULE-036",
+      "created_at": "2026-11-26 03:25:54",
+      "source_game": "Minnesota Timberwolves 113 - Oklahoma City Thunder 106",
+      "residual_trigger": "e_t = -13.7 pts (r = -1.3)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on Minnesota Timberwolves @ Oklahoma City Thunder: Observed residual of -13.7 pts (SE_pred = 10.56). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": -3
+    },
+    {
+      "rule_id": "RULE-037",
+      "created_at": "2026-11-26 03:25:54",
+      "source_game": "LA Clippers 97 - Memphis Grizzlies 115",
+      "residual_trigger": "e_t = +16.3 pts (r = +1.56)",
+      "category": "POST_MORTEM_RESIDUAL_UPDATE",
+      "rule_statement": "Post-mortem on LA Clippers @ Memphis Grizzlies: Observed residual of +16.3 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
+      "adjustment_type": "VARIANCE_GUARD",
+      "parameter_delta": -3
     }
   ],
-  "last_updated": "2026-11-25T14:15:23Z"
+  "last_updated": "2026-11-26T03:25:54Z"
 }
