@@ -2,8 +2,8 @@
   "bankroll": {
     "starting_capital": 1000.0,
     "current_balance": 1092.62,
-    "available_cash": 832.62,
-    "in_play_equity": 260.0,
+    "available_cash": 792.62,
+    "in_play_equity": 300.0,
     "total_profit_loss": 92.62,
     "roi_percent": 9.26,
     "currency": "USD"
@@ -36,8 +36,8 @@
       "potential_profit": 36.36,
       "model_projected_spread": 1.6,
       "edge_points": 4.1,
-      "cover_prob_pct": 65.3,
-      "ev_pct": 24.69,
+      "cover_prob_pct": 89.4,
+      "ev_pct": 70.67,
       "se_pred": 10.5,
       "se_mean": 1.29,
       "pi_80": [
@@ -45,8 +45,8 @@
         11.9
       ],
       "triggered_rule_id": "RULE-001",
-      "gemini_confidence": 93,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 65.3% (+24.69% EV, SE_pred=10.5) exceeds high-conviction threshold for Milwaukee Bucks. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 89.4% (+70.67% EV, SE_pred=10.5) exceeds high-conviction threshold for Milwaukee Bucks. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
       "status": "PENDING"
     },
     {
@@ -63,8 +63,8 @@
       "potential_profit": 36.36,
       "model_projected_spread": -1.0,
       "edge_points": 5.5,
-      "cover_prob_pct": 70.1,
-      "ev_pct": 33.84,
+      "cover_prob_pct": 59.5,
+      "ev_pct": 13.62,
       "se_pred": 10.45,
       "se_mean": 0.74,
       "pi_80": [
@@ -72,8 +72,8 @@
         14.5
       ],
       "triggered_rule_id": "RULE-001",
-      "gemini_confidence": 95,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 70.1% (+33.84% EV, SE_pred=10.45) exceeds high-conviction threshold for Indiana Pacers. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "gemini_confidence": 79,
+      "gemini_reasoning": "Student-t cover probability of 59.5% (+13.62% EV vs 52.4% breakeven) confirms positive expectation on Indiana Pacers. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
       "status": "PENDING"
     },
     {
@@ -144,8 +144,8 @@
       "potential_profit": 36.36,
       "model_projected_spread": -1.7,
       "edge_points": 4.8,
-      "cover_prob_pct": 67.8,
-      "ev_pct": 29.4,
+      "cover_prob_pct": 64.3,
+      "ev_pct": 22.72,
       "se_pred": 10.45,
       "se_mean": 0.73,
       "pi_80": [
@@ -153,8 +153,8 @@
         15.1
       ],
       "triggered_rule_id": "RULE-001",
-      "gemini_confidence": 95,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 67.8% (+29.4% EV, SE_pred=10.45) exceeds high-conviction threshold for Los Angeles Lakers. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "gemini_confidence": 91,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 64.3% (+22.72% EV, SE_pred=10.45) exceeds high-conviction threshold for Los Angeles Lakers. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
       "status": "PENDING"
     },
     {
@@ -198,8 +198,8 @@
       "potential_profit": 36.36,
       "model_projected_spread": 4.8,
       "edge_points": 7.3,
-      "cover_prob_pct": 75.3,
-      "ev_pct": 43.69,
+      "cover_prob_pct": 89.4,
+      "ev_pct": 70.62,
       "se_pred": 10.6,
       "se_mean": 1.93,
       "pi_80": [
@@ -208,7 +208,34 @@
       ],
       "triggered_rule_id": "RULE-001",
       "gemini_confidence": 95,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 75.3% (+43.69% EV, SE_pred=10.6) exceeds high-conviction threshold for Golden State Warriors. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 89.4% (+70.62% EV, SE_pred=10.6) exceeds high-conviction threshold for Golden State Warriors. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "status": "PENDING"
+    },
+    {
+      "bet_id": "bet_20261126_220821_bro",
+      "game_id": "espn_nba_401909329",
+      "date_placed": "2026-11-26 22:08:21",
+      "matchup": "Brooklyn Nets @ Toronto Raptors",
+      "selection": "Brooklyn Nets",
+      "line": 7.5,
+      "odds": -110,
+      "sportsbook": "DraftKings",
+      "stake": 40.0,
+      "units": 2,
+      "potential_profit": 36.36,
+      "model_projected_spread": -1.7,
+      "edge_points": 5.8,
+      "cover_prob_pct": 70.9,
+      "ev_pct": 35.39,
+      "se_pred": 10.44,
+      "se_mean": 0.7,
+      "pi_80": [
+        -11.7,
+        15.2
+      ],
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 70.9% (+35.39% EV, SE_pred=10.44) exceeds high-conviction threshold for Brooklyn Nets. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
       "status": "PENDING"
     }
   ],
@@ -2987,5 +3014,5 @@
       "note": "Day Settlement: 6 bets (2W-4L, $-87.28)"
     }
   ],
-  "last_updated": "2026-11-26T16:48:05.860293+00:00"
+  "last_updated": "2026-11-26T22:09:00.737446+00:00"
 }
