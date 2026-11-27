@@ -1,56 +1,122 @@
 {
   "model_metadata": {
-    "model_id": "courtvision_ewma_ols_v1",
-    "framework": "ISyE 4031 Holt EWMA + First-Principles Multivariate OLS + Student-t Prediction Intervals",
-    "training_vintage": "nba_chronological_2025_2026_n240",
-    "validation_protocol": "Strict Time-Ordered Split (70% Chronological Train / 30% Out-of-Time Validation - Zero Leakage)",
-    "n_obs": 240,
-    "n_params": 5,
-    "df": 235,
-    "r_squared": 0.418,
-    "adj_r_squared": 0.408,
-    "residual_se_s": 10.42
+    "model_id": "courtvision_srs_ridge_v3",
+    "framework": "ISyE 4031 Opponent-Adjusted SRS + Damped Holt EWMA + Chronological Ridge + Market Prior Shrinkage",
+    "training_vintage": "espn_nba_2024-11-01_to_2026-11-26_n2497",
+    "validation_protocol": "Strict Time-Ordered Split (70% Chronological Train / 30% Out-of-Time Holdout - Zero Leakage)",
+    "n_obs": 1747,
+    "n_val": 750,
+    "n_params": 6,
+    "df": 1741,
+    "ridge_lambda": 2500.0,
+    "r_squared": 0.1954,
+    "adj_r_squared": 0.1931,
+    "val_r_squared": 0.246,
+    "residual_se_s": 14.93,
+    "market_prior_weight": 0.6
   },
   "smoothing_parameters": {
     "alpha_level": 0.25,
     "beta_trend": 0.1,
-    "phi1_ar1_reversion": -0.08,
-    "tuning_method": "Out-of-Sample Grid Search over Stable Region [0.15, 0.35]"
+    "phi_damping": 0.8,
+    "tuning_method": "Damped Holt (Zero-Trend Init) + Ridge Inner Chronological CV"
   },
   "ols_parameters": {
-    "equation_latex": "\\hat{Y}_0 = 2.20 + 0.68(\\Delta \\text{EWMA}_{\\text{NRtg}}) + 0.85(\\Delta \\text{Holt}_{\\text{Trend}}) + 0.22(\\Delta \\text{FourFactors}) + 0.95(\\Delta \\text{Rest})",
+    "equation_latex": "\\hat{Y}_0 = 1.73 + 0.64(\\Delta \\text{SRS}) + 0.21(\\Delta \\text{HoltLevel}) + -0.07(\\Delta \\text{HoltTrend}) + 0.46(\\Delta \\text{Rest}) + 0.028(\\Delta \\text{Shock})",
     "beta": [
-      1.74,
-      0.68,
-      0.85,
-      0.22,
-      0.95
+      1.733,
+      0.6396,
+      0.2075,
+      -0.0682,
+      0.4586,
+      0.0275
     ],
     "feature_names": [
       "Intercept (Home Court Advantage)",
-      "EWMA Pace-Scaled Net Rating Diff",
-      "Holt Linear Momentum Slope Diff",
-      "Orthogonal Four-Factors Shooting & TOV Diff (CS 2316)",
-      "Rest Days & Altitude Fatigue Diff"
+      "Opponent-Adjusted SRS Rating Diff (SoS + H/A Adjusted)",
+      "Damped Holt EWMA Level Diff (Recent Form)",
+      "Damped Holt Momentum Slope Diff (Orthogonal to Level)",
+      "Schedule Rest Days Diff (Clamped [-3, 3])",
+      "Prior-Game Blowout Shock Diff (AR1 Mean Reversion)"
     ],
     "xtx_inv_diag": [
-      0.0045,
-      0.00038,
-      0.0021,
-      0.00095,
-      0.0032
+      0.00057302,
+      2.623e-05,
+      1.243e-05,
+      0.00034442,
+      0.00024562,
+      2.22e-06
+    ],
+    "xtx_inv_matrix": [
+      [
+        0.00057302,
+        1.41e-06,
+        -7.9e-07,
+        -3.54e-06,
+        -5.26e-06,
+        -9.1e-07
+      ],
+      [
+        1.41e-06,
+        2.623e-05,
+        -1.428e-05,
+        1.415e-05,
+        1.81e-06,
+        -9.5e-07
+      ],
+      [
+        -7.9e-07,
+        -1.428e-05,
+        1.243e-05,
+        -1.287e-05,
+        -8.9e-07,
+        7.6e-07
+      ],
+      [
+        -3.54e-06,
+        1.415e-05,
+        -1.287e-05,
+        0.00034442,
+        -7.3e-07,
+        -2.11e-06
+      ],
+      [
+        -5.26e-06,
+        1.81e-06,
+        -8.9e-07,
+        -7.3e-07,
+        0.00024562,
+        -3.1e-07
+      ],
+      [
+        -9.1e-07,
+        -9.5e-07,
+        7.6e-07,
+        -2.11e-06,
+        -3.1e-07,
+        2.22e-06
+      ]
     ]
+  },
+  "holdout_validation": {
+    "n_games": 750,
+    "rmse": 14.93,
+    "mae": 11.71,
+    "r_squared": 0.246,
+    "interval_coverage_50_pct": 51.7,
+    "interval_coverage_80_pct": 80.5,
+    "interval_coverage_95_pct": 94.9
   },
   "diagnostics": {
     "cfe": 24.7,
     "mad": 11.61,
     "tracking_signal": 2.13,
     "tracking_signal_limit": 3.75,
-    "status": "IN_CONTROL (Unbiased)",
-    "out_of_sample_rmse": 14.62,
-    "interval_coverage_50_pct": 38.6,
-    "interval_coverage_80_pct": 61.4,
-    "interval_coverage_95_pct": 86.0,
+    "status": "CALIBRATED (Out-of-Time SRS Ridge Holdout Verified)",
+    "out_of_sample_rmse": 14.93,
+    "interval_coverage_50_pct": 51.7,
+    "interval_coverage_80_pct": 80.5,
+    "interval_coverage_95_pct": 94.9,
     "residual_history": [
       {
         "date": "2026-11-10",
@@ -797,395 +863,35 @@
   },
   "learned_rules": [
     {
-      "rule_id": "RULE-001",
-      "created_at": "2026-11-11 08:05:00",
-      "source_game": "OKC 124 - POR 104 (2026-11-10)",
-      "residual_trigger": "e_t = -9.4 pts (OKC covered -7.5 by 12.5 pts)",
-      "category": "TURNOVER_COMPOUNDING",
-      "rule_statement": "When an elite EWMA Net Rating team (>= +7.5) faces a bottom-5 ball-security team (TOV% >= 15.0%), transition points compound non-linearly. Boost confidence by +5 pts.",
-      "adjustment_type": "CONFIDENCE_BOOST",
-      "parameter_delta": 5
+      "rule_id": "RULE-INJURY-001",
+      "created_at": "2026-11-27 17:59:04",
+      "source_game": "P0/P1 Structural Guardrail",
+      "residual_trigger": "Live ESPN Injury Feed",
+      "category": "INJURY_AUDIT",
+      "rule_statement": "VETO any pick where a starter/key rotation player on the recommended side is Out or Doubtful (line already reflects absence).",
+      "adjustment_type": "QUALITATIVE_VETO",
+      "parameter_delta": 0
     },
     {
-      "rule_id": "RULE-002",
-      "created_at": "2026-11-12 08:05:00",
-      "source_game": "DEN 112 - MIN 115 (2026-11-11)",
-      "residual_trigger": "e_t = +9.8 pts (DEN -4.0 lost outright by 3 pts)",
-      "category": "ROAD_FATIGUE_3PT_VARIANCE",
-      "rule_statement": "Road favorites on compressed travel schedules facing top-10 perimeter defense experience elevated 4th-quarter eFG% decay. Require P(Cover) >= 57.5% or apply -6 confidence penalty.",
-      "adjustment_type": "CONFIDENCE_PENALTY",
-      "parameter_delta": -6
+      "rule_id": "RULE-SANITY-002",
+      "created_at": "2026-11-27 17:59:04",
+      "source_game": "P0/P1 Structural Guardrail",
+      "residual_trigger": "|raw_edge| > 7.5 pts",
+      "category": "ADVERSE_SELECTION_GUARD",
+      "rule_statement": "Block discrepancies > 7.5 pts vs Vegas spread; large model gaps indicate unpriced injury/lineup shocks rather than +EV.",
+      "adjustment_type": "HARD_CAP",
+      "parameter_delta": 0
     },
     {
-      "rule_id": "RULE-003",
-      "created_at": "2026-11-12 12:00:00",
-      "source_game": "ISyE 4031 Baseline Calibration",
-      "residual_trigger": "PACF Lag-1 Autocorrelation Check (phi_1 = -0.08)",
-      "category": "BLOWOUT_MEAN_REVERSION",
-      "rule_statement": "Teams coming off a 20+ point blowout win exhibit negative lag-1 residual autocorrelation (-8% mean reversion) as market lines overreact. Dampen raw net rating shock before staking.",
-      "adjustment_type": "AR1_DAMPENER",
-      "parameter_delta": -0.08
-    },
-    {
-      "rule_id": "RULE-004",
-      "created_at": "2026-11-17 02:10:11",
-      "source_game": "Milwaukee Bucks 99 - Orlando Magic 107",
-      "residual_trigger": "e_t = +9.2 pts (r = +0.88)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Milwaukee Bucks @ Orlando Magic: Observed residual of +9.2 pts (SE_pred = 10.5). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": 2
-    },
-    {
-      "rule_id": "RULE-005",
-      "created_at": "2026-11-17 02:10:11",
-      "source_game": "Memphis Grizzlies 142 - New Orleans Pelicans 111",
-      "residual_trigger": "e_t = -33.2 pts (r = -3.18)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Memphis Grizzlies @ New Orleans Pelicans: Observed residual of -33.2 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
-    },
-    {
-      "rule_id": "RULE-006",
-      "created_at": "2026-11-17 02:10:11",
-      "source_game": "Golden State Warriors 85 - San Antonio Spurs 123",
-      "residual_trigger": "e_t = +42.3 pts (r = +3.99)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Golden State Warriors @ San Antonio Spurs: Observed residual of +42.3 pts (SE_pred = 10.6). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
-    },
-    {
-      "rule_id": "RULE-007",
-      "created_at": "2026-11-17 02:10:12",
-      "source_game": "Portland Trail Blazers 120 - Sacramento Kings 107",
-      "residual_trigger": "e_t = -15.2 pts (r = -1.46)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Portland Trail Blazers @ Sacramento Kings: Observed residual of -15.2 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
-    },
-    {
-      "rule_id": "RULE-008",
-      "created_at": "2026-11-17 02:50:28",
-      "source_game": "Orlando Magic 115 - Boston Celtics 105",
-      "residual_trigger": "e_t = -21.4 pts (r = -1.99)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Orlando Magic @ Boston Celtics: Observed residual of -21.4 pts (SE_pred = 10.78). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
-    },
-    {
-      "rule_id": "RULE-009",
-      "created_at": "2026-11-17 21:30:14",
-      "source_game": "Golden State Warriors 94 - New Orleans Pelicans 115",
-      "residual_trigger": "e_t = +25.3 pts (r = +2.39)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Golden State Warriors @ New Orleans Pelicans: Observed residual of +25.3 pts (SE_pred = 10.6). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
-    },
-    {
-      "rule_id": "RULE-010",
-      "created_at": "2026-11-17 21:30:14",
-      "source_game": "Phoenix Suns 117 - Denver Nuggets 105",
-      "residual_trigger": "e_t = -16.6 pts (r = -1.58)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Phoenix Suns @ Denver Nuggets: Observed residual of -16.6 pts (SE_pred = 10.5). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": 2
-    },
-    {
-      "rule_id": "RULE-011",
-      "created_at": "2026-11-18 04:45:05",
-      "source_game": "Detroit Pistons 105 - San Antonio Spurs 93",
-      "residual_trigger": "e_t = -14.2 pts (r = -1.36)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Detroit Pistons @ San Antonio Spurs: Observed residual of -14.2 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": 2
-    },
-    {
-      "rule_id": "RULE-012",
-      "created_at": "2026-11-18 21:30:05",
-      "source_game": "Utah Jazz 132 - LA Clippers 107",
-      "residual_trigger": "e_t = -27.2 pts (r = -2.61)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Utah Jazz @ LA Clippers: Observed residual of -27.2 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": 2
-    },
-    {
-      "rule_id": "RULE-013",
-      "created_at": "2026-11-19 04:45:07",
-      "source_game": "Houston Rockets 119 - Indiana Pacers 104",
-      "residual_trigger": "e_t = -17.2 pts (r = -1.65)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Houston Rockets @ Indiana Pacers: Observed residual of -17.2 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
-    },
-    {
-      "rule_id": "RULE-014",
-      "created_at": "2026-11-19 04:45:07",
-      "source_game": "Philadelphia 76ers 121 - Orlando Magic 116",
-      "residual_trigger": "e_t = -6.5 pts (r = -0.62)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Philadelphia 76ers @ Orlando Magic: Observed residual of -6.5 pts (SE_pred = 10.45). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
-    },
-    {
-      "rule_id": "RULE-015",
-      "created_at": "2026-11-19 04:45:07",
-      "source_game": "Detroit Pistons 122 - New Orleans Pelicans 109",
-      "residual_trigger": "e_t = -15.2 pts (r = -1.46)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Detroit Pistons @ New Orleans Pelicans: Observed residual of -15.2 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
-    },
-    {
-      "rule_id": "RULE-016",
-      "created_at": "2026-11-20 05:10:40",
-      "source_game": "Golden State Warriors 98 - Memphis Grizzlies 126",
-      "residual_trigger": "e_t = +33.6 pts (r = +3.17)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Golden State Warriors @ Memphis Grizzlies: Observed residual of +33.6 pts (SE_pred = 10.6). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
-    },
-    {
-      "rule_id": "RULE-017",
-      "created_at": "2026-11-20 05:10:40",
-      "source_game": "Portland Trail Blazers 124 - Milwaukee Bucks 114",
-      "residual_trigger": "e_t = -14.3 pts (r = -1.36)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Portland Trail Blazers @ Milwaukee Bucks: Observed residual of -14.3 pts (SE_pred = 10.5). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": 2
-    },
-    {
-      "rule_id": "RULE-018",
-      "created_at": "2026-11-20 05:10:40",
-      "source_game": "New York Knicks 102 - Minnesota Timberwolves 99",
-      "residual_trigger": "e_t = -6.9 pts (r = -0.66)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on New York Knicks @ Minnesota Timberwolves: Observed residual of -6.9 pts (SE_pred = 10.49). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
-    },
-    {
-      "rule_id": "RULE-019",
-      "created_at": "2026-11-20 05:10:40",
-      "source_game": "LA Clippers 112 - San Antonio Spurs 124",
-      "residual_trigger": "e_t = +11.1 pts (r = +1.06)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on LA Clippers @ San Antonio Spurs: Observed residual of +11.1 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": 2
-    },
-    {
-      "rule_id": "RULE-020",
-      "created_at": "2026-11-21 04:45:05",
-      "source_game": "Charlotte Hornets 97 - Atlanta Hawks 111",
-      "residual_trigger": "e_t = +13.5 pts (r = +1.29)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Charlotte Hornets @ Atlanta Hawks: Observed residual of +13.5 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
-    },
-    {
-      "rule_id": "RULE-021",
-      "created_at": "2026-11-21 04:45:05",
-      "source_game": "Indiana Pacers 119 - Cleveland Cavaliers 128",
-      "residual_trigger": "e_t = +8.5 pts (r = +0.81)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Indiana Pacers @ Cleveland Cavaliers: Observed residual of +8.5 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
-    },
-    {
-      "rule_id": "RULE-022",
-      "created_at": "2026-11-21 20:02:09",
-      "source_game": "Phoenix Suns 111 - Utah Jazz 101",
-      "residual_trigger": "e_t = -9.2 pts (r = -0.88)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Phoenix Suns @ Utah Jazz: Observed residual of -9.2 pts (SE_pred = 10.45). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
-    },
-    {
-      "rule_id": "RULE-023",
-      "created_at": "2026-11-22 20:17:34",
-      "source_game": "Memphis Grizzlies 95 - Minnesota Timberwolves 104",
-      "residual_trigger": "e_t = +5 pts (r = +0.48)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Memphis Grizzlies @ Minnesota Timberwolves: Observed residual of +5 pts (SE_pred = 10.51). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
-    },
-    {
-      "rule_id": "RULE-024",
-      "created_at": "2026-11-22 20:17:34",
-      "source_game": "New Orleans Pelicans 91 - San Antonio Spurs 114",
-      "residual_trigger": "e_t = +22.5 pts (r = +2.16)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on New Orleans Pelicans @ San Antonio Spurs: Observed residual of +22.5 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
-    },
-    {
-      "rule_id": "RULE-025",
-      "created_at": "2026-11-22 20:17:34",
-      "source_game": "Boston Celtics 96 - Sacramento Kings 97",
-      "residual_trigger": "e_t = +9.7 pts (r = +0.9)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Boston Celtics @ Sacramento Kings: Observed residual of +9.7 pts (SE_pred = 10.78). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": 2
-    },
-    {
-      "rule_id": "RULE-026",
-      "created_at": "2026-11-23 13:30:07",
-      "source_game": "Oklahoma City Thunder 113 - Miami Heat 123",
-      "residual_trigger": "e_t = +17.8 pts (r = +1.65)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Oklahoma City Thunder @ Miami Heat: Observed residual of +17.8 pts (SE_pred = 10.78). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
-    },
-    {
-      "rule_id": "RULE-027",
-      "created_at": "2026-11-23 13:30:07",
-      "source_game": "Orlando Magic 96 - Washington Wizards 116",
-      "residual_trigger": "e_t = +19.5 pts (r = +1.87)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Orlando Magic @ Washington Wizards: Observed residual of +19.5 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": 2
-    },
-    {
-      "rule_id": "RULE-028",
-      "created_at": "2026-11-24 04:45:05",
-      "source_game": "Cleveland Cavaliers 108 - Chicago Bulls 122",
-      "residual_trigger": "e_t = +13.3 pts (r = +1.27)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Cleveland Cavaliers @ Chicago Bulls: Observed residual of +13.3 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": 2
-    },
-    {
-      "rule_id": "RULE-029",
-      "created_at": "2026-11-24 04:45:05",
-      "source_game": "Phoenix Suns 123 - New Orleans Pelicans 119",
-      "residual_trigger": "e_t = -3.4 pts (r = -0.33)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Phoenix Suns @ New Orleans Pelicans: Observed residual of -3.4 pts (SE_pred = 10.45). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
-    },
-    {
-      "rule_id": "RULE-030",
-      "created_at": "2026-11-24 04:45:05",
-      "source_game": "LA Clippers 104 - Houston Rockets 116",
-      "residual_trigger": "e_t = +11.3 pts (r = +1.08)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on LA Clippers @ Houston Rockets: Observed residual of +11.3 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": 2
-    },
-    {
-      "rule_id": "RULE-031",
-      "created_at": "2026-11-24 13:30:04",
-      "source_game": "Utah Jazz 94 - Los Angeles Lakers 109",
-      "residual_trigger": "e_t = +14.2 pts (r = +1.36)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Utah Jazz @ Los Angeles Lakers: Observed residual of +14.2 pts (SE_pred = 10.45). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
-    },
-    {
-      "rule_id": "RULE-032",
-      "created_at": "2026-11-24 13:30:04",
-      "source_game": "San Antonio Spurs 123 - Sacramento Kings 107",
-      "residual_trigger": "e_t = -16.7 pts (r = -1.6)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on San Antonio Spurs @ Sacramento Kings: Observed residual of -16.7 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
-    },
-    {
-      "rule_id": "RULE-033",
-      "created_at": "2026-11-25 04:00:28",
-      "source_game": "Detroit Pistons 104 - Orlando Magic 86",
-      "residual_trigger": "e_t = -19.7 pts (r = -1.89)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Detroit Pistons @ Orlando Magic: Observed residual of -19.7 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
-    },
-    {
-      "rule_id": "RULE-034",
-      "created_at": "2026-11-25 04:00:28",
-      "source_game": "Boston Celtics 131 - Washington Wizards 116",
-      "residual_trigger": "e_t = -7.6 pts (r = -0.71)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Boston Celtics @ Washington Wizards: Observed residual of -7.6 pts (SE_pred = 10.78). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
-    },
-    {
-      "rule_id": "RULE-035",
-      "created_at": "2026-11-25 14:15:23",
-      "source_game": "Dallas Mavericks 120 - Denver Nuggets 101",
-      "residual_trigger": "e_t = -21.2 pts (r = -2.03)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Dallas Mavericks @ Denver Nuggets: Observed residual of -21.2 pts (SE_pred = 10.46). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": 2
-    },
-    {
-      "rule_id": "RULE-036",
-      "created_at": "2026-11-26 03:25:54",
-      "source_game": "Minnesota Timberwolves 113 - Oklahoma City Thunder 106",
-      "residual_trigger": "e_t = -13.7 pts (r = -1.3)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Minnesota Timberwolves @ Oklahoma City Thunder: Observed residual of -13.7 pts (SE_pred = 10.56). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
-    },
-    {
-      "rule_id": "RULE-037",
-      "created_at": "2026-11-26 03:25:54",
-      "source_game": "LA Clippers 97 - Memphis Grizzlies 115",
-      "residual_trigger": "e_t = +16.3 pts (r = +1.56)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on LA Clippers @ Memphis Grizzlies: Observed residual of +16.3 pts (SE_pred = 10.44). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
-    },
-    {
-      "rule_id": "RULE-038",
-      "created_at": "2026-11-26 16:46:51",
-      "source_game": "Brooklyn Nets 104 - Milwaukee Bucks 97",
-      "residual_trigger": "e_t = -12.1 pts (r = -1.15)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Brooklyn Nets @ Milwaukee Bucks: Observed residual of -12.1 pts (SE_pred = 10.5). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
-    },
-    {
-      "rule_id": "RULE-039",
-      "created_at": "2026-11-26 16:46:52",
-      "source_game": "Phoenix Suns 104 - Houston Rockets 116",
-      "residual_trigger": "e_t = +11.6 pts (r = +1.11)",
-      "category": "POST_MORTEM_RESIDUAL_UPDATE",
-      "rule_statement": "Post-mortem on Phoenix Suns @ Houston Rockets: Observed residual of +11.6 pts (SE_pred = 10.45). Tightening variance filter on similar pace/shooting profiles.",
-      "adjustment_type": "VARIANCE_GUARD",
-      "parameter_delta": -3
+      "rule_id": "RULE-REST-003",
+      "created_at": "2026-11-27 17:59:04",
+      "source_game": "P0/P1 Structural Guardrail",
+      "residual_trigger": "Away B2B vs Rested Home",
+      "category": "SCHEDULE_FATIGUE",
+      "rule_statement": "Flag/veto road favorites on 0-day rest (back-to-back travel) against rested opponents when edge is marginal.",
+      "adjustment_type": "FATIGUE_VETO",
+      "parameter_delta": 0
     }
   ],
-  "last_updated": "2026-11-26T16:46:52Z"
+  "last_updated": "2026-11-27T17:59:04Z"
 }

@@ -10,8 +10,100 @@ from datetime import datetime, timezone
 from src.gemini_veto import update_decision_basis_post_mortem
 
 STATE_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "bankroll_state.json")
-UNIT_1_AMOUNT = 20.0
-UNIT_2_AMOUNT = 40.0
+
+# P2 Fractional Kelly & Hard Bankroll Risk Controls
+MAX_SINGLE_BET_PCT = 0.02        # 2.0% hard cap per wager
+MIN_SINGLE_BET_PCT = 0.005       # 0.5% floor for approved +EV wagers
+MIN_STAKE_DOLLARS = 5.0
+MAX_IN_PLAY_EXPOSURE_PCT = 0.10  # 10.0% max simultaneous in-play exposure
+DRAWDOWN_THROTTLE_PCT = 15.0     # Halve bet sizing once drawdown >= 15%
+DRAWDOWN_HALT_PCT = 25.0         # Halt new wagers once drawdown >= 25%
+
+
+def compute_current_drawdown_pct(state):
+    """
+    Computes current peak-to-trough drawdown percentage (>= 0.0) across starting capital,
+    equity history, and current balance.
+    """
+    bankroll = state.get("bankroll", {})
+    start_cap = float(bankroll.get("starting_capital", 1000.0))
+    current_balance = float(bankroll.get("current_balance", start_cap))
+    peak = max(start_cap, current_balance)
+    for h in state.get("equity_history", []):
+        bal = float(h.get("balance", start_cap))
+        if bal > peak:
+            peak = bal
+    if peak <= 0.0:
+        return 0.0
+    return round(max(0.0, ((peak - current_balance) / peak) * 100.0), 2)
+
+
+def calculate_risk_managed_stake(state, isye_telemetry):
+    """
+    Computes a bankroll-proportional stake using Quarter-Kelly sizing constrained by:
+    - 2.0% single-bet hard cap (0.5% floor when +EV)
+    - 10.0% simultaneous in-play exposure cap
+    - 15% drawdown throttle (halves size) and 25% drawdown circuit-breaker halt
+    Returns (stake_dollars, units, risk_status, reason).
+    """
+    current_dd = compute_current_drawdown_pct(state)
+    if current_dd >= DRAWDOWN_HALT_PCT:
+        return (
+            0.0,
+            0.0,
+            "DRAWDOWN_HALT",
+            f"Drawdown circuit breaker triggered ({current_dd:.1f}% >= {DRAWDOWN_HALT_PCT:.1f}% halt).",
+        )
+
+    bankroll = state.get("bankroll", {})
+    current_balance = float(bankroll.get("current_balance", 0.0))
+    in_play = float(bankroll.get("in_play_equity", 0.0))
+    available_cash = float(bankroll.get("available_cash", 0.0))
+
+    q_kelly_frac = float(isye_telemetry.get("quarter_kelly_pct", 0.0)) / 100.0
+    if q_kelly_frac <= 0.0:
+        return (
+            0.0,
+            0.0,
+            "ZERO_KELLY",
+            "Quarter-Kelly fraction is <= 0% (insufficient calibrated edge).",
+        )
+
+    bet_frac = min(MAX_SINGLE_BET_PCT, max(MIN_SINGLE_BET_PCT, q_kelly_frac))
+    if current_dd >= DRAWDOWN_THROTTLE_PCT:
+        bet_frac *= 0.5
+        risk_status = "DRAWDOWN_THROTTLED"
+    else:
+        risk_status = "NORMAL"
+
+    raw_stake = round(current_balance * bet_frac, 2)
+    max_exposure = round(current_balance * MAX_IN_PLAY_EXPOSURE_PCT, 2)
+    remaining_room = round(max_exposure - in_play, 2)
+
+    if remaining_room < MIN_STAKE_DOLLARS:
+        return (
+            0.0,
+            0.0,
+            "EXPOSURE_CAP",
+            f"Simultaneous in-play exposure (${in_play:.2f}) leaves ${remaining_room:.2f} below ${max_exposure:.2f} (10% cap).",
+        )
+
+    stake = round(min(raw_stake, remaining_room, available_cash), 2)
+    if stake < MIN_STAKE_DOLLARS:
+        return (
+            0.0,
+            0.0,
+            "MIN_STAKE",
+            f"Available/capped stake (${stake:.2f}) is below ${MIN_STAKE_DOLLARS:.2f} minimum.",
+        )
+
+    units = round(stake / max(1.0, current_balance * 0.01), 2)  # 1.0U = 1% of current bankroll
+    return (
+        stake,
+        units,
+        risk_status,
+        f"Quarter-Kelly={q_kelly_frac * 100:.2f}%, Capped={bet_frac * 100:.2f}%, DD={current_dd:.1f}%, Status={risk_status}",
+    )
 
 
 def load_bankroll_state():
@@ -50,16 +142,24 @@ def place_simulated_wager(candidate, veto_verdict):
     state = load_bankroll_state()
     isye = candidate.get("isye_4031", {})
 
-    # Check if game_id is already settled so we never re-bet a finished game
+    # Check if game_id OR same (matchup, date) is already settled so we never re-bet a finished game
     game_id = candidate["game_id"]
+    cand_matchup = f"{candidate['away_team']} @ {candidate['home_team']}"
+    cand_date = (candidate.get("commence_time") or datetime.now(timezone.utc).isoformat())[:10]
     for settled in state.get("settled_bets", []):
-        if settled.get("game_id") == game_id:
+        if settled.get("game_id") == game_id or (
+            settled.get("matchup") == cand_matchup
+            and (settled.get("date_placed") or "")[:10] == cand_date
+        ):
             print(f"[Bankroll] Skipping {candidate['recommended_side']} ({game_id} already settled).")
             return None
 
-    # Check if an active bet already exists for this game_id
+    # Check if an active bet already exists for this game_id or same matchup today
     for idx, active in enumerate(state.get("active_bets", [])):
-        if active["game_id"] == game_id:
+        if active["game_id"] == game_id or (
+            active.get("matchup") == cand_matchup
+            and (active.get("date_placed") or "")[:10] == cand_date
+        ):
             if active["selection"] == candidate["recommended_side"]:
                 # Enrich existing active bet with latest ISyE 4031 telemetry
                 active["cover_prob_pct"] = isye.get("cover_prob_pct", 60.5)
@@ -92,11 +192,12 @@ def place_simulated_wager(candidate, veto_verdict):
         print(f"[Bankroll] No bet placed on {candidate['recommended_side']} (Vetoed or 0 units).")
         return None
 
-    stake = UNIT_2_AMOUNT if units == 2 else UNIT_1_AMOUNT
-    if state["bankroll"]["available_cash"] < stake:
-        print(f"[Bankroll] Insufficient available cash (${state['bankroll']['available_cash']}) to stake ${stake} on {candidate['recommended_side']}.")
+    stake, units, risk_status, risk_note = calculate_risk_managed_stake(state, isye)
+    if stake <= 0.0:
+        print(f"[Bankroll] Risk Gate ({risk_status}) blocked {candidate['recommended_side']}: {risk_note}")
         return None
 
+    current_balance = float(state["bankroll"]["current_balance"])
     odds = candidate.get("target_odds", -110)
     potential_profit = calculate_potential_profit(stake, odds)
 
@@ -113,6 +214,9 @@ def place_simulated_wager(candidate, veto_verdict):
         "stake": stake,
         "units": units,
         "potential_profit": potential_profit,
+        "quarter_kelly_pct": isye.get("quarter_kelly_pct", 0.0),
+        "bet_bankroll_pct": round((stake / current_balance) * 100.0, 2) if current_balance > 0 else 0.0,
+        "risk_status": risk_status,
         "model_projected_spread": candidate["projected_home_spread"],
         "edge_points": candidate["edge_points"],
         "cover_prob_pct": isye.get("cover_prob_pct", 58.0),
@@ -129,16 +233,18 @@ def place_simulated_wager(candidate, veto_verdict):
     state["bankroll"]["available_cash"] = round(state["bankroll"]["available_cash"] - stake, 2)
     state["bankroll"]["in_play_equity"] = round(state["bankroll"]["in_play_equity"] + stake, 2)
     state["active_bets"].append(new_bet)
+    recompute_metrics(state)
 
     save_bankroll_state(state)
-    print(f"[Bankroll] Placed {units}U (${stake}) on {new_bet['selection']} ({new_bet['line']:+g}) at {odds}. Cash: ${state['bankroll']['available_cash']}")
+    print(f"[Bankroll] Placed {units}U (${stake:.2f}, {risk_status}) on {new_bet['selection']} ({new_bet['line']:+g}) at {odds}. Cash: ${state['bankroll']['available_cash']}")
     return new_bet
 
 
-def settle_bet(bet_id, actual_margin, final_score_str):
+def settle_bet(bet_id, actual_margin, final_score_str, closing_info=None):
     """
-    Settles a pending bet given actual game margin (Home Score - Away Score)
-    and triggers the ISyE 4031 post-mortem residual diagnostic & LLM rule update.
+    Settles a pending bet given actual game margin (Home Score - Away Score),
+    records real Closing Line Value (CLV) if closing_info is provided,
+    and triggers the ISyE 4031 post-mortem residual diagnostic.
     """
     state = load_bankroll_state()
     bet = None
@@ -210,8 +316,23 @@ def settle_bet(bet_id, actual_margin, final_score_str):
 
     del state["active_bets"][bet_idx]
     now_utc = datetime.now(timezone.utc)
+
+    # Real Closing Line Value (CLV) tracking
+    clv_fields = {}
+    if closing_info and closing_info.get("home_close") is not None and closing_info.get("away_close") is not None:
+        closing_line = float(closing_info["home_close"] if is_home_pick else closing_info["away_close"])
+        clv_points = round(float(line) - closing_line, 2)
+        beat_clv = True if clv_points > 0 else (False if clv_points < 0 else None)
+        clv_fields = {
+            "closing_line": closing_line,
+            "clv_points": clv_points,
+            "beat_clv": beat_clv,
+            "closing_provider": closing_info.get("provider", "DraftKings"),
+        }
+
     settled_entry = {
         **bet,
+        **clv_fields,
         "status": "SETTLED",
         "result": result,
         "final_score": final_score_str,
@@ -258,6 +379,7 @@ def settle_bet(bet_id, actual_margin, final_score_str):
             "note": f"{result}: {bet['selection']} ({final_score_str})"
         })
 
+    recompute_metrics(state)
     save_bankroll_state(state)
     sign = "+" if pnl >= 0 else "-"
     print(f"[Bankroll] Settled {bet_id} as {result} ({sign}${abs(pnl):.2f}). New balance: ${state['bankroll']['current_balance']:.2f}")
@@ -269,3 +391,79 @@ def settle_bet(bet_id, actual_margin, final_score_str):
         print(f"[Bankroll] Post-mortem update warning: {e}")
 
     return True
+
+
+def recompute_metrics(state):
+    """
+    Recomputes all bankroll performance metrics directly from settled_bets and equity_history
+    so max_drawdown_percent, streaks, average_edge_points, and win_rate are never stale.
+    """
+    settled_desc = state.get("settled_bets", [])
+    settled_chron = list(reversed(settled_desc))
+
+    wins = sum(1 for b in settled_chron if b.get("result") == "WON")
+    losses = sum(1 for b in settled_chron if b.get("result") == "LOST")
+    pushes = sum(1 for b in settled_chron if b.get("result") == "PUSH")
+    decided = wins + losses
+
+    longest_w = 0
+    longest_l = 0
+    cur_type = ""
+    cur_len = 0
+    for b in settled_chron:
+        res = b.get("result")
+        if res == "WON":
+            cur_len = (cur_len + 1) if cur_type == "W" else 1
+            cur_type = "W"
+            longest_w = max(longest_w, cur_len)
+        elif res == "LOST":
+            cur_len = (cur_len + 1) if cur_type == "L" else 1
+            cur_type = "L"
+            longest_l = max(longest_l, cur_len)
+
+    # True peak-to-trough max drawdown across equity_history
+    start_cap = float(state.get("bankroll", {}).get("starting_capital", 1000.0))
+    peak = start_cap
+    max_dd_pct = 0.0
+    for h in state.get("equity_history", []):
+        bal = float(h.get("balance", start_cap))
+        if bal > peak:
+            peak = bal
+        if peak > 0:
+            dd = ((bal - peak) / peak) * 100.0  # negative percentage
+            if dd < max_dd_pct:
+                max_dd_pct = dd
+
+    edges = [float(b["edge_points"]) for b in settled_chron if b.get("edge_points") is not None]
+    avg_edge = round(sum(edges) / len(edges), 2) if edges else 0.0
+
+    # Only report CLV if bets actually have recorded closing_line values
+    clv_decided = [b for b in settled_chron if b.get("beat_clv") is not None]
+    if clv_decided:
+        clv_beats = sum(1 for b in clv_decided if b.get("beat_clv") is True)
+        clv_rate = round((clv_beats / len(clv_decided)) * 100.0, 1)
+    else:
+        clv_rate = None
+
+    clv_pts_list = [float(b["clv_points"]) for b in settled_chron if b.get("clv_points") is not None]
+    avg_clv_pts = round(sum(clv_pts_list) / len(clv_pts_list), 2) if clv_pts_list else None
+
+    current_bal = float(state.get("bankroll", {}).get("current_balance", 0.0))
+    in_play = float(state.get("bankroll", {}).get("in_play_equity", 0.0))
+
+    metrics = state.setdefault("metrics", {})
+    metrics["total_bets"] = len(settled_chron)
+    metrics["wins"] = wins
+    metrics["losses"] = losses
+    metrics["pushes"] = pushes
+    metrics["win_rate_percent"] = round((wins / decided) * 100.0, 1) if decided > 0 else 0.0
+    metrics["current_streak"] = f"{cur_type}{cur_len}" if cur_type else ""
+    metrics["longest_win_streak"] = longest_w
+    metrics["longest_loss_streak"] = longest_l
+    metrics["max_drawdown_percent"] = round(max_dd_pct, 2)
+    metrics["current_drawdown_percent"] = compute_current_drawdown_pct(state)
+    metrics["in_play_exposure_percent"] = round((in_play / current_bal) * 100.0, 2) if current_bal > 0 else 0.0
+    metrics["average_edge_points"] = avg_edge
+    metrics["clv_beat_rate_percent"] = clv_rate
+    metrics["average_clv_points"] = avg_clv_pts
+    return metrics

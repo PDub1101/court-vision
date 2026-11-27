@@ -36,17 +36,17 @@
       "potential_profit": 36.36,
       "model_projected_spread": 1.6,
       "edge_points": 4.1,
-      "cover_prob_pct": 85.5,
-      "ev_pct": 63.25,
+      "cover_prob_pct": 87.6,
+      "ev_pct": 67.16,
       "se_pred": 10.5,
       "se_mean": 1.29,
       "pi_80": [
         -15.1,
         11.9
       ],
-      "triggered_rule_id": "NONE",
-      "gemini_confidence": 85,
-      "gemini_reasoning": "Milwaukee holds a superior EWMA Net Rating (+4.34 vs. 0.0) with an upward Holt trend, establishing a massive +11.1 point discrepancy against the market line. With an 85.5% Student-t cover probability and no adverse situational fatigue or turnover rules triggered, the +63.25% EV warrants maximum staking.",
+      "triggered_rule_id": "RULE-001",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 87.6% (+67.16% EV, SE_pred=10.5) exceeds high-conviction threshold for Milwaukee Bucks. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
       "status": "PENDING"
     },
     {
@@ -144,8 +144,8 @@
       "potential_profit": 36.36,
       "model_projected_spread": -1.7,
       "edge_points": 4.8,
-      "cover_prob_pct": 64.3,
-      "ev_pct": 22.72,
+      "cover_prob_pct": 67.8,
+      "ev_pct": 29.4,
       "se_pred": 10.45,
       "se_mean": 0.73,
       "pi_80": [
@@ -153,8 +153,8 @@
         15.1
       ],
       "triggered_rule_id": "RULE-001",
-      "gemini_confidence": 91,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 64.3% (+22.72% EV, SE_pred=10.45) exceeds high-conviction threshold for Los Angeles Lakers. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 67.8% (+29.4% EV, SE_pred=10.45) exceeds high-conviction threshold for Los Angeles Lakers. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
       "status": "PENDING"
     },
     {
@@ -171,8 +171,8 @@
       "potential_profit": 36.36,
       "model_projected_spread": 2.0,
       "edge_points": 7.5,
-      "cover_prob_pct": 76.2,
-      "ev_pct": 45.54,
+      "cover_prob_pct": 79.1,
+      "ev_pct": 50.94,
       "se_pred": 10.53,
       "se_mean": 1.51,
       "pi_80": [
@@ -181,7 +181,7 @@
       ],
       "triggered_rule_id": "RULE-003",
       "gemini_confidence": 95,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 76.2% (+45.54% EV, SE_pred=10.53) exceeds high-conviction threshold for Utah Jazz. Applied RULE-003 (AR(1) blowout mean-reversion dampener of -0.78 pts).",
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 79.1% (+50.94% EV, SE_pred=10.53) exceeds high-conviction threshold for Utah Jazz. Applied RULE-003 (AR(1) blowout mean-reversion dampener of -0.78 pts).",
       "status": "PENDING"
     },
     {
@@ -225,8 +225,8 @@
       "potential_profit": 36.36,
       "model_projected_spread": -1.7,
       "edge_points": 5.8,
-      "cover_prob_pct": 70.9,
-      "ev_pct": 35.39,
+      "cover_prob_pct": 77.1,
+      "ev_pct": 47.19,
       "se_pred": 10.44,
       "se_mean": 0.7,
       "pi_80": [
@@ -235,7 +235,7 @@
       ],
       "triggered_rule_id": "RULE-001",
       "gemini_confidence": 95,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 70.9% (+35.39% EV, SE_pred=10.44) exceeds high-conviction threshold for Brooklyn Nets. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 77.1% (+47.19% EV, SE_pred=10.44) exceeds high-conviction threshold for Brooklyn Nets. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
       "status": "PENDING"
     }
   ],
@@ -3014,5 +3014,5 @@
       "note": "Day Settlement: 6 bets (2W-4L, $-87.28)"
     }
   ],
-  "last_updated": "2026-11-27T04:45:50.967990+00:00"
+  "last_updated": "2026-11-27T15:00:35.029851+00:00"
 }

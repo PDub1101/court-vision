@@ -4,8 +4,8 @@ on:
   schedule:
     # 8:07 AM EST (13:07 UTC) - Morning Auto-Grader & Settlement (off-peak cron minute)
     - cron: '7 13 * * *'
-    # 4:03 PM EST (21:03 UTC) - Afternoon Odds Ingestion, Quant Modeling, Gemini Veto & Staking
-    - cron: '3 21 * * *'
+    # 6:15 PM EST (23:15 UTC) - Pre-Tip Odds, 30-Team Metrics, Live Injury Audit & Staking
+    - cron: '15 23 * * *'
   workflow_dispatch: # Allows manual trigger from GitHub UI anytime
 
 permissions:

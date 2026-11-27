@@ -33,15 +33,23 @@ def save_decision_basis(basis):
 
 def audit_with_gemini(candidate, injury_context=""):
     """
-    Submits an ISyE 4031 flagged edge to Gemini 2.5 Flash alongside persistent learned rules.
+    Submits an ISyE 4031 flagged edge to Gemini alongside live injury reports and learned rules.
+    `injury_context` may be a formatted string or the dict returned by format_matchup_injury_context().
     """
     basis = load_decision_basis()
     learned_rules = basis.get("learned_rules", [])
     isye = candidate.get("isye_4031", {})
 
+    if isinstance(injury_context, dict):
+        injury_text = injury_context.get("text", "")
+        injury_meta = injury_context
+    else:
+        injury_text = injury_context or ""
+        injury_meta = {}
+
     if not GEMINI_API_KEY:
-        print(f"[CourtVision Veto] Evaluating {candidate['recommended_side']} via ISyE 4031 + Learned Decision Basis rules.")
-        return fallback_context_check(candidate, learned_rules)
+        print(f"[CourtVision Veto] Evaluating {candidate['recommended_side']} via ISyE 4031 + Injury Guard + Learned Rules.")
+        return fallback_context_check(candidate, learned_rules, injury_meta=injury_meta)
 
     try:
         from google import genai
@@ -58,44 +66,44 @@ def audit_with_gemini(candidate, injury_context=""):
         )
 
         prompt = f"""
-You are the Lead Quantitative & Qualitative Auditor for CourtVision (`courtvision_ewma_ols_v1`), an autonomous NBA spread forecasting engine built on Georgia Tech ISyE 4031 principles.
+You are the Lead Qualitative Risk Auditor for CourtVision (`courtvision_ridge_holt_v2`), an NBA spread forecasting engine.
+Your ONLY job is to decide whether to APPROVE ("BET", strictly 1 Unit) or REJECT ("VETO", 0 Units) this quantitative candidate based on live injuries, rotation context, and schedule fatigue. Never scale unit size above 1.
 
 Tonight's Flagged Matchup:
 - Game: {candidate['away_team']} @ {candidate['home_team']}
 - Sportsbook Line ({candidate['sportsbook']}): {candidate['home_team']} {candidate['vegas_home_spread']:+g} / {candidate['away_team']} {candidate['vegas_away_spread']:+g}
-- Model Projected Home Spread: {candidate['projected_home_spread']:+g} (Expected Margin: {candidate['expected_home_margin']:+g})
+- Model Projected Home Spread: {candidate['projected_home_spread']:+g} (Raw Margin: {candidate['expected_home_margin']:+g}, Shrunk Margin: {isye.get('shrunk_home_margin')})
 - Recommended Side: {candidate['recommended_side']} ({candidate['target_spread']:+g}) at {candidate['target_odds']}
-- Point Discrepancy (Edge): +{candidate['edge_points']} pts
+- Raw Edge vs Vegas: +{candidate['edge_points']} pts (Market-Shrunk Edge: +{isye.get('shrunk_edge_points')} pts)
 
-ISyE 4031 Forecasting Telemetry:
+Calibrated Statistical Telemetry:
 - Home EWMA Net Rating: {isye.get('home_ewma_nrtg')} (Holt Trend: {isye.get('home_holt_trend'):+g})
 - Away EWMA Net Rating: {isye.get('away_ewma_nrtg')} (Holt Trend: {isye.get('away_holt_trend'):+g})
 - Prediction Standard Error (SE_pred): {isye.get('se_pred')} pts (vs SE_mean: {isye.get('se_mean')} pts)
 - Nested Prediction Intervals (Home Margin): 50% {isye.get('pi_50')}, 80% {isye.get('pi_80')}, 95% {isye.get('pi_95')}
-- Student-t Cover Probability: {isye.get('cover_prob_pct')}% (vs {isye.get('breakeven_prob_pct')}% Vig Breakeven)
-- Mathematical Expected Value (+EV): +{isye.get('ev_pct')}%
+- Calibrated Cover Probability: {isye.get('cover_prob_pct')}% (vs {isye.get('breakeven_prob_pct')}% Vig Breakeven)
+- Market-Shrunk Expected Value (+EV): +{isye.get('ev_pct')}%
 
-Active Self-Learned Decision Basis Rules (from Past Post-Mortems):
+Active Structural Rules:
 {rules_text}
 
-Qualitative Injury & Rotation Context:
-{injury_context if injury_context else "Standard rotation schedule. Evaluate rest differential and learned memory rules."}
+Live NBA Injury Report & Rotation Context (ESPN Official Feed):
+{injury_text if injury_text else "Live injury feed unavailable — exercise extreme caution on large spread discrepancies."}
 
 Your Task:
-1. Check if any Active Self-Learned Rule applies to this matchup.
-2. Audit whether the +{isye.get('ev_pct')}% EV holds or is invalidated by a rotational trap.
-3. Assign a calibrated Confidence Score (1-100) and unit size:
-   - 80+: High Confidence (2 Units / $40)
-   - 70-79: Standard Edge (1 Unit / $20)
-   - <70: VETO / Pass (0 Units)
+1. CRITICAL INJURY CHECK: Examine the live injury report above. If a star/key rotation player on the recommended side ({candidate['recommended_side']}) is listed as Out or Doubtful, VETO the bet — the sportsbook line already reflects that absence while our trailing rating does not.
+2. Check schedule fatigue (e.g., road team on 0-day rest back-to-back) and active structural rules.
+3. Return a binary decision:
+   - "BET" with recommended_units = 1 if no disqualifying injury/rotation/fatigue trap is found.
+   - "VETO" with recommended_units = 0 if a qualitative trap invalidates the edge.
 
 Return ONLY valid JSON matching this schema:
 {{
   "verdict": "BET" | "VETO",
   "confidence": <integer 1-100>,
-  "recommended_units": <0 | 1 | 2>,
+  "recommended_units": <0 | 1>,
   "triggered_rule_id": "<RULE-ID or NONE>",
-  "reasoning": "<Concise 2-sentence technical explanation referencing EWMA/P(Cover) and any triggered learned rule>"
+  "reasoning": "<Concise 2-sentence explanation referencing live injury/rest context and calibrated P(Cover)>"
 }}
 """
         response = client.models.generate_content(
@@ -108,74 +116,71 @@ Return ONLY valid JSON matching this schema:
         )
 
         parsed = json.loads(response.text.strip())
-        print(f"[CourtVision Veto] Gemini Verdict for {candidate['recommended_side']}: {parsed.get('verdict')} ({parsed.get('confidence')}/100)")
+        verdict = "BET" if str(parsed.get("verdict", "")).upper() == "BET" else "VETO"
+        parsed["verdict"] = verdict
+        # Hard guard: LLM is strictly a veto auditor and may never scale stake above 1 unit
+        parsed["recommended_units"] = 1 if verdict == "BET" else 0
+        print(f"[CourtVision Veto] Gemini Verdict for {candidate['recommended_side']}: {verdict} ({parsed.get('confidence')}/100)")
         return parsed
 
     except Exception as e:
         print(f"[CourtVision Veto] Gemini API fallback triggered ({e}).")
-        return fallback_context_check(candidate, learned_rules)
+        return fallback_context_check(candidate, learned_rules, injury_meta=injury_meta)
 
 
-def fallback_context_check(candidate, learned_rules):
+def fallback_context_check(candidate, learned_rules, injury_meta=None):
     """
-    ISyE 4031 + Learned Rule deterministic evaluator when offline or no API key is configured.
+    ISyE 4031 + Live Injury Guard + Fatigue Veto deterministic evaluator.
+    Strictly binary BET (1 Unit) or VETO (0 Units); never scales to 2U.
     """
     isye = candidate.get("isye_4031", {})
-    cover_prob = isye.get("cover_prob_pct", 56.0)
-    ev_pct = isye.get("ev_pct", 7.0)
+    cover_prob = isye.get("cover_prob_pct", 54.0)
+    ev_pct = isye.get("ev_pct", 0.0)
     rest_diff = isye.get("rest_diff", 0.0)
     side = candidate.get("recommended_side", "Candidate")
     direction = candidate.get("edge_direction", "AWAY")
+    injury_meta = injury_meta or {}
 
-    # Base confidence scaled from Student-t cover probability
-    base_conf = int(round(50 + (cover_prob - 50.0) * 2.5))
-    triggered_rule = "RULE-001"
-    rule_note = "Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage)."
-
-    # Check if road favorite on compressed rest triggers RULE-002
-    if direction == "AWAY" and rest_diff > 0:
-        # Away team has fewer rest days than Home team (back-to-back fatigue)
-        triggered_rule = "RULE-002"
-        confidence = max(45, min(65, base_conf - 12))
+    # P0 Injury Guardrail: Veto if recommended side has >= 3 confirmed Out/Doubtful players
+    # and at least 2 more absences than the opponent
+    side_out = injury_meta.get("home_out_count", 0) if direction == "HOME" else injury_meta.get("away_out_count", 0)
+    opp_out = injury_meta.get("away_out_count", 0) if direction == "HOME" else injury_meta.get("home_out_count", 0)
+    if side_out >= 3 and (side_out - opp_out) >= 2:
         return {
             "verdict": "VETO",
-            "confidence": confidence,
+            "confidence": 55,
             "recommended_units": 0,
-            "triggered_rule_id": triggered_rule,
+            "triggered_rule_id": "RULE-INJURY-001",
             "reasoning": (
-                f"VETOED by Self-Learned {triggered_rule}: Although raw OLS projects +{ev_pct}% EV on {side}, "
-                f"they are a road favorite with a rest disadvantage (0d rest after travel). Passing to protect bankroll."
+                f"VETOED by Live Injury Guard: {side} has {side_out} Out/Doubtful players "
+                f"(vs {opp_out} for opponent). Trailing rating likely overstates depleted roster."
             )
         }
-    elif abs(isye.get("ar1_reversion_adj", 0.0)) >= 0.45:
-        triggered_rule = "RULE-003"
-        rule_note = f"Applied RULE-003 (AR(1) blowout mean-reversion dampener of {isye.get('ar1_reversion_adj'):+g} pts)."
-        base_conf += 2
-    else:
-        base_conf += 5
 
-    confidence = max(40, min(95, base_conf))
-
-    if confidence >= 80 and cover_prob >= 60.0:
+    # Check if road pick on compressed rest triggers RULE-REST-003
+    if direction == "AWAY" and rest_diff > 0 and cover_prob < 57.5:
         return {
-            "verdict": "BET",
-            "confidence": confidence,
-            "recommended_units": 2,
-            "triggered_rule_id": triggered_rule,
+            "verdict": "VETO",
+            "confidence": 62,
+            "recommended_units": 0,
+            "triggered_rule_id": "RULE-REST-003",
             "reasoning": (
-                f"ISyE 4031 Student-t cover probability of {cover_prob}% (+{ev_pct}% EV, SE_pred={isye.get('se_pred')}) "
-                f"exceeds high-conviction threshold for {side}. {rule_note}"
+                f"VETOED by RULE-REST-003: {side} is an away team at a rest disadvantage "
+                f"({rest_diff:+g}d vs home) with marginal calibrated cover probability ({cover_prob}%)."
             )
         }
-    elif confidence >= 70 and cover_prob >= 55.5:
+
+    confidence = max(40, min(90, int(round(55 + (cover_prob - 50.0) * 3.0))))
+
+    if cover_prob >= 54.0 and ev_pct > 0.0:
         return {
             "verdict": "BET",
             "confidence": confidence,
             "recommended_units": 1,
-            "triggered_rule_id": triggered_rule,
+            "triggered_rule_id": "NONE",
             "reasoning": (
-                f"Student-t cover probability of {cover_prob}% (+{ev_pct}% EV vs 52.4% breakeven) confirms positive expectation on {side}. "
-                f"{rule_note}"
+                f"Calibrated Student-t cover probability of {cover_prob}% (+{ev_pct}% shrunk EV vs "
+                f"{isye.get('breakeven_prob_pct', 52.4)}% breakeven, SE_pred={isye.get('se_pred')}) passes injury & fatigue audit for {side}."
             )
         }
     else:
@@ -183,9 +188,9 @@ def fallback_context_check(candidate, learned_rules):
             "verdict": "VETO",
             "confidence": confidence,
             "recommended_units": 0,
-            "triggered_rule_id": triggered_rule,
+            "triggered_rule_id": "NONE",
             "reasoning": (
-                f"Vetoed: Cover probability ({cover_prob}%) and post-rule confidence ({confidence}/100) fall below bankroll protection threshold. {rule_note}"
+                f"Vetoed: Calibrated cover probability ({cover_prob}%) or EV ({ev_pct}%) falls below +EV threshold."
             )
         }
 
@@ -215,9 +220,9 @@ def update_decision_basis_post_mortem(settled_bet, actual_home_margin, final_sco
     studentized_r = round(residual_e / se_pred, 2)
 
     abs_e = abs(residual_e)
-    captured_50 = abs_e <= (0.6755 * se_pred)
-    captured_80 = abs_e <= (1.2852 * se_pred)
-    captured_95 = abs_e <= (1.9701 * se_pred)
+    captured_50 = abs_e <= (0.6745 * se_pred)
+    captured_80 = abs_e <= (1.2816 * se_pred)
+    captured_95 = abs_e <= (1.9600 * se_pred)
 
     new_diag_entry = {
         "date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
@@ -252,30 +257,10 @@ def update_decision_basis_post_mortem(settled_bet, actual_home_margin, final_sco
 
     limit = diag.get("tracking_signal_limit", 3.75)
     if abs(tracking_signal) > limit:
-        diag["status"] = "RECALIBRATED (Bias Corrected)"
-        # Adjust intercept slightly toward reducing systematic CFE bias
-        basis["ols_parameters"]["beta"][0] = round(basis["ols_parameters"]["beta"][0] + 0.15 * (cfe / n), 2)
+        # Flag retrain needed on the full slate rather than mutating beta[0] on selected bets
+        diag["status"] = "RETRAIN_ALERT (Tracking Signal Exceeded)"
     else:
         diag["status"] = "IN_CONTROL (Unbiased)"
-
-    # Generate new learned rule if bet lost or large residual shock occurred
-    if settled_bet.get("result") == "LOST" or abs(studentized_r) >= 0.85:
-        rules = basis.get("learned_rules", [])
-        next_id = f"RULE-{len(rules) + 1:03d}"
-        rules.append({
-            "rule_id": next_id,
-            "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
-            "source_game": f"{final_score_str}",
-            "residual_trigger": f"e_t = {residual_e:+g} pts (r = {studentized_r:+g})",
-            "category": "POST_MORTEM_RESIDUAL_UPDATE",
-            "rule_statement": (
-                f"Post-mortem on {settled_bet['matchup']}: Observed residual of {residual_e:+g} pts "
-                f"(SE_pred = {se_pred}). Tightening variance filter on similar pace/shooting profiles."
-            ),
-            "adjustment_type": "VARIANCE_GUARD",
-            "parameter_delta": -3 if settled_bet.get("result") == "LOST" else 2
-        })
-        basis["learned_rules"] = rules
 
     save_decision_basis(basis)
     print(f"[CourtVision Post-Mortem] Updated ISyE 4031 Diagnostics: CFE={cfe}, MAD={mad}, TS={tracking_signal}")
