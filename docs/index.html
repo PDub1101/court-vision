@@ -1,59 +1,82 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="slate">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CourtVision — ISyE 4031 NBA Forecasting Engine &amp; $1,000 Paper Bankroll</title>
-  <meta name="description" content="CourtVision: Autonomous NBA spread forecasting model using ISyE 4031 Holt Exponential Smoothing, Multivariate OLS SE_pred Prediction Intervals, Student-t calibration, and Gemini 2.5 Flash residual audits." />
+  <title>CourtVision — ISyE 4031 NBA Forecasting Engine & $1,000 Paper Bankroll</title>
+  <meta name="description" content="CourtVision: Autonomous NBA spread forecasting model using ISyE 4031 Holt Exponential Smoothing, Multivariate OLS SE_pred Prediction Intervals, Student-t +EV staking, and Gemini 2.5 Flash Self-Learning Decision Basis." />
 
+  <!-- Fonts matching your ecosystem -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- Chart.js for equity curve tracking -->
+  <!-- Chart.js for real equity tracking -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- Embed detector for portfolio integration -->
+  <script>
+    if (window.self !== window.top) {
+      document.documentElement.classList.add('is-embedded');
+    }
+    const savedTheme = localStorage.getItem('theme') || 'slate';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
+    // Support bidirectional theme sync with portfolio host
+    window.applyTheme = function(theme) {
+      if (theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        try { localStorage.setItem('theme', theme); } catch (e) {}
+        if (typeof updateThemeButton === 'function') updateThemeButton(theme);
+        if (typeof equityChartInstance !== 'undefined' && equityChartInstance && typeof updateChartTheme === 'function') {
+          updateChartTheme(equityChartInstance, theme);
+        }
+      }
+    };
+    window.addEventListener('message', function(e) {
+      if (e.data && e.data.type === 'SET_THEME' && e.data.theme) {
+        window.applyTheme(e.data.theme);
+      }
+    });
+  </script>
 
   <style>
     /* ==========================================================================
-       CRISP EDITORIAL LIGHT DESIGN SYSTEM
+       SPORTY DESIGN SYSTEM: HARDWOOD BASKETBALL ACCENTS & ARENA SLATE
        ========================================================================== */
-    :root {
-      --bg-page: #faf9f6;
-      --bg-header: rgba(250, 249, 246, 0.94);
-      --bg-ticker: #f3f1ec;
-      --ticker-text: #4a505c;
-      --ticker-border: #e5e2da;
+    :root,
+    html[data-theme="light"] {
+      --bg-page: #f4f6f9;
+      --bg-header: rgba(255, 255, 255, 0.96);
+      --bg-ticker: #ffffff;
+      --ticker-text: #334155;
+      --ticker-border: #e2e8f0;
       --bg-ribbon: #ffffff;
       --bg-card: #ffffff;
-      --bg-card-alt: #f3f1ec;
-      --bg-card-hover: #faf9f6;
-      --border-subtle: #e5e2da;
-      --border-strong: #cfc9bc;
+      --bg-card-alt: #f1f5f9;
+      --bg-card-hover: #f8fafc;
+      --border-subtle: #e2e8f0;
+      --border-strong: #cbd5e1;
 
-      --text-primary: #14171f;
-      --text-secondary: #4a505c;
-      --text-muted: #68707d;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #475569;
 
-      --accent-navy: #003057;
-      --accent-navy-hover: #00213d;
-      --accent-gold: #8c7a3e;
-      --accent-gold-badge: #b3a369;
+      --bball-orange: #ea580c;
+      --bball-orange-glow: rgba(234, 88, 12, 0.14);
+      --bball-court: #fff7ed;
+      --bball-border: #fed7aa;
 
-      --bball-orange: #003057;
-      --bball-orange-glow: rgba(0, 48, 87, 0.08);
-      --bball-court: #eff6ff;
-      --bball-border: #bfdbfe;
+      --accent-primary: #ea580c;
+      --accent-primary-hover: #c2410c;
+      --accent-primary-bg: #fff7ed;
+      --accent-primary-border: #fdba74;
 
-      --accent-primary: #003057;
-      --accent-primary-hover: #00213d;
-      --accent-primary-bg: rgba(0, 48, 87, 0.08);
-      --accent-primary-border: rgba(0, 48, 87, 0.25);
-
-      --pos: #047857;
+      --pos: #059669;
       --pos-bg: #ecfdf5;
       --pos-border: #a7f3d0;
 
-      --neg: #b91c1c;
+      --neg: #dc2626;
       --neg-bg: #fef2f2;
       --neg-border: #fecaca;
 
@@ -61,45 +84,128 @@
       --amber-bg: #fffbeb;
       --amber-border: #fde68a;
 
-      --purple: #6d28d9;
+      --purple: #7c3aed;
       --purple-bg: #f5f3ff;
       --purple-border: #ddd6fe;
 
-      --sky: #0369a1;
+      --sky: #0284c7;
       --sky-bg: #f0f9ff;
       --sky-border: #bae6fd;
 
-      --shadow-subtle: none;
+      --shadow-subtle: 0 1px 2px rgba(15, 23, 42, 0.04);
       --shadow-card: none;
 
-      /* Scorebug Tokens (Crisp Editorial Light) */
+      /* Broadcast TV Score Bug Tokens - Light Mode */
       --bcast-bg: #ffffff;
-      --bcast-border: #e5e2da;
-      --bcast-shadow: none;
-      --bcast-top-bg: #f3f1ec;
-      --bcast-top-border: #e5e2da;
+      --bcast-border: #e2e8f0;
+      --bcast-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+      --bcast-top-bg: #f8fafc;
+      --bcast-top-border: #e2e8f0;
       --bcast-wing-base: #ffffff;
-      --bcast-wing-border: #e5e2da;
-      --bcast-text-primary: #14171f;
-      --bcast-text-secondary: #4a505c;
-      --bcast-hud-bg: #faf9f6;
-      --bcast-hud-border: #e5e2da;
-      --bcast-hud-clock: #14171f;
-      --bcast-shotclock-bg: #fffbeb;
+      --bcast-wing-border: #f1f5f9;
+      --bcast-text-primary: #0f172a;
+      --bcast-text-secondary: #475569;
+      --bcast-hud-bg: #f8fafc;
+      --bcast-hud-border: #e2e8f0;
+      --bcast-hud-clock: #0f172a;
+      --bcast-shotclock-bg: #fef3c7;
       --bcast-shotclock-text: #b45309;
       --bcast-shotclock-border: #fde68a;
-      --bcast-chyron-bg: #faf9f6;
-      --bcast-chyron-border: #e5e2da;
-      --bcast-chyron-text: #14171f;
-      --bcast-tag-bg: #f3f1ec;
-      --bcast-tag-text: #4a505c;
-      --bcast-tag-border: #cfc9bc;
-      --bcast-timeout-off: #cfc9bc;
-      --bcast-timeout-on: #003057;
+      --bcast-chyron-bg: #f8fafc;
+      --bcast-chyron-border: #e2e8f0;
+      --bcast-chyron-text: #1e293b;
+      --bcast-tag-bg: #e2e8f0;
+      --bcast-tag-text: #334155;
+      --bcast-tag-border: #cbd5e1;
+      --bcast-timeout-off: #cbd5e1;
+      --bcast-timeout-on: #f59e0b;
+    }
 
-      --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    html[data-theme="slate"] {
+      --bg-page: #0a0d14;
+      --bg-header: rgba(13, 17, 26, 0.94);
+      --bg-ticker: #07090e;
+      --ticker-text: #cbd5e1;
+      --ticker-border: rgba(255, 255, 255, 0.08);
+      --bg-ribbon: #111622;
+      --bg-card: #141a29;
+      --bg-card-alt: #1a2235;
+      --bg-card-hover: #1e283f;
+      --border-subtle: #252f47;
+      --border-strong: #374465;
+
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #94a3b8;
+
+      --bball-orange: #ea580c;
+      --bball-orange-glow: rgba(249, 115, 22, 0.22);
+      --bball-court: #1c1510;
+      --bball-border: #7c2d12;
+
+      --accent-primary: #ea580c;
+      --accent-primary-hover: #ea580c;
+      --accent-primary-bg: rgba(249, 115, 22, 0.14);
+      --accent-primary-border: rgba(249, 115, 22, 0.35);
+
+      --pos: #34d399;
+      --pos-bg: rgba(52, 211, 153, 0.12);
+      --pos-border: rgba(52, 211, 153, 0.28);
+
+      --neg: #f87171;
+      --neg-bg: rgba(239, 68, 68, 0.12);
+      --neg-border: rgba(239, 68, 68, 0.28);
+
+      --amber: #fbbf24;
+      --amber-bg: rgba(251, 191, 36, 0.12);
+      --amber-border: rgba(251, 191, 36, 0.28);
+
+      --purple: #a78bfa;
+      --purple-bg: rgba(167, 139, 250, 0.14);
+      --purple-border: rgba(167, 139, 250, 0.32);
+
+      --sky: #38bdf8;
+      --sky-bg: rgba(56, 189, 248, 0.12);
+      --sky-border: rgba(56, 189, 248, 0.28);
+
+      --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-card: none;
+
+      /* Broadcast TV Score Bug Tokens - Dark Mode */
+      --bcast-bg: linear-gradient(180deg, #131b2e 0%, #0a0e1a 100%);
+      --bcast-border: rgba(255, 255, 255, 0.12);
+      --bcast-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      --bcast-top-bg: rgba(0, 0, 0, 0.55);
+      --bcast-top-border: rgba(255, 255, 255, 0.08);
+      --bcast-wing-base: rgba(13, 19, 34, 0.95);
+      --bcast-wing-border: rgba(255, 255, 255, 0.08);
+      --bcast-text-primary: #ffffff;
+      --bcast-text-secondary: rgba(255, 255, 255, 0.7);
+      --bcast-hud-bg: #060910;
+      --bcast-hud-border: rgba(255, 255, 255, 0.06);
+      --bcast-hud-clock: #ffffff;
+      --bcast-shotclock-bg: rgba(245, 158, 11, 0.15);
+      --bcast-shotclock-text: #f59e0b;
+      --bcast-shotclock-border: rgba(245, 158, 11, 0.4);
+      --bcast-chyron-bg: #090e1c;
+      --bcast-chyron-border: rgba(255, 255, 255, 0.1);
+      --bcast-chyron-text: #e2e8f0;
+      --bcast-tag-bg: rgba(255, 255, 255, 0.08);
+      --bcast-tag-text: #cbd5e1;
+      --bcast-tag-border: rgba(255, 255, 255, 0.1);
+      --bcast-timeout-off: rgba(255, 255, 255, 0.18);
+      --bcast-timeout-on: #f59e0b;
+    }
+
+    html.is-embedded header {
+      display: none !important;
+    }
+    /* Display the arena ticker banner prominently in embedded view */
+    html.is-embedded .arena-ticker {
+      display: block !important;
+    }
+    html.is-embedded .metrics-ribbon {
+      padding-top: 14px;
     }
 
     *, *::before, *::after {
@@ -108,40 +214,21 @@
       padding: 0;
     }
 
-    ::selection {
-      background: rgba(0, 48, 87, 0.14);
-      color: var(--text-primary);
-    }
-
-    :focus-visible {
-      outline: 2px solid var(--accent-navy);
-      outline-offset: 2px;
-    }
-
     body {
       background-color: var(--bg-page);
       color: var(--text-primary);
-      font-family: var(--font-body);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       font-size: 14.5px;
       line-height: 1.55;
       -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
+      transition: background-color 0.2s, color 0.2s;
     }
 
     h1, h2, h3, h4 {
-      font-family: var(--font-display);
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-weight: 800;
       color: var(--text-primary);
       letter-spacing: -0.015em;
-    }
-
-    code {
-      font-family: var(--font-mono);
-      font-size: 0.88em;
-      background: var(--bg-card-alt);
-      padding: 1px 5px;
-      border-radius: 3px;
-      color: var(--text-primary);
     }
 
     .container {
@@ -150,156 +237,34 @@
       padding: 0 20px;
     }
 
-    /* Unified Top Site Header */
-    .site-header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: var(--bg-header);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--border-subtle);
-    }
-    .nav-container {
-      max-width: 1240px;
-      margin: 0 auto;
-      padding: 0 20px;
-      height: 62px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-    }
-    .nav-brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--text-primary);
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 16px;
-      letter-spacing: -0.015em;
-      text-decoration: none;
-      flex-shrink: 0;
-    }
-    .nav-brand:hover { color: var(--accent-navy); text-decoration: none; }
-    .gt-logo-pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 28px;
-      height: 28px;
-      background: var(--accent-navy);
-      color: var(--accent-gold-badge);
-      font-family: var(--font-display);
-      font-weight: 800;
-      font-size: 11.5px;
-      letter-spacing: 0.03em;
-      border-radius: 4px;
-      flex-shrink: 0;
-    }
-    .brand-sub-nav {
-      color: var(--text-muted);
-      font-weight: 500;
-      font-size: 13.5px;
-      margin-left: 4px;
-    }
-    .nav-links {
-      display: flex;
-      align-items: stretch;
-      height: 100%;
-      gap: 24px;
-    }
-    .nav-link {
-      display: inline-flex;
-      align-items: center;
-      height: 100%;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      border-bottom: 2px solid transparent;
-      white-space: nowrap;
-      padding: 0 2px;
-      text-decoration: none;
-    }
-    .nav-link:hover { color: var(--text-primary); text-decoration: none; }
-    .nav-link.active {
-      color: var(--text-primary);
-      font-weight: 700;
-      border-bottom-color: var(--accent-navy);
-    }
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
-    }
-    .nav-icon-link {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 34px;
-      height: 34px;
-      border-radius: 4px;
-      color: var(--text-secondary);
-      text-decoration: none;
-    }
-    .nav-icon-link:hover { color: var(--accent-navy); background: var(--bg-card-alt); }
-    .nav-resume-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      height: 34px;
-      padding: 0 12px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-primary);
-      background: var(--bg-card);
-      border: 1px solid var(--border-strong);
-      border-radius: 4px;
-      text-decoration: none;
-    }
-    .nav-resume-btn:hover { border-color: var(--accent-navy); color: var(--accent-navy); text-decoration: none; }
-
-    @media (max-width: 768px) {
-      .nav-container {
-        height: auto;
-        padding: 10px 16px 0;
-        flex-wrap: wrap;
-        gap: 8px 12px;
-      }
-      .nav-brand { order: 1; }
-      .nav-actions { order: 2; }
-      .nav-links {
-        order: 3;
-        width: 100%;
-        height: auto;
-        border-top: 1px solid var(--border-subtle);
-        margin-top: 4px;
-        gap: 12px;
-        justify-content: space-between;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-      }
-      .nav-link { height: 40px; font-size: 13px; }
-      .brand-sub-nav { display: none; }
-      .container { padding: 0 16px; }
-    }
-
     /* Arena Sports Ticker Bar */
     .arena-ticker {
       background: var(--bg-ticker);
-      color: var(--ticker-text);
-      font-family: var(--font-mono);
+      color: var(--ticker-text, #cbd5e1);
+      font-family: 'JetBrains Mono', monospace;
       font-size: 11.5px;
       padding: 7px 0;
-      border-bottom: 1px solid var(--ticker-border);
+      border-bottom: 1px solid var(--ticker-border, rgba(255, 255, 255, 0.08));
       overflow: hidden;
       white-space: nowrap;
+      transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
     }
 
-    .arena-ticker strong {
-      color: var(--text-primary);
+    html[data-theme="light"] .arena-ticker {
+      background: #ffffff;
+      color: #334155;
+      border-bottom: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    }
+
+    html[data-theme="light"] .arena-ticker strong {
+      color: #0f172a;
+    }
+
+    html[data-theme="light"] .ticker-badge {
+      background: #ea580c;
+      color: #ffffff;
+      box-shadow: none;
     }
 
     
@@ -426,12 +391,18 @@
       background: var(--bg-card-alt);
     }
 
-    /* KPI Ribbon - Flat Institutional Telemetry Strip */
+    /* KPI Ribbon - Clean Open Telemetry Strip (Institutional Bloomberg / Yahoo Finance / ESPN Style) */
     .metrics-ribbon {
       background: var(--bg-ribbon);
+      border-top: 1px solid var(--border-subtle);
       border-bottom: 1px solid var(--border-subtle);
       padding: 8px 0;
       margin-bottom: 28px;
+    }
+
+    html.is-embedded .metrics-ribbon {
+      padding-top: 0;
+      margin-bottom: 24px;
     }
 
     .kpi-grid {
@@ -475,6 +446,21 @@
         border-bottom: 1px solid var(--border-subtle);
       }
     }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 3px;
+      height: 100%;
+    }
+
+    .kpi-card.accent-trial::before { background: #ea580c; }
+    .kpi-card.accent-bankroll::before { background: #3b82f6; }
+    .kpi-card.accent-pnl::before { background: var(--pos); }
+    .kpi-card.accent-ats::before { background: #8b5cf6; }
 
     .kpi-label {
       font-size: 11px;
@@ -930,6 +916,12 @@
       backdrop-filter: none !important;
     }
 
+    html[data-theme="light"] .broadcast-section {
+      background: transparent !important;
+      box-shadow: none !important;
+      border: none !important;
+    }
+
     .broadcast-section-header {
       display: flex;
       justify-content: space-between;
@@ -1024,7 +1016,6 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      white-space: nowrap;
     }
 
     .bcast-filter-btn:hover {
@@ -1032,10 +1023,16 @@
     }
 
     .bcast-filter-btn.active {
-      background: #ffffff;
-      color: var(--accent-navy);
+      background: var(--bg-card);
+      color: var(--bball-orange);
       box-shadow: none;
-      border: 1px solid var(--border-strong);
+      border: 1px solid var(--border-subtle);
+    }
+
+    html[data-theme="light"] .bcast-filter-btn.active {
+      background: #ffffff;
+      box-shadow: none;
+      border: 1px solid #cbd5e1;
     }
 
     .bcast-sim-btn {
@@ -1075,8 +1072,8 @@
 
     /* Individual TV Score Bug Container - Sharp Technical Precision */
     .bcast-scorebug {
-      background: #ffffff;
-      border: 1px solid var(--border-subtle);
+      background: var(--bcast-bg);
+      border: 1px solid var(--bcast-border);
       border-radius: 4px;
       overflow: hidden;
       box-shadow: none;
@@ -1084,19 +1081,40 @@
       position: relative;
     }
 
+    html[data-theme="light"] .bcast-scorebug {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    }
+
     .bcast-scorebug:hover {
       transform: none;
-      box-shadow: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
       border-color: var(--border-strong);
     }
 
+    html[data-theme="light"] .bcast-scorebug:hover {
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+      border-color: #94a3b8;
+    }
+
     .bcast-scorebug.bet-covering {
-      border-color: var(--pos);
+      border-color: #10b981;
+      box-shadow: none;
+    }
+
+    html[data-theme="light"] .bcast-scorebug.bet-covering {
+      border-color: #10b981;
       box-shadow: none;
     }
 
     .bcast-scorebug.bet-losing {
-      border-color: var(--neg);
+      border-color: #f87171;
+      box-shadow: none;
+    }
+
+    html[data-theme="light"] .bcast-scorebug.bet-losing {
+      border-color: #f87171;
       box-shadow: none;
     }
 
@@ -1109,6 +1127,12 @@
       padding: 7px 14px;
       border-bottom: 1px solid var(--bcast-top-border);
       font-size: 11px;
+      transition: background 0.25s ease, border-color 0.25s ease;
+    }
+
+    html[data-theme="light"] .bcast-top-ribbon {
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
     }
 
     .bcast-network-badge {
@@ -1117,7 +1141,7 @@
       font-weight: 900;
       letter-spacing: 0.6px;
       padding: 3px 8px;
-      border-radius: 4px;
+      border-radius: 5px;
       text-transform: uppercase;
       display: inline-flex;
       align-items: center;
@@ -1128,7 +1152,7 @@
     .net-bally { background: #d91c24; color: #fff; }
     .net-yes { background: #002b66; color: #fff; }
     .net-tnt { background: #111; color: #fff; border: 1px solid #555; }
-    .net-courtvision { background: var(--accent-navy); color: #fff; box-shadow: none; border: 1px solid var(--accent-navy); }
+    .net-courtvision { background: #c2410c; color: #fff; box-shadow: none; border: 1px solid rgba(234, 88, 12, 0.4); }
     .net-sn { background: #002d62; color: #fdbb30; }
 
     .bcast-status-indicator {
@@ -1141,15 +1165,35 @@
     }
 
     .bcast-status-indicator.is-live {
+      color: #f87171;
+    }
+
+    html[data-theme="light"] .bcast-status-indicator.is-live {
       color: #dc2626;
     }
 
     .bcast-status-indicator.is-final {
+      color: #94a3b8;
+    }
+
+    html[data-theme="light"] .bcast-status-indicator.is-final {
       color: var(--text-muted);
     }
 
+    .bcast-status-indicator.is-final.is-won {
+      color: var(--pos) !important;
+    }
+
+    .bcast-status-indicator.is-final.is-lost {
+      color: var(--neg) !important;
+    }
+
     .bcast-status-indicator.is-upcoming {
-      color: #0369a1;
+      color: #38bdf8;
+    }
+
+    html[data-theme="light"] .bcast-status-indicator.is-upcoming {
+      color: #0284c7;
     }
 
     .bcast-sportsbook-tag {
@@ -1189,6 +1233,80 @@
     }
     .bcast-confidence-pill strong {
       color: var(--pos);
+    }
+
+    .game-date-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--bg-card-alt);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 5px;
+      padding: 2px 7px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      vertical-align: middle;
+    }
+    .bcast-date-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--bcast-tag-text);
+      background: var(--bcast-tag-bg);
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid var(--bcast-tag-border);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .ledger-date-filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .ledger-date-btn {
+      background: var(--bg-card-alt);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 11.5px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .ledger-date-btn:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+    }
+    .ledger-date-btn.active {
+      background: var(--bball-orange-glow);
+      color: var(--bball-orange);
+      border-color: var(--bball-border);
+      font-weight: 800;
+    }
+    .ledger-date-summary {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 10px 16px;
+      margin-bottom: 14px;
+      font-size: 12.5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     /* Tri-Column Body Architecture */
@@ -1266,6 +1384,16 @@
       padding: 1px 7px;
       border-radius: 4px;
     }
+    .tri-target-badge.badge-won {
+      color: var(--pos) !important;
+      background: var(--pos-bg) !important;
+      border: 1px solid var(--pos-border) !important;
+    }
+    .tri-target-badge.badge-lost {
+      color: var(--neg) !important;
+      background: var(--neg-bg) !important;
+      border: 1px solid var(--neg-border) !important;
+    }
     .tri-edge-grade {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11.5px;
@@ -1290,14 +1418,22 @@
       align-items: center;
       justify-content: space-between;
       padding: 6px 8px;
-      border-radius: 4px;
-      background: var(--bg-page);
-      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid transparent;
       margin-bottom: 2px;
     }
+    html[data-theme="light"] .tri-team-row {
+      background: #f8fafc;
+      border-color: #f1f5f9;
+    }
     .tri-team-row.is-our-pick {
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
+      background: rgba(249, 115, 22, 0.1);
+      border: 1px solid rgba(249, 115, 22, 0.35);
+    }
+    html[data-theme="light"] .tri-team-row.is-our-pick {
+      background: #fff7ed;
+      border-color: #fed7aa;
     }
     .tri-team-left {
       display: flex;
@@ -1499,6 +1635,9 @@
     .wager-val.profit {
       color: var(--pos);
     }
+    .wager-val.loss {
+      color: var(--neg);
+    }
 
     /* Model Column 3 Elements (ISyE Quant Radar) */
     .tri-edge-compare {
@@ -1601,8 +1740,13 @@
       display: grid;
       grid-template-columns: 1fr 104px 1fr;
       align-items: stretch;
-      background: #ffffff;
+      background: var(--bcast-wing-base);
       min-height: 108px;
+      transition: background 0.25s ease;
+    }
+
+    html[data-theme="light"] .bcast-rack {
+      background: #ffffff;
     }
 
     .bcast-team-wing {
@@ -1710,11 +1854,21 @@
       color: var(--bcast-text-primary);
       line-height: 1;
       letter-spacing: -1px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+      transition: color 0.25s ease;
+    }
+
+    html[data-theme="light"] .bcast-score-num {
       text-shadow: none;
     }
 
     .bcast-score-num.winner-score {
-      color: var(--pos);
+      color: var(--accent-win);
+      text-shadow: none;
+    }
+
+    html[data-theme="light"] .bcast-score-num.winner-score {
+      color: #059669;
       text-shadow: none;
     }
 
@@ -1759,7 +1913,11 @@
 
     .timeout-dash.active {
       background: var(--bcast-timeout-on);
-      box-shadow: none;
+      box-shadow: 0 0 4px var(--bcast-timeout-on);
+    }
+
+    html[data-theme="light"] .timeout-dash.active {
+      box-shadow: 0 0 3px rgba(245, 158, 11, 0.4);
     }
 
     .bcast-foul-text {
@@ -1778,6 +1936,13 @@
       justify-content: center;
       padding: 8px 4px;
       position: relative;
+      transition: background 0.25s ease, border-color 0.25s ease;
+    }
+
+    html[data-theme="light"] .bcast-hud {
+      background: #f8fafc;
+      border-left: 1px solid #e2e8f0;
+      border-right: 1px solid #e2e8f0;
     }
 
     .bcast-hud-period {
@@ -1788,6 +1953,7 @@
       text-transform: uppercase;
       letter-spacing: 0.6px;
       margin-bottom: 2px;
+      transition: color 0.25s ease;
     }
 
     .bcast-hud-clock {
@@ -1798,6 +1964,10 @@
       line-height: 1.1;
       letter-spacing: -0.5px;
       margin-bottom: 4px;
+      transition: color 0.25s ease;
+    }
+
+    html[data-theme="light"] .bcast-hud-clock {
       text-shadow: none;
     }
 
@@ -1812,6 +1982,11 @@
       border-radius: 4px;
       text-shadow: none;
       letter-spacing: 0.5px;
+      transition: all 0.25s ease;
+    }
+
+    html[data-theme="light"] .bcast-hud-shotclock {
+      text-shadow: none;
     }
 
     /* Lower-Third Betting Chyron */
@@ -1819,6 +1994,12 @@
       background: var(--bcast-chyron-bg);
       border-top: 1px solid var(--bcast-chyron-border);
       padding: 10px 14px;
+      transition: background 0.25s ease, border-color 0.25s ease;
+    }
+
+    html[data-theme="light"] .bcast-chyron-strip {
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
     }
 
     .bcast-chyron-main {
@@ -1835,17 +2016,25 @@
       gap: 8px;
       font-size: 12.5px;
       color: var(--bcast-chyron-text);
+      transition: color 0.25s ease;
     }
 
     .bcast-pick-pill {
       font-family: 'JetBrains Mono', monospace;
       font-weight: 900;
-      color: var(--accent-navy);
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
+      color: var(--bball-orange);
+      background: var(--bball-orange-light);
+      border: 1px solid var(--bball-orange-border);
       padding: 2px 7px;
-      border-radius: 4px;
+      border-radius: 6px;
       font-size: 12px;
+      transition: all 0.25s ease;
+    }
+
+    html[data-theme="light"] .bcast-pick-pill {
+      background: #fff7ed;
+      color: #c2410c;
+      border-color: #fdba74;
     }
 
     .bcast-cover-badge {
@@ -1853,16 +2042,21 @@
       font-size: 12px;
       font-weight: 900;
       padding: 4px 10px;
-      border-radius: 4px;
+      border-radius: 6px;
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      transition: all 0.25s ease;
     }
 
     .bcast-cover-badge.status-covering {
       background: var(--pos-bg);
       color: var(--pos);
       border: 1px solid var(--pos-border);
+      box-shadow: none;
+    }
+
+    html[data-theme="light"] .bcast-cover-badge.status-covering {
       box-shadow: none;
     }
 
@@ -1876,6 +2070,10 @@
       background: var(--pos-bg);
       color: var(--pos);
       border: 1px solid var(--pos-border);
+      box-shadow: none;
+    }
+
+    html[data-theme="light"] .bcast-cover-badge.status-won {
       box-shadow: none;
     }
 
@@ -1895,11 +2093,15 @@
     .bcast-meter-track {
       width: 100%;
       height: 5px;
-      background: #e5e2da;
+      background: var(--bcast-top-border);
       border-radius: 999px;
       margin-top: 8px;
       overflow: hidden;
       position: relative;
+    }
+
+    html[data-theme="light"] .bcast-meter-track {
+      background: #e2e8f0;
     }
 
     .bcast-meter-fill {
@@ -1926,46 +2128,45 @@
 </head>
 <body>
 
-  <header class="site-header">
-    <div class="nav-container">
-      <a href="../" class="nav-brand">
-        <span class="gt-logo-pill">GT</span>
-        <span class="brand-text">Paul Gibson <span class="brand-sub-nav">ISyE '28</span></span>
-      </a>
-
-      <nav class="nav-links" aria-label="Main Navigation">
-        <a href="../" class="nav-link">Overview</a>
-        <a href="../market-insight/" class="nav-link">Market Insight</a>
-        <a href="../deal-scout/" class="nav-link">DealScout</a>
-        <a href="../court-vision/" class="nav-link active" aria-current="page">CourtVision</a>
-      </nav>
-
-      <div class="nav-actions">
-        <a href="https://github.com/PDub1101" target="_blank" rel="noopener" class="nav-icon-link" title="GitHub Profile" aria-label="GitHub Profile">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-        </a>
-        <a href="https://www.linkedin.com/in/paul-gibson-079b44326/" target="_blank" rel="noopener" class="nav-icon-link" title="LinkedIn Profile" aria-label="LinkedIn Profile">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-        </a>
-        <a href="../Paul_Gibson_Resume.pdf" target="_blank" rel="noopener" class="nav-resume-btn">
-          <span>Resume</span>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <!-- Subdued Live Telemetry Ticker Bar -->
+  <!-- Arena Scoreboard Ticker Bar -->
   <div class="arena-ticker">
     <div class="ticker-inner" id="arena-ticker-content">
       <span class="ticker-item"><span class="ticker-badge">ISyE 4031</span> COURTVISION EWMA + OLS RADAR</span>
-      <span class="ticker-item"><strong>MODEL SPEC:</strong> <code>courtvision_ewma_ols_v1</code> &middot; Holt (&alpha; = 0.25, &beta; = 0.10) &middot; Student-t SE<sub>pred</sub> Intervals</span>
-      <span class="ticker-item"><strong>PAPER DESK:</strong> $1,000 Out-of-Sample Trial &middot; Eastern Time (ET)</span>
+      <span class="ticker-item">🏀 <strong>NYK @ IND (7:00 PM ET)</strong> • IND (+8.5) • P(Cover): 83.7% • +EV: +59.7% [DraftKings -110]</span>
+      <span class="ticker-item">🏀 <strong>MIL @ ORL (7:00 PM ET)</strong> • MIL (+9.5) • P(Cover): 84.5% • +EV: +61.3% [DraftKings -110]</span>
+      <span class="ticker-item">🏀 <strong>GSW @ SAS (9:30 PM ET)</strong> • GSW (+12.5) • P(Cover): 94.3% • +EV: +80.0% [DraftKings -110]</span>
+      <span class="ticker-item">💰 <strong>$1,000 PAPER DESK</strong>: Day 3/30 • Bankroll: $1,034.54 • Eastern Time (ET)</span>
+      <!-- Duplicate for seamless loop -->
       <span class="ticker-item"><span class="ticker-badge">ISyE 4031</span> COURTVISION EWMA + OLS RADAR</span>
-      <span class="ticker-item"><strong>MODEL SPEC:</strong> <code>courtvision_ewma_ols_v1</code> &middot; Holt (&alpha; = 0.25, &beta; = 0.10) &middot; Student-t SE<sub>pred</sub> Intervals</span>
-      <span class="ticker-item"><strong>PAPER DESK:</strong> $1,000 Out-of-Sample Trial &middot; Eastern Time (ET)</span>
+      <span class="ticker-item">🏀 <strong>NYK @ IND (7:00 PM ET)</strong> • IND (+8.5) • P(Cover): 83.7% • +EV: +59.7% [DraftKings -110]</span>
+      <span class="ticker-item">🏀 <strong>MIL @ ORL (7:00 PM ET)</strong> • MIL (+9.5) • P(Cover): 84.5% • +EV: +61.3% [DraftKings -110]</span>
+      <span class="ticker-item">🏀 <strong>GSW @ SAS (9:30 PM ET)</strong> • GSW (+12.5) • P(Cover): 94.3% • +EV: +80.0% [DraftKings -110]</span>
+      <span class="ticker-item">💰 <strong>$1,000 PAPER DESK</strong>: Day 3/30 • Bankroll: $1,034.54 • Eastern Time (ET)</span>
     </div>
   </div>
+
+  <!-- Header -->
+  <header>
+    <div class="container header-inner">
+      <div class="brand-wrap">
+        <span class="brand-ball">🏀</span>
+        <div>
+          <span class="brand-title">COURT<span>VISION</span></span>
+          <span class="brand-subtitle">ISyE 4031 NBA Forecasting Engine & $1,000 Paper Bankroll</span>
+        </div>
+      </div>
+      <div class="header-links">
+        <span class="bookmaker-badge" style="display: inline-flex; align-items: center; gap: 6px;">
+          <span style="width: 7px; height: 7px; border-radius: 50%; background: var(--pos); display: inline-block;"></span>
+          courtvision_ewma_ols_v1
+        </span>
+        <button id="theme-toggle" class="btn-header" onclick="toggleTheme()">
+          <span id="theme-icon">☀️</span>
+          <span id="theme-text">Theme</span>
+        </button>
+      </div>
+    </div>
+  </header>
 
   <!-- 30-Day Evaluation Progress & Bankroll Ribbon -->
   <section class="metrics-ribbon">
@@ -1973,7 +2174,7 @@
       <div class="kpi-grid">
         <!-- Trial Progress -->
         <div class="kpi-card accent-trial">
-          <div class="kpi-label">30-Day Evaluation Period</div>
+          <div class="kpi-label">🏀 30-Day Evaluation Period</div>
           <div class="kpi-val" id="trial-day-display">Day 3 <span style="font-size: 16px; color: var(--text-muted); font-weight: 600;">/ 30</span></div>
           <div class="kpi-sub">
             <span id="trial-sub-text">Out-of-time sequential validation</span>
@@ -1985,16 +2186,16 @@
 
         <!-- Bankroll -->
         <div class="kpi-card accent-bankroll">
-          <div class="kpi-label">Paper Bankroll</div>
+          <div class="kpi-label">💼 Paper Bankroll</div>
           <div class="kpi-val" id="bankroll-val">$998.18</div>
           <div class="kpi-sub" id="bankroll-split">
-            <span>Cash: $978.18</span> &bull; <span>In-Play: $20.00</span>
+            <span>Cash: $978.18</span> • <span>In-Play: $20.00</span>
           </div>
         </div>
 
         <!-- Total Profit / Loss -->
         <div class="kpi-card accent-pnl">
-          <div class="kpi-label">Net Profit / Loss ($)</div>
+          <div class="kpi-label">📈 Net Profit / Loss ($)</div>
           <div class="kpi-val" id="pnl-val">-$1.82</div>
           <div class="kpi-sub" id="roi-sub">
             <span style="color: var(--neg); font-weight: 700;">-0.2% ROI</span> vs $1,000 starting capital
@@ -2003,10 +2204,10 @@
 
         <!-- ATS Record & Win Rate -->
         <div class="kpi-card accent-ats">
-          <div class="kpi-label">Record Against The Spread</div>
+          <div class="kpi-label">🎯 Record Against The Spread</div>
           <div class="kpi-val" id="record-val">1 - 1 - 0</div>
           <div class="kpi-sub" id="winrate-sub">
-            <span>Win Rate: 50.0%</span> &bull; <span>TS: -0.29 (Unbiased)</span>
+            <span>Win Rate: 50.0%</span> • <span>TS: -0.29 (Unbiased)</span>
           </div>
         </div>
       </div>
@@ -2016,53 +2217,54 @@
   <!-- Main Content Container -->
   <main class="container">
     
-    <!-- GAME TRACKER FOR ACTIVE & SETTLED SLATES -->
+    
+    <!-- TV BROADCAST SCOREBOARD FOR GAMES BEING BET ON -->
     <section class="broadcast-section" id="broadcast-scoreboard-section">
       <div class="broadcast-section-header">
         <div class="broadcast-title-group">
           <div class="live-on-air-badge">
             <span class="live-pulse-dot"></span>
-            <span>LIVE &amp; SETTLED SLATE</span>
+            <span>ON-AIR CHYRON</span>
           </div>
           <div>
-            <h2 class="broadcast-heading">Tracked NBA Matchups &amp; Spread Diagnostics</h2>
-            <p class="broadcast-sub">Active and settled NBA games tracked against ISyE 4031 Holt EWMA + multivariate OLS spread projections.</p>
+            <h2 class="broadcast-heading">Games Being Bet On — Live & Final Score Bugs</h2>
+            <p class="broadcast-sub">Authentic arena & network broadcast graphics inspired by Bally Sports, ESPN & YES Network for in-play wagers, upcoming tip-offs, and final scores.</p>
           </div>
         </div>
         <div class="broadcast-controls-group">
           <div class="bcast-filter-group" id="bcast-filter-pills">
-            <button class="bcast-filter-btn active" id="btn-filter-active" onclick="setBroadcastFilter('active')">Tonight's Active Bets (<span id="bcast-count-active">7</span>)</button>
-            <button class="bcast-filter-btn" id="btn-filter-settled" onclick="setBroadcastFilter('settled')">Final Scores / Settled (<span id="bcast-count-settled">3</span>)</button>
-            <button class="bcast-filter-btn" id="btn-filter-all" onclick="setBroadcastFilter('all')">All Bet Games (<span id="bcast-count-all">10</span>)</button>
+            <button class="bcast-filter-btn active" id="btn-filter-active" onclick="setBroadcastFilter('active')">⚡ Tonight's Active Bets (<span id="bcast-count-active">7</span>)</button>
+            <button class="bcast-filter-btn" id="btn-filter-settled" onclick="setBroadcastFilter('settled')">📜 Final Scores / Settled (<span id="bcast-count-settled">3</span>)</button>
+            <button class="bcast-filter-btn" id="btn-filter-all" onclick="setBroadcastFilter('all')">🏀 All Bet Games (<span id="bcast-count-all">10</span>)</button>
           </div>
-          <button class="bcast-sim-btn" id="bcast-sim-toggle" onclick="toggleBroadcastSimulation()" title="Switch between live ESPN feed and active in-game simulation">
-            <span id="bcast-sim-icon" style="display:inline-block;width:7px;height:7px;border-radius:50%;background:currentColor;"></span>
+          <button class="bcast-sim-btn" id="bcast-sim-toggle" onclick="toggleBroadcastSimulation()" title="Switch between real ESPN live feed and active in-game demo simulation">
+            <span id="bcast-sim-icon">🔴</span>
             <span id="bcast-sim-text">Simulate Live Game</span>
           </button>
         </div>
       </div>
 
       <div class="bcast-grid" id="broadcast-bugs-container">
-        <!-- Dynamically rendered scorebugs by app.js -->
+        <!-- Dynamically rendered broadcast score bugs by app.js -->
       </div>
     </section>
 
     <!-- Navigation Tabs -->
     <div class="tabs-bar">
       <button class="tab-btn active" onclick="switchTab('today')">
-        <span>Tonight's Forecasts &amp; Divergence Slate</span>
-        <span class="tab-badge" id="picks-count-badge">2 Divergences</span>
+        <span>🎯 Tonight's Forecasts & +EV Slate</span>
+        <span class="tab-badge" id="picks-count-badge">2 +EV Edges</span>
       </button>
       <button class="tab-btn" onclick="switchTab('desk')">
-        <span>Live $1,000 Paper Desk</span>
+        <span>💼 Live $1,000 Paper Desk</span>
         <span class="tab-badge" id="active-bets-badge" style="background: var(--sky-bg); color: var(--sky); border-color: var(--sky-border);">Active</span>
       </button>
       <button class="tab-btn" onclick="switchTab('model')">
-        <span>ISyE 4031 Model &amp; Residual Memory</span>
+        <span>🧠 ISyE 4031 Model & AI Memory</span>
         <span class="tab-badge" id="rules-count-badge" style="background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border);">3 Learned Rules</span>
       </button>
       <button class="tab-btn" onclick="switchTab('ledger')">
-        <span>30-Day Settlement Ledger</span>
+        <span>📜 30-Day Settlement Ledger</span>
         <span class="tab-badge" id="settled-bets-badge">2 Settled</span>
       </button>
     </div>
@@ -2071,8 +2273,11 @@
     <div id="pane-today" class="tab-pane active">
       <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
         <div>
-          <h2 style="font-size: 19px;">Tonight's ISyE 4031 Prospective Nowcasts &amp; Spread Radar</h2>
-          <p style="font-size: 13.5px; color: var(--text-muted);">Holt's Exponential Smoothing (&alpha; = 0.25, &beta; = 0.10) + Multivariate OLS (SE<sub>pred</sub> Nested 50%/80%/95% Intervals) + Student-t Cover Probability. Note: raw OLS probabilities reflect box-score dispersion and can diverge from closing market lines when late injury or rest news is unmodeled, so CLV and tracking signals are audited daily.</p>
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px;">
+            <h2 style="font-size: 19px; margin-bottom: 0;">Tonight's ISyE 4031 Prospective Nowcasts & Spread Radar</h2>
+            <span class="game-date-badge" id="slate-game-date-badge" style="background: var(--bball-orange-glow); color: var(--bball-orange); border-color: var(--bball-border); font-size: 12px; padding: 3px 9px;">📅 Game Slate: <strong id="slate-date-text">Loading...</strong></span>
+          </div>
+          <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 0;">Holt's Exponential Smoothing ($\alpha=0.25, \beta=0.10$) + Multivariate OLS ($SE_{\text{pred}}$ Nested 50%/80%/95% Intervals) + Student-$t$ Cover Probability.</p>
         </div>
         <div style="font-size: 12px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;" id="slate-updated-time">
           Updated: Just now
@@ -2091,8 +2296,8 @@
       <div class="money-lifecycle-box">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
           <div>
-            <h3 style="font-size: 16px;">Daily Paper Bankroll Allocation ($1,000 Capital)</h3>
-            <p style="font-size: 13px; color: var(--text-muted);">Every afternoon, positions passing both the Student-t probability filter (&ge; 55.5%) and Gemini's learned-rule audit are staked from the $1,000 paper bankroll.</p>
+            <h3 style="font-size: 16px;">💰 How CourtVision Tracks Your $1,000 Capital Day-by-Day</h3>
+            <p style="font-size: 13px; color: var(--text-muted);">Every afternoon, +EV picks passing both the Student-$t$ probability filter ($\ge 55.5\%$) and Gemini's learned-rule audit are staked from your $1,000 bankroll.</p>
           </div>
           <span class="bookmaker-badge" style="background: var(--bball-orange-glow); color: var(--bball-orange); border-color: var(--bball-border);">
             Live Paper Simulation
@@ -2105,10 +2310,10 @@
       </div>
 
       <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-        <h3 style="font-size: 17px;">Active In-Play Positions (Tonight)</h3>
+        <h3 style="font-size: 17px;" id="desk-active-heading">Active In-Play Positions (Tonight)</h3>
         <div style="display: flex; gap: 8px;">
-          <button class="bcast-filter-btn active" id="desk-view-bugs-btn" onclick="toggleDeskView('bugs')">Scorebug Cards</button>
-          <button class="bcast-filter-btn" id="desk-view-table-btn" onclick="toggleDeskView('table')">Table View</button>
+          <button class="bcast-filter-btn active" id="desk-view-bugs-btn" onclick="toggleDeskView('bugs')">📺 Broadcast Score Bugs</button>
+          <button class="bcast-filter-btn" id="desk-view-table-btn" onclick="toggleDeskView('table')">📋 Table View</button>
         </div>
       </div>
 
@@ -2121,12 +2326,13 @@
         <table>
           <thead>
             <tr>
+              <th>Game Date & Tip-Off</th>
               <th>Matchup</th>
-              <th>Selection &amp; Line</th>
+              <th>Selection & Line</th>
               <th>Live Score / Status</th>
               <th>Sportsbook</th>
               <th>Odds</th>
-              <th>P(Cover) &amp; +EV</th>
+              <th>P(Cover) & +EV</th>
               <th>Invested Stake</th>
               <th>Potential Profit</th>
               <th>Rule / Conf</th>
@@ -2143,7 +2349,7 @@
       <div class="chart-box">
         <div class="chart-header">
           <div>
-            <h3 style="font-size: 16px;">30-Day Paper Bankroll &amp; Cash Flow Trajectory</h3>
+            <h3 style="font-size: 16px;">📈 30-Day Paper Bankroll & Cash Flow Trajectory</h3>
             <p style="font-size: 12.5px; color: var(--text-muted);">Real day-by-day balance curve starting at $1,000.00. <strong>Hover over any day</strong> to inspect the exact bets placed, lines, stakes, and settlement outcomes.</p>
           </div>
           <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 800; color: var(--bball-orange);" id="chart-latest-balance">
@@ -2159,8 +2365,8 @@
     <!-- TAB 3: ISyE 4031 Forecasting Model & Self-Learning AI Memory -->
     <div id="pane-model" class="tab-pane">
       <div style="margin-bottom: 20px;">
-        <h2 style="font-size: 19px;">ISyE 4031 Forecasting Architecture &amp; Self-Learning Decision Basis</h2>
-        <p style="font-size: 13.5px; color: var(--text-muted);">Combines Exponential Smoothing, First-Principles OLS Prediction Intervals (SE<sub>pred</sub> vs SE<sub>mean</sub>), CFE/MAD Tracking Signal diagnostics, and Gemini's persistent post-mortem rule memory. Calibration caveat: OLS dispersion ignores late injury scratches and market microstructure, so tracking signals and CLV remain primary diagnostic guardrails.</p>
+        <h2 style="font-size: 19px;">🧠 ISyE 4031 Forecasting Architecture & Self-Learning Decision Basis</h2>
+        <p style="font-size: 13.5px; color: var(--text-muted);">Combines Exponential Smoothing, First-Principles OLS Prediction Intervals ($SE_{\text{pred}}$ vs $SE_{\text{mean}}$), CFE/MAD Tracking Signal diagnostics, and Gemini's persistent post-mortem rule memory.</p>
       </div>
 
       <!-- Model Diagnostics KPI Strip -->
@@ -2170,20 +2376,20 @@
 
       <!-- OLS Equation & Regression Specification -->
       <div class="money-lifecycle-box" style="margin-bottom: 26px;">
-        <h3 style="font-size: 16px; margin-bottom: 6px;">First-Principles Multivariate OLS &amp; Prediction Standard Error (SE<sub>pred</sub>)</h3>
+        <h3 style="font-size: 16px; margin-bottom: 6px;">📐 First-Principles Multivariate OLS & Prediction Standard Error ($SE_{\text{pred}}$)</h3>
         <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">
-          Because sports wagering depends on a <strong>single future game outcome</strong> Y<sub>0</sub> rather than the long-run conditional mean E[Y|x<sub>0</sub>], CourtVision computes out-of-sample prediction standard error SE<sub>pred</sub>(x<sub>0</sub>) = s &radic;(1 + x<sub>0</sub><sup>T</sup>(X<sup>T</sup>X)<sup>-1</sup>x<sub>0</sub>) to construct strictly nested 50%, 80%, 95% Student-t intervals:
+          Because sports wagering depends on a <strong>single future game outcome</strong> $Y_0$ rather than the long-run conditional mean $E[Y|\mathbf{x}_0]$, CourtVision computes out-of-sample prediction standard error $SE_{\text{pred}}(\mathbf{x}_0) = s\sqrt{1 + \mathbf{x}_0^\top(\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{x}_0}$ to construct strictly nested $50\%, 80\%, 95\%$ Student-$t$ intervals:
         </p>
-        <div style="background: var(--bg-card-alt); border: 1px solid var(--border-subtle); border-radius: 4px; padding: 14px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--bball-orange); overflow-x: auto;" id="ols-equation-box">
-          &#374;&#8320; = +2.20 (HCA) + 0.94(&Delta;EWMA_NRtg) + 1.35(&Delta;Holt_Trend) + 0.42(&Delta;FourFactors_CS2316) + 1.15(&Delta;Rest_Fatigue) - 0.08(&Delta;AR1_Shock)
+        <div style="background: var(--bg-card-alt); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 14px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--bball-orange); overflow-x: auto;" id="ols-equation-box">
+          Ŷ₀ = +2.20 (HCA) + 0.94(ΔEWMA_NRtg) + 1.35(ΔHolt_Trend) + 0.42(ΔFourFactors_CS2316) + 1.15(ΔRest_Fatigue) - 0.08(ΔAR1_Shock)
         </div>
       </div>
 
       <!-- Gemini Self-Learning Decision Basis Rules -->
       <div style="margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
         <div>
-          <h3 style="font-size: 17px;">Gemini 2.5 Flash Self-Learning Decision Basis (<code>decision_basis.json</code>)</h3>
-          <p style="font-size: 13px; color: var(--text-muted);">Every morning after games settle, Gemini audits the forecast residual (e<sub>t</sub> = y<sub>t</sub> - y&#770;<sub>t</sub>) and updates its active rulebook for future slates.</p>
+          <h3 style="font-size: 17px;">🔄 Gemini 2.5 Flash Self-Learning Decision Basis (`decision_basis.json`)</h3>
+          <p style="font-size: 13px; color: var(--text-muted);">Every morning after games settle, Gemini audits the forecast residual ($e_t = y_t - \hat{y}_t$) and updates its active rulebook for future slates.</p>
         </div>
       </div>
 
@@ -2193,7 +2399,7 @@
 
       <!-- Residual Diagnostics & Interval Coverage Table -->
       <div style="margin-bottom: 14px;">
-        <h3 style="font-size: 17px;">Out-of-Sample Residual Diagnostics &amp; Prediction Interval Coverage</h3>
+        <h3 style="font-size: 17px;">📊 Out-of-Sample Residual Diagnostics & Prediction Interval Coverage</h3>
       </div>
 
       <div class="table-container">
@@ -2202,11 +2408,11 @@
             <tr>
               <th>Date</th>
               <th>Matchup</th>
-              <th>Pred Margin (y&#770;<sub>t</sub>)</th>
-              <th>Actual (y<sub>t</sub>)</th>
-              <th>Residual (e<sub>t</sub>)</th>
-              <th>Studentized (r<sub>t</sub>)</th>
-              <th>SE<sub>pred</sub> vs SE<sub>mean</sub></th>
+              <th>Pred Margin ($\hat{y}_t$)</th>
+              <th>Actual ($y_t$)</th>
+              <th>Residual ($e_t$)</th>
+              <th>Studentized ($r_t$)</th>
+              <th>$SE_{\text{pred}}$ vs $SE_{\text{mean}}$</th>
               <th>80% / 95% PI Capture</th>
             </tr>
           </thead>
@@ -2220,21 +2426,34 @@
     <!-- TAB 4: 30-Day Settlement Ledger -->
     <div id="pane-ledger" class="tab-pane">
       <div style="margin-bottom: 20px;">
-        <h2 style="font-size: 19px;">30-Day Auditable Settlement Ledger</h2>
-        <p style="font-size: 13.5px; color: var(--text-muted);">Every graded game, final score, cover margin, and closing balance.</p>
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px;">
+          <h2 style="font-size: 19px; margin-bottom: 0;">30-Day Auditable Settlement Ledger</h2>
+          <span class="game-date-badge" id="ledger-count-badge" style="background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border); font-size: 12px; padding: 3px 9px;">📜 All Past Days Bets</span>
+        </div>
+        <p style="font-size: 13.5px; color: var(--text-muted); margin-bottom: 0;">Every graded game, final score, cover margin, and closing balance across all past betting days.</p>
+      </div>
+
+      <!-- Past Days Filter Buttons -->
+      <div class="ledger-date-filters" id="ledger-date-filters">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+
+      <div class="ledger-date-summary" id="ledger-date-summary" style="display: none;">
+        <!-- Rendered dynamically by app.js -->
       </div>
 
       <div class="table-container">
         <table>
           <thead>
             <tr>
+              <th>Game Date</th>
               <th>Settled Date</th>
               <th>Matchup</th>
-              <th>Pick &amp; Line</th>
+              <th>Pick & Line</th>
               <th>Final Score</th>
               <th>Outcome</th>
               <th>Stake</th>
-              <th>Net P&amp;L ($)</th>
+              <th>Net P&L ($)</th>
               <th>Bankroll After</th>
             </tr>
           </thead>
@@ -2250,8 +2469,8 @@
   <!-- Footer -->
   <footer>
     <div class="container">
-      <p>CourtVision (<code>courtvision_ewma_ols_v1</code>) &bull; ISyE 4031 Forecasting Engine &amp; $1,000 Paper Bankroll</p>
-      <p style="margin-top: 4px; font-size: 11.5px;">Strict Time-Ordered Validation &bull; Holt EWMA + Multivariate OLS SE<sub>pred</sub> Intervals &bull; Gemini 2.5 Flash Self-Learning Memory</p>
+      <p>🏀 CourtVision (`courtvision_ewma_ols_v1`) • ISyE 4031 Forecasting Engine & $1,000 Paper Bankroll</p>
+      <p style="margin-top: 4px; font-size: 11.5px;">Strict Time-Ordered Validation • Holt EWMA + Multivariate OLS $SE_{\text{pred}}$ Intervals • Gemini 2.5 Flash Self-Learning Memory</p>
     </div>
   </footer>
 
