@@ -44,9 +44,9 @@
         -15.1,
         11.9
       ],
-      "triggered_rule_id": "RULE-001",
-      "gemini_confidence": 95,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 85.5% (+63.25% EV, SE_pred=10.5) exceeds high-conviction threshold for Milwaukee Bucks. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "triggered_rule_id": "NONE",
+      "gemini_confidence": 85,
+      "gemini_reasoning": "Milwaukee holds a superior EWMA Net Rating (+4.34 vs. 0.0) with an upward Holt trend, establishing a massive +11.1 point discrepancy against the market line. With an 85.5% Student-t cover probability and no adverse situational fatigue or turnover rules triggered, the +63.25% EV warrants maximum staking.",
       "status": "PENDING"
     },
     {
@@ -63,8 +63,8 @@
       "potential_profit": 36.36,
       "model_projected_spread": -1.0,
       "edge_points": 5.5,
-      "cover_prob_pct": 63.2,
-      "ev_pct": 20.6,
+      "cover_prob_pct": 66.7,
+      "ev_pct": 27.36,
       "se_pred": 10.45,
       "se_mean": 0.74,
       "pi_80": [
@@ -72,8 +72,8 @@
         14.5
       ],
       "triggered_rule_id": "RULE-001",
-      "gemini_confidence": 88,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 63.2% (+20.6% EV, SE_pred=10.45) exceeds high-conviction threshold for Indiana Pacers. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "gemini_confidence": 95,
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 66.7% (+27.36% EV, SE_pred=10.45) exceeds high-conviction threshold for Indiana Pacers. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
       "status": "PENDING"
     },
     {
@@ -125,9 +125,9 @@
         -13.7,
         13.2
       ],
-      "triggered_rule_id": "RULE-001",
-      "gemini_confidence": 81,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 60.2% (+14.98% EV, SE_pred=10.48) exceeds high-conviction threshold for Dallas Mavericks. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "triggered_rule_id": "NONE",
+      "gemini_confidence": 75,
+      "gemini_reasoning": "Dallas holds a clear net efficiency advantage with a 4.02 EWMA Net Rating against Phoenix's 1.93, supporting an elevated 60.2% Student-t cover probability at +2.5. With no active memory heuristics triggered to penalize variance, the +14.98% EV provides a sound 1-unit investment profile.",
       "status": "PENDING"
     },
     {
@@ -198,8 +198,8 @@
       "potential_profit": 36.36,
       "model_projected_spread": 4.8,
       "edge_points": 7.3,
-      "cover_prob_pct": 89.4,
-      "ev_pct": 70.62,
+      "cover_prob_pct": 91.0,
+      "ev_pct": 73.71,
       "se_pred": 10.6,
       "se_mean": 1.93,
       "pi_80": [
@@ -208,7 +208,7 @@
       ],
       "triggered_rule_id": "RULE-001",
       "gemini_confidence": 95,
-      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 89.4% (+70.62% EV, SE_pred=10.6) exceeds high-conviction threshold for Golden State Warriors. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
+      "gemini_reasoning": "ISyE 4031 Student-t cover probability of 91.0% (+73.71% EV, SE_pred=10.6) exceeds high-conviction threshold for Golden State Warriors. Applied RULE-001 (+5 confidence boost for elite EWMA Net Rating & turnover efficiency advantage).",
       "status": "PENDING"
     },
     {
@@ -3014,5 +3014,5 @@
       "note": "Day Settlement: 6 bets (2W-4L, $-87.28)"
     }
   ],
-  "last_updated": "2026-11-27T03:34:18.247799+00:00"
+  "last_updated": "2026-11-27T04:45:50.967990+00:00"
 }
