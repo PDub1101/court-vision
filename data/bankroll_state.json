@@ -15,11 +15,14 @@
     "pushes": 0,
     "win_rate_percent": 55.2,
     "current_streak": "W1",
-    "longest_win_streak": 1,
-    "longest_loss_streak": 1,
-    "max_drawdown_percent": -2.0,
-    "average_edge_points": 2.9,
-    "clv_beat_rate_percent": 66.7
+    "longest_win_streak": 6,
+    "longest_loss_streak": 4,
+    "max_drawdown_percent": -12.65,
+    "average_edge_points": 7.3,
+    "clv_beat_rate_percent": null,
+    "current_drawdown_percent": 12.65,
+    "in_play_exposure_percent": 27.46,
+    "average_clv_points": null
   },
   "active_bets": [
     {
@@ -3014,5 +3017,5 @@
       "note": "Day Settlement: 6 bets (2W-4L, $-87.28)"
     }
   ],
-  "last_updated": "2026-11-27T15:00:35.029851+00:00"
+  "last_updated": "2026-11-27T18:14:54.666151+00:00"
 }
