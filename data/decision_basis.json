@@ -108,15 +108,15 @@
     "interval_coverage_95_pct": 94.9
   },
   "diagnostics": {
-    "cfe": 24.7,
-    "mad": 11.61,
-    "tracking_signal": 2.13,
+    "cfe": 24.6,
+    "mad": 11.93,
+    "tracking_signal": 2.06,
     "tracking_signal_limit": 3.75,
-    "status": "CALIBRATED (Out-of-Time SRS Ridge Holdout Verified)",
-    "out_of_sample_rmse": 14.93,
-    "interval_coverage_50_pct": 51.7,
-    "interval_coverage_80_pct": 80.5,
-    "interval_coverage_95_pct": 94.9,
+    "status": "IN_CONTROL (Unbiased)",
+    "out_of_sample_rmse": 14.86,
+    "interval_coverage_50_pct": 37.1,
+    "interval_coverage_80_pct": 59.7,
+    "interval_coverage_95_pct": 83.9,
     "residual_history": [
       {
         "date": "2026-11-10",
@@ -858,6 +858,71 @@
         "captured_50": true,
         "captured_80": true,
         "captured_95": true
+      },
+      {
+        "date": "2026-11-28",
+        "matchup": "Milwaukee Bucks @ Detroit Pistons",
+        "predicted_home_margin": -1.6,
+        "observed_home_margin": 15,
+        "residual_e": 16.6,
+        "studentized_r": 1.58,
+        "se_pred": 10.5,
+        "se_mean": 1.29,
+        "captured_50": false,
+        "captured_80": false,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-28",
+        "matchup": "Philadelphia 76ers @ Indiana Pacers",
+        "predicted_home_margin": 1.0,
+        "observed_home_margin": -24,
+        "residual_e": -25.0,
+        "studentized_r": -2.39,
+        "se_pred": 10.45,
+        "se_mean": 0.74,
+        "captured_50": false,
+        "captured_80": false,
+        "captured_95": false
+      },
+      {
+        "date": "2026-11-28",
+        "matchup": "Memphis Grizzlies @ Minnesota Timberwolves",
+        "predicted_home_margin": 5.2,
+        "observed_home_margin": -5,
+        "residual_e": -10.2,
+        "studentized_r": -0.97,
+        "se_pred": 10.51,
+        "se_mean": 1.35,
+        "captured_50": false,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-28",
+        "matchup": "Dallas Mavericks @ Phoenix Suns",
+        "predicted_home_margin": -0.2,
+        "observed_home_margin": -4,
+        "residual_e": -3.8,
+        "studentized_r": -0.36,
+        "se_pred": 10.48,
+        "se_mean": 1.12,
+        "captured_50": true,
+        "captured_80": true,
+        "captured_95": true
+      },
+      {
+        "date": "2026-11-28",
+        "matchup": "Brooklyn Nets @ Toronto Raptors",
+        "predicted_home_margin": 1.7,
+        "observed_home_margin": 24,
+        "residual_e": 22.3,
+        "studentized_r": 2.14,
+        "se_pred": 10.44,
+        "se_mean": 0.7,
+        "captured_50": false,
+        "captured_80": false,
+        "captured_95": false
       }
     ]
   },
@@ -893,5 +958,5 @@
       "parameter_delta": 0
     }
   ],
-  "last_updated": "2026-11-27T17:59:04Z"
+  "last_updated": "2026-11-28T04:43:18Z"
 }
